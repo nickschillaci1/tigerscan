@@ -1,1 +1,1 @@
-# SoftwareEngineering_EmailSecurityScanner
+# Software Engineering: Email Security Scanner

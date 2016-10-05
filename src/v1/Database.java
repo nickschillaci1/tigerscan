@@ -1,8 +1,11 @@
-import Java.io.File;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Exception;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 /**
  * This class will maintain the database, handle database encryption, and handles modifications to the database.
@@ -10,30 +13,40 @@ import java.io.Exception;
  * SO FAR: this file only creates the database locally in a non-encrypted file
  *
  * @author Brandon Dixon
- * @version 10/4/16
+ * @version 10/5/16
  **/
 public class Database {
 
     private ArrayList<String> terms;
     private final String fileName = "/info.info";
-    private File textFile = new File(filename);
+    private File textFile = new File(fileName);
     
 
     /**
      * This will initalize the database and load in terms if there are any to load
      */
-    public Databse() {
+    public Database() {
 	//Read the file in
-	FileReader fileReader = new FileReader(textFile);
-	BufferedReader bufferedReader = new BufferedReader(fileReader);
-	String tempLine = "";
+	try {
+	    FileReader fileReader = new FileReader(textFile);
 
-	while ((tempLine=bufferedReader.readLine())!=null) {
-	    terms.add(tempLine);
+	    BufferedReader bufferedReader = new BufferedReader(fileReader);
+	    String tempLine = "";
+	    
+	    try {
+	        while ((tempLine=bufferedReader.readLine())!=null) {
+	            terms.add(tempLine);
+	        }
+	    
+	        bufferedReader.close();
+	        fileReader.close();
+	    } catch (IOException q) {
+		//nothing
+	    }
+
+        } catch (FileNotFoundException e) {
+	    rewriteFile();
 	}
-
-	bufferedReader.close();
-	fileReader.close();
 	
     }
 
@@ -122,7 +135,7 @@ public class Database {
 	}
 
 	if (error.size()>0) {
-	    throw new DatabaseRemoveTermException(conflict);
+	    throw new DatabaseRemoveTermException(error);
 	}
 
     }
@@ -132,17 +145,21 @@ public class Database {
      * This is a private method that will totally rewrite the file with the contents of the ArrayList terms
      */
     private void rewriteFile() {
-	FileWriter fileWriter = new FileWriter(fileName,false);
-	BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-	int numTerms = terms.size();
-	for (int i=0; i<numTerms; i++) {
-	    bufferedWriter.write(terms.get(i));
-	    bufferedWriter.newLine();
+	try {
+	    FileWriter fileWriter = new FileWriter(fileName,false);
+	    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+	    
+	    int numTerms = terms.size();
+	    for (int i=0; i<numTerms; i++) {
+		bufferedWriter.write(terms.get(i));
+		bufferedWriter.newLine();
+	    }
+	    
+	    bufferedWriter.close();
+	    fileWriter.close();
+	} catch (IOException e) {
+	    //nothing yet
 	}
-
-	bufferedWriter.close();
-	fileWriter.close();
     }
   
 }

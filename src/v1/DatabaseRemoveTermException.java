@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class DatabaseRemoveTermException extends Exception {
 
@@ -5,17 +6,12 @@ public class DatabaseRemoveTermException extends Exception {
 
     public DatabaseRemoveTermException(String inputTerm) {
         super("The term '"+inputTerm+"' does not exist in the database and therefore cannot be deleted.");
-	term = new ArrayLst<String>();
-        term.add(term);
+	term = new ArrayList<String>();
+        term.add(inputTerm);
     }
 
     public DatabaseRemoveTermException(ArrayList<String> inputTerm) {
-	String error = "";
-	int length = inputTerm.size();
-	for (int i=0; i<length; i++) {
-	    error+=inputTerm.get(i)+", ";
-	}
-	super("The terms "+error+" do not exist in the database and therefore cannot be deleted.");
+	super("Some or all of the input terms do not exist in the database and therefore cannot be deleted.  Call the getTerms() method to find out which ones.");
 
 	term = inputTerm;
     }

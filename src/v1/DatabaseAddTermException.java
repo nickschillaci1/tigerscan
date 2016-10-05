@@ -1,4 +1,4 @@
-import java.ArrayList;
+import java.util.ArrayList;
 
 
 public class DatabaseAddTermException extends Exception {
@@ -7,16 +7,12 @@ public class DatabaseAddTermException extends Exception {
 
     public DatabaseAddTermException(String inputTerm) {
 	super("The term '"+inputTerm+"' has already been added.");
-	term = inputTerm;
+	term = new ArrayList<String>();
+	term.add(inputTerm);
     }
 
     public DatabaseAddTermException(ArrayList<String> inputTerm) {
-	String error = "";
-        int length = inputTerm.size();
-        for (int i=0; i<length; i++) {
-            error+=inputTerm.get(i)+", ";
-        }
-	super("The terms "+error+" have already been added.");
+	super("Some or all of these terms have already been added.  You can call the getTerms() method to find which ones.");
 
 	term = inputTerm;
     }

@@ -58,9 +58,33 @@ public class Database {
     }
 
     /**
+     * This will add multiple terms to the database
+     * @param ArrayList<Strimg> terms to add to the database
+     * @exception DabaseAddTermException if one or more words is already present in the database
+     */
+    public void addTerm(ArrayList<String> termArray) throws DatabaseAddTermException {
+	//manipulate root words as necessary
+	ArrayList<String> conflicts = new ArrayList<String>();
+
+	//add all of the 
+	int length = termArray.size();
+	for (int i=0; i<length; i++) {
+	    String temp = termArray.get(i);
+	    if (terms.contains(temp)) {
+		conflicts.add(temp);
+	    }
+	}
+
+	if (conflicts.size()>0) {
+	    throw new DatabaseAddTermException(conflicts);
+	}
+
+    }
+
+    /**
      * This will remove a term from the database.
      * @param String term to be removed
-     * @param DatabaseRemoveTermException if the word is not present in the database
+     * @exception DatabaseRemoveTermException if the word is not present in the database
      * 
      */
     public void removeTerm(String term) throws DatabaseRemoveTermException {
@@ -75,6 +99,32 @@ public class Database {
 
 	//rewrite the file
 	rewriteFile();
+    }
+
+    /**
+     * This will remove one or more terms from the database.
+     * @param ArrayList<String> terms to be removed
+     * @exception DatabaseRemoveTermException if one or more words is not present in the database
+     */
+    public void removeTerm(ArrayList<String> termArray) throws DatabaseRemoveTermException {
+	//manipulate the root word if neccessary
+
+	ArrayList<String> error = new ArrayList<String>();
+	//remove all of the terms
+	int length = termArray.size();
+	for (int i=0; i<length; i++) {
+	    String temp = termArray.get(i);
+	    if (!terms.contains(temp)) {
+		error.add(temp);
+	    } else {
+		terms.remove(temp);
+	    }
+	}
+
+	if (error.size()>0) {
+	    throw new DatabaseRemoveTermException(conflict);
+	}
+
     }
 
 

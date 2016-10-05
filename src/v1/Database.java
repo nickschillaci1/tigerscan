@@ -50,6 +50,18 @@ public class Database {
 	
     }
 
+
+    /**
+     * This will check to see if the database contains a certain term.
+     * @param String term to check for
+     * @return boolean of whether the database has the term or not
+     */
+    public boolean hasTerm(String term) {
+	//root word manipulation will happen here - for now, use single line
+
+	return terms.contains(term);
+    }
+
     /**
      * This will add a term to the database
      * @param String term to add to the database
@@ -138,6 +150,12 @@ public class Database {
 	    throw new DatabaseRemoveTermException(error);
 	}
 
+    }
+
+    public void removeAllTerms() {
+	terms = new ArrayList<String>();
+
+	rewriteFile();
     }
 
 

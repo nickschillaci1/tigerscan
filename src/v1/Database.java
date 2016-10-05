@@ -1,6 +1,7 @@
-import Java.IO.File;
+import Java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.Exception;
 
 /**
@@ -16,14 +17,82 @@ public class Database {
     private ArrayList<String> terms;
     private final String fileName = "/info.info";
     private File textFile = new File(filename);
-    private FileWriter write = new FileWriter(textFile,false);
-    private PrintWriter printToFile = new PrintWriter(fileWrite);
+    
 
     /**
      * This will initalize the database and load in terms if there are any to load
      */
     public Databse() {
-	//TODO: read the file in
+	//Read the file in
+	FileReader fileReader = new FileReader(textFile);
+	BufferedReader bufferedReader = new BufferedReader(fileReader);
+	String tempLine = "";
+
+	while ((tempLine=bufferedReader.readLine())!=null) {
+	    terms.add(tempLine);
+	}
+
+	bufferedReader.close();
+	fileReader.close();
+	
+    }
+
+    /**
+     * This will add a term to the database
+     * @param String term to add to the database
+     * @exception DatabaseAddTermException if the word is already present in the database
+     */
+    public void addTerm(String term) throws DatabaseAddTermException {
+	//manipulate to root word if necessary
+
+	//throw an exception if the term is there already
+	if (terms.contains(term)) {
+	    throw new DatabaseAddTermException(term);
+	}
+
+	terms.add(term);
+
+	//rewrite the file
+	rewriteFile(); 
+	
+    }
+
+    /**
+     * This will remove a term from the database.
+     * @param String term to be removed
+     * @param DatabaseRemoveTermException if the word is not present in the database
+     * 
+     */
+    public void removeTerm(String term) throws DatabaseRemoveTermException {
+	//manipulate the root word if neccesary
+
+	//throws an exception if the term does not exist
+	if (!terms.contains(term)) {
+	    throw new DatabaseRemoveTermException(term);
+	}
+	
+	terms.remove(term);
+
+	//rewrite the file
+	rewriteFile();
+    }
+
+
+    /**
+     * This is a private method that will totally rewrite the file with the contents of the ArrayList terms
+     */
+    private void rewriteFile() {
+	FileWriter fileWriter = new FileWriter(fileName,false);
+	BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+	int numTerms = terms.size();
+	for (int i=0; i<numTerms; i++) {
+	    bufferedWriter.write(terms.get(i));
+	    bufferedWriter.newLine();
+	}
+
+	bufferedWriter.close();
+	fileWriter.close();
     }
   
 }

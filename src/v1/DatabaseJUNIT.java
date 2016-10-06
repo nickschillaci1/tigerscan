@@ -17,6 +17,12 @@ public class DatabaseJUNIT {
 	addSingleTerm();
 	System.out.println("\nTesting Multiple Terms: ");
 	addMultipleTerms();
+	System.out.println("\nTesting File Write/Read: ");
+	readInTerms();
+	System.out.println("\nTesting Remove Single Term: ");
+	removeSingleTerm();
+	System.out.println("\nTesting Remove Multiple Terms: ");
+	removeMultipleTerms();
     }
 
     //@Test
@@ -42,6 +48,7 @@ public class DatabaseJUNIT {
 	terms.add("nuclear");
 	terms.add("maintenance");
 	terms.add("brandon");
+	terms.add("yellow");
 	
 	Database dbTest = new Database();
 	dbTest.removeAllTerms();
@@ -57,6 +64,48 @@ public class DatabaseJUNIT {
 	System.out.println("Nuclear is added: "+dbTest.hasTerm("nuclear"));
 	System.out.println("Maintenance is added: "+dbTest.hasTerm("maintenance"));
 	System.out.println("Brandon is added: "+dbTest.hasTerm("brandon"));
+	System.out.println("Yellow is added: "+dbTest.hasTerm("yellow"));
+    }
+
+    public static void readInTerms() {
+	Database dbTest = new Database();
+
+	System.out.println("Nuclear is added: "+dbTest.hasTerm("nuclear"));
+        System.out.println("Maintenance is added: "+dbTest.hasTerm("maintenance"));
+        System.out.println("Brandon is added: "+dbTest.hasTerm("brandon"));
+        System.out.println("Yellow is added: "+dbTest.hasTerm("yellow"));
+    }
+
+    //@Test
+    public static void removeSingleTerm() {
+	Database dbTest = new Database();
+
+	try {
+	    dbTest.removeTerm("nuclear");
+	} catch (DatabaseRemoveTermException e) {
+	    System.out.println("Error in remove single test.");
+	}
+
+	System.out.println("Nuclear is removed: "+(!dbTest.hasTerm("nuclear")));
+    }
+
+    //@Test
+    public static void removeMultipleTerms() {
+	Database dbTest = new Database();
+	ArrayList<String> rTerms = new ArrayList<String>();
+	rTerms.add("maintenance");
+	rTerms.add("brandon");
+	rTerms.add("yellow");
+
+	try {
+	    dbTest.removeTerm(rTerms);
+	} catch (DatabaseRemoveTermException e) {
+	    System.out.println("Error in remove multiple test.");
+	}
+	
+	System.out.println("Maintenance is removed: "+(!dbTest.hasTerm("maintenance")));
+	System.out.println("Brandon is removed: "+(!dbTest.hasTerm("brandon")));
+	System.out.println("Yellow is removed: "+(!dbTest.hasTerm("yellow")));
     }
 
 }

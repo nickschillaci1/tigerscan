@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Database {
 
     private ArrayList<String> terms;
-    private final String fileName = "/info.info";
+    private final String fileName = "info.info";
     private File textFile = new File(fileName);
     
 
@@ -99,8 +99,12 @@ public class Database {
 	    String temp = termArray.get(i);
 	    if (terms.contains(temp)) {
 		conflicts.add(temp);
+	    } else {
+		terms.add(temp);
 	    }
 	}
+
+	rewriteFile();
 
 	if (conflicts.size()>0) {
 	    throw new DatabaseAddTermException(conflicts);

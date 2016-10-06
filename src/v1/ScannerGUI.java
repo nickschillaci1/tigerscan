@@ -1,7 +1,6 @@
 package v1;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -10,9 +9,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -20,22 +17,15 @@ import javax.swing.JPanel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.Color;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JSplitPane;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-
 import java.awt.FlowLayout;
 import javax.swing.JList;
-import javax.swing.Box;
-import javax.swing.AbstractListModel;
 import java.awt.Component;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.JScrollPane;
 
 

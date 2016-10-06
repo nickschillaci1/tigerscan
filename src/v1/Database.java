@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * SO FAR: this file only creates the database locally in a non-encrypted file
  *
  * @author Brandon Dixon
- * @version 10/5/16
+ * @version 10/6/16
  **/
 public class Database {
 
@@ -26,6 +26,8 @@ public class Database {
      * This will initalize the database and load in terms if there are any to load
      */
     public Database() {
+	terms = new ArrayList<String>();
+	
 	//Read the file in
 	try {
 	    FileReader fileReader = new FileReader(textFile);

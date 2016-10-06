@@ -6,6 +6,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Scanner;
 
 /**
  * This class will maintain the database, handle database encryption, and handles modifications to the database.
@@ -20,36 +25,65 @@ public class Database {
     private ArrayList<String> terms;
     private final String fileName = "info.info";
     private File textFile = new File(fileName);
-    
+    private final String keyString = "374419DDAF3A8FA865B425BB1B15D"; //random 256-bit key
+    private final Key key;
+    private final Cipher cipher;
 
     /**
      * This will initalize the database and load in terms if there are any to load
      */
     public Database() {
-	terms = new ArrayList<String>();
-	
-	//Read the file in
 	try {
-	    FileReader fileReader = new FileReader(textFile);
+	    key = new SecretKeySpec(keyString.getBytes(),"WEP");
+	    cipher = Cipher.getInstance("WEP");
 
-	    BufferedReader bufferedReader = new BufferedReader(fileReader);
-	    String tempLine = "";
+	    terms = new ArrayList<String>();
+	    String in = "";
+	    String inDecrypted = "";
 	    
+	    //Read the file in
 	    try {
-	        while ((tempLine=bufferedReader.readLine())!=null) {
-	            terms.add(tempLine);
-	        }
-	    
-	        bufferedReader.close();
-	        fileReader.close();
-	    } catch (IOException q) {
-		//nothing
+		FileReader fileReader = new FileReader(textFile);
+		
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		String tempLine = "";
+		
+		try {
+		    while ((tempLine=bufferedReader.readLine())!=null) {
+			in+=tempLine+"\n";
+		    }
+		    
+		    //stop if the file exists, but is empty
+		    if (!in.equals("")) {
+			
+			//get rid of extra newline
+			in=in.substring(0,in.length()-1);
+			
+			//close file readers
+			bufferedReader.close();
+			fileReader.close();
+			
+			//decrypt input text
+			byte[] inB = in.getBytes();
+			cipher.init(Cipher.DECRYPT_MODE,key);
+			inDecrypted = new String(cipher.doFinal(inB));
+			
+			//take each line 
+			Scanner inScan = new Scanner(inDecrypted);
+			while (inScan.hasNextLine()) {
+			    terms.add(inScan.nextLine());
+			}
+		    }
+		} catch (IOException q) {
+		    //nothing
+		}
+		
+	    } catch (FileNotFoundException e) {
+		rewriteFile();
 	    }
-
-        } catch (FileNotFoundException e) {
-	    rewriteFile();
+	} catch (NoSuchAlgorithmException e) {
+	    System.out.println(e);
 	}
-	
     }
 
 
@@ -172,11 +206,35 @@ public class Database {
 	try {
 	    FileWriter fileWriter = new FileWriter(fileName,false);
 	    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-	    
+	    String fileS = "";
+
 	    int numTerms = terms.size();
 	    for (int i=0; i<numTerms; i++) {
-		bufferedWriter.write(terms.get(i));
-		bufferedWriter.newLine();
+		fileS += terms.get(i) +"\n";
+	    }
+
+	    //remove extra space
+	    if (!fileS.equals("")) {
+		fileS = fileS.substring(0,fileS.length()-1);
+	    }
+
+	    //encrypt the resulting string
+	    cipher.init(Cipher.ENCRYPT_MODE, key);
+	    byte[] fileSE = cipher.doFinal(fileS.getBytes());
+
+	    String fileSES = new String(fileSE);
+	    
+	    Scanner fileSESScan = new Scanner(fileSES);
+
+	    if (!fileSES.equals("")) {
+		while (true) {
+		    bufferedWriter.write(fileSESScan.nextLine());
+		    if (fileSESScan.hasNextLine()) {
+			bufferedWriter.newLine();
+		    } else {
+			break;
+		    }
+		}
 	    }
 	    
 	    bufferedWriter.close();

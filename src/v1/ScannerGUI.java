@@ -135,10 +135,12 @@ public class ScannerGUI extends JFrame{
 		fileAddButton.setMnemonic(KeyEvent.VK_A);
 		fileAddButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				FileDialog fd = new FileDialog(new JFrame(), "Choose file(s) to add", FileDialog.LOAD);
+				FileDialog fd = new FileDialog(new JFrame(), "Choose file to add", FileDialog.LOAD);
 				fd.setVisible(true);
-				filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
-				listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+				if(fd.getFile() != null) {
+					filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
+					listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+				}
 			}
 		});
 		

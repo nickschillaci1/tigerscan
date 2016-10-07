@@ -1,3 +1,5 @@
+package v1;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FileReader;
@@ -9,8 +11,8 @@ import java.util.ArrayList;
 
 public class FileScanner {
 
-    public static String getStringFromFile(String fileName boolean isEncrypted) {
-	
+    public static String getStringFromFile(String fileName, boolean isEncrypted) {
+    	return null;
     }
 
 }

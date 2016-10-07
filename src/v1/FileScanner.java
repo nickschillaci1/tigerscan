@@ -15,6 +15,7 @@ public class FileScanner {
 		
 	}
 	
+	public void scan(String line)
 	{
 		
 	}

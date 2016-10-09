@@ -7,9 +7,9 @@ public class DatabaseRemoveTermException extends Exception {
     private ArrayList<String> term;
 
     public DatabaseRemoveTermException(String inputTerm) {
-        super("The term '"+inputTerm+"' does not exist in the database and therefore cannot be deleted.");
+	super("The term '"+inputTerm+"' does not exist in the database and therefore cannot be deleted.");
 	term = new ArrayList<String>();
-        term.add(inputTerm);
+	term.add(inputTerm);
     }
 
     public DatabaseRemoveTermException(ArrayList<String> inputTerm) {
@@ -19,7 +19,7 @@ public class DatabaseRemoveTermException extends Exception {
     }
 
     public ArrayList<String> getTerms() {
-        return term;
+		return term;
     }
 
 }

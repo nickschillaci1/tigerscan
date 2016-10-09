@@ -1,6 +1,5 @@
 package v1;
 
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
 

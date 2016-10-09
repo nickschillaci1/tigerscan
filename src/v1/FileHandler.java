@@ -32,7 +32,9 @@ public class FileHandler {
 	
 	
 		} catch (IOException a) {
-			System.out.println(a);
+			if (!(a instanceof FileNotFoundException)) {
+				System.out.println(a);
+			}
 		}finally {	
 		    try {
 			if (fIn != null) {
@@ -58,7 +60,7 @@ public class FileHandler {
 		    fOut.write(contents);
 	
 		} catch (IOException e) {
-		    System.out.println();
+		    System.out.println(e);
 		} finally {
 		    try {
 			if (fOut!=null) {

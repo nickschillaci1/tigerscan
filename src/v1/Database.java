@@ -1,18 +1,8 @@
 package v1;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.ArrayList;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Scanner;
 
 /**
  * This class will maintain the database, handle database encryption, and handles modifications to the database.
@@ -22,70 +12,23 @@ import java.util.Scanner;
  * @author Brandon Dixon
  * @version 10/6/16
  **/
+
 public class Database {
 
     private ArrayList<String> terms;
     private final String fileName = "info.info";
-    private File textFile = new File(fileName);
-    private final String keyString = "374419DDAF3A8FA865B425BB1B15D"; //random 256-bit key
-    private final Key key;
-    private final Cipher cipher;
+    
 
     /**
      * This will initalize the database and load in terms if there are any to load
      */
     public Database() {
 	try {
-	    key = new SecretKeySpec(keyString.getBytes(),"WEP");
-	    cipher = Cipher.getInstance("WEP");
-
-	    terms = new ArrayList<String>();
-	    String in = "";
-	    String inDecrypted = "";
-	    
-	    //Read the file in
-	    try {
-		FileReader fileReader = new FileReader(textFile);
-		
-		BufferedReader bufferedReader = new BufferedReader(fileReader);
-		String tempLine = "";
-		
-		try {
-		    while ((tempLine=bufferedReader.readLine())!=null) {
-			in+=tempLine+"\n";
-		    }
-		    
-		    //stop if the file exists, but is empty
-		    if (!in.equals("")) {
-			
-			//get rid of extra newline
-			in=in.substring(0,in.length()-1);
-			
-			//close file readers
-			bufferedReader.close();
-			fileReader.close();
-			
-			//decrypt input text
-			byte[] inB = in.getBytes();
-			cipher.init(Cipher.DECRYPT_MODE,key);
-			inDecrypted = new String(cipher.doFinal(inB));
-			
-			//take each line 
-			Scanner inScan = new Scanner(inDecrypted);
-			while (inScan.hasNextLine()) {
-			    terms.add(inScan.nextLine());
-			}
-		    }
-		} catch (IOException q) {
-		    //nothing
-		}
-		
-	    } catch (FileNotFoundException e) {
-		rewriteFile();
-	    }
-	} catch (NoSuchAlgorithmException e) {
+	    terms = new ArrayList<String>(Arrays.asList(FileHandler.getStringFromFile(fileName).split("\n")));
+	} catch (FileNotFoundException e) {
 	    System.out.println(e);
 	}
+
     }
 
 
@@ -117,7 +60,7 @@ public class Database {
 
 	//rewrite the file
 	rewriteFile(); 
-	
+
     }
 
     /**
@@ -161,7 +104,7 @@ public class Database {
 	if (!terms.contains(term)) {
 	    throw new DatabaseRemoveTermException(term);
 	}
-	
+
 	terms.remove(term);
 
 	//rewrite the file
@@ -205,45 +148,16 @@ public class Database {
      * This is a private method that will totally rewrite the file with the contents of the ArrayList terms
      */
     private void rewriteFile() {
-	try {
-	    FileWriter fileWriter = new FileWriter(fileName,false);
-	    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-	    String fileS = "";
+	String allTerms = "";
+	int length = terms.size();
 
-	    int numTerms = terms.size();
-	    for (int i=0; i<numTerms; i++) {
-		fileS += terms.get(i) +"\n";
-	    }
-
-	    //remove extra space
-	    if (!fileS.equals("")) {
-		fileS = fileS.substring(0,fileS.length()-1);
-	    }
-
-	    //encrypt the resulting string
-	    cipher.init(Cipher.ENCRYPT_MODE, key);
-	    byte[] fileSE = cipher.doFinal(fileS.getBytes());
-
-	    String fileSES = new String(fileSE);
-	    
-	    Scanner fileSESScan = new Scanner(fileSES);
-
-	    if (!fileSES.equals("")) {
-		while (true) {
-		    bufferedWriter.write(fileSESScan.nextLine());
-		    if (fileSESScan.hasNextLine()) {
-			bufferedWriter.newLine();
-		    } else {
-			break;
-		    }
-		}
-	    }
-	    
-	    bufferedWriter.close();
-	    fileWriter.close();
-	} catch (IOException e) {
-	    //nothing yet
+	for (int i=0; i<length; i++) {
+	    allTerms += "\n";
 	}
+	
+	allTerms = allTerms.substring(0,length-1);
+
+	FileHandler.writeStringToFile(allTerms,fileName);
     }
   
 }

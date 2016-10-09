@@ -2,6 +2,7 @@ package v1;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,34 +16,68 @@ public class FileHandler {
      * @param Boolean isEncrypted
      * NOTE: this will have added implementation for "Attachement" files
      */
-    public static String getStringFromFile(String fileName, boolean isEncrypted) throws FileNotFoundException {
-    	ArrayList<Bytes> bytes = new ArrayList<Bytes>();
-	
-	File file = null;
+    public static String getStringFromFile(String fileName) throws FileNotFoundException {
+        File file = null;
 	FileInputStream fIn = null;
+	String result = "";
 	
 	try {
 	    file = new File(fileName);
 	    fIn = new FileInputStream(file);
 	    
 	    //read file in
-	    byte temp;
+	    byte[] in = new byte[1];
+	    try {
+		int length = fIn.read(in);
+		
+		for (int i=0; i<length; i++) {
+		    result += Character.toString((char)in[i]);
+		}
+	    } catch (IOException f) {
+		System.out.println(f);
+	    }
+
 	    
-	    while ((temp = fIn.read()) != -1) {
-		bytes.add(temp);
-	    }
 	} finally {
-	    if (fIn != null) {
-		fIn.close();
+	    try {
+		if (fIn != null) {
+		    fIn.close();
+		}
+	    } catch (IOException e) {
+		System.out.println(e);
 	    }
 	}
-
-	if (isEncrypted) {
-	    //handle encryption
-	}
-
 	
-	return byteToString(bytes);
+	return result;
+    }
+
+    public static void writeStringToFile(String contents, String fileName) {
+	FileOutputStream fOut = null;
+	File file;
+
+	try {
+	    file = new File(fileName);
+	    if (!file.exists()) {
+		file.createNewFile();
+	    }
+
+	    fOut = new FileOutputStream(file);
+	    byte[] contentBytes = contents.getBytes();
+	    fOut.write(contentBytes);
+	    fOut.flush();
+	    fOut.close();
+	    
+	} catch (IOException e) {
+	    System.out.println();
+	} finally {
+	    try {
+		if (fOut!=null) {
+		    fOut.close();
+		}
+	    } catch (IOException e) {
+		System.out.println(e);
+	    }
+	}
     }
 
 }

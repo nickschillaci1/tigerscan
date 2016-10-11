@@ -89,16 +89,15 @@ public class Database {
 		if (conflicts.size()>0) {
 		    throw new DatabaseAddTermException(conflicts);
 		}
+	}
 	
-	    }
-	
-	    /**
-	     * This will remove a term from the database.
-	     * @param String term to be removed
-	     * @exception DatabaseRemoveTermException if the word is not present in the database
-	     *
-	     */
-	    public void removeTerm(String term) throws DatabaseRemoveTermException {
+    /**
+     * This will remove a term from the database.
+     * @param String term to be removed
+     * @exception DatabaseRemoveTermException if the word is not present in the database
+     *
+     */
+    public void removeTerm(String term) throws DatabaseRemoveTermException {
 		//manipulate the root word if neccesary
 	
 		//throws an exception if the term does not exist
@@ -115,8 +114,8 @@ public class Database {
     /**
      * This will remove one or more terms from the database.
      * @param ArrayList<String> terms to be removed
-	     * @exception DatabaseRemoveTermException if one or more words is not present in the database
-		      */
+	 * @exception DatabaseRemoveTermException if one or more words is not present in the database
+	 */
     public void removeTerm(ArrayList<String> termArray) throws DatabaseRemoveTermException {
 		//manipulate the root word if neccessary
 	

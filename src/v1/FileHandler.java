@@ -139,7 +139,7 @@ public class FileHandler {
     	//encrypt string
     	Key key = new SecretKeySpec(KEYString.getBytes(),ALG);
 		Cipher cipher = null;
-		byte[] in = new byte[1];
+		byte[] in = contents.getBytes();
 		
 		try {
 			cipher = Cipher.getInstance(ALG);

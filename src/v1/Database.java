@@ -42,14 +42,14 @@ public class Database {
 		//root word manipulation will happen here - for now, use single line
 	
 		return terms.contains(term);
-	    }
-	
-	    /**
-	     * This will add a term to the database
-	     * @param String term to add to the database
-	     * @exception DatabaseAddTermException if the word is already present in the database
-	     */
-	    public void addTerm(String term) throws DatabaseAddTermException {
+    }
+
+    /**
+     * This will add a term to the database
+     * @param String term to add to the database
+     * @exception DatabaseAddTermException if the word is already present in the database
+     */
+    public void addTerm(String term) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
 	
 		//throw an exception if the term is there already

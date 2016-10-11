@@ -4,10 +4,10 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
- * This class will maintain the database, handle database encryption, and handles modifications to the database.
+ * This class will maintain the Database and will handle adding and removing terms.  It will also, through the FileHandler, handle the external file
  * 
  * @author Brandon Dixon
- * @version 10/6/16
+ * @version 10/8/16
  **/
 
 public class Database {

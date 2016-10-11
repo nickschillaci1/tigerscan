@@ -12,6 +12,12 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * This class currently handles reading in and writing out text files.  It also has read/write methods for use of the Database that includes encryption
+ * @author Brandon Dixon
+ * @version 10/11/16
+ *
+ */
 
 public class FileHandler {
 
@@ -22,7 +28,8 @@ public class FileHandler {
     /**
      * This will get the contents of a file as a String
      * @param String filename
-     * @param Boolean isEncrypted
+     * @return String contents of the file
+     * @exception FileNotFoundException
      * NOTE: this will have added implementation for "Attachement" files
      */
     public static String getStringFromFile(String fileName) throws FileNotFoundException {
@@ -55,6 +62,11 @@ public class FileHandler {
 		return result;
     }
 
+    /**
+     * This will write a String to a specified file
+     * @param String contents to write
+     * @param String filename
+     */
     public static void writeStringToFile(String contents, String fileName) {
 		FileOutputStream fOut = null;
 		File file;
@@ -80,6 +92,10 @@ public class FileHandler {
 		}
     }
     
+    /**
+     * This is intended to be used by the Database.  It will decrypt the file and return the String.
+     * @return String contents
+     */
     public static String getDatabaseString() {
     	File file = new File(dataFileName);
     	
@@ -133,6 +149,10 @@ public class FileHandler {
     	return "";
     }
     
+    /**
+     * This is intended to be used by the Database.  It will encrypt and save the String.
+     * @param String contents to save
+     */
     public static void saveDatabaseString(String contents) {
     	File file = new File(dataFileName);
     	

@@ -47,10 +47,12 @@ public class ScannerGUI extends JFrame{
 	static final int FRAME_HEIGHT = 300;
 	
 	private ArrayList<String> filenames;
+	private ContentScanner scanner;
 	
-	public ScannerGUI() {
-		initializeUI();
+	public ScannerGUI(ContentScanner scanner) {
+		this.scanner = scanner;
 		filenames = new ArrayList<String>();
+		initializeUI();
 	}
 	
 	private void initializeUI() {
@@ -170,7 +172,8 @@ public class ScannerGUI extends JFrame{
 			public void actionPerformed(ActionEvent event) {
 				for(int i = 0; i < filenames.size(); i++) {
 					System.out.println("Scanning file: " + filenames.get(i)); // exact directory and file name
-					System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
+					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
+					scanner.scanFiles(filenames);
 				}
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");

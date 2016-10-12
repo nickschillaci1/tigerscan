@@ -3,7 +3,8 @@ package v1;
 public class Main {
 
 	public static void main(String[] args) {
-		ScannerGUI frame = new ScannerGUI();
+		ContentScanner scanner = new ContentScanner();
+		ScannerGUI frame = new ScannerGUI(scanner);
 		//frame.pack();
 		frame.setVisible(true);
 	}

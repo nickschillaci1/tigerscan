@@ -15,15 +15,21 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import java.awt.Font;
+import java.awt.GridLayout;
+
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+
 import java.awt.FlowLayout;
 import javax.swing.JList;
 import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
@@ -37,14 +43,15 @@ import javax.swing.JScrollPane;
  * TODO currently operates as intended, but could look cleaner
  * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
- *
+ * @author Zackary Flake
  */
 public class ScannerGUI extends JFrame{
 
 	static final String TITLE = "Security Scanner";
 	static final String TITLE_FULL = "Team Tiger Security Scanner";
-	static final int FRAME_WIDTH = 400;
-	static final int FRAME_HEIGHT = 300;
+	static final int FRAME_WIDTH = 500;
+	static final int FRAME_HEIGHT = 400;
+	static final String VERSION = "0.7";
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -56,7 +63,6 @@ public class ScannerGUI extends JFrame{
 	}
 	
 	private void initializeUI() {
-		
 		this.setTitle(TITLE);
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -71,7 +77,6 @@ public class ScannerGUI extends JFrame{
 		int screenHeight = tk.getScreenSize().height;
 		setLocation(screenWidth/3, screenHeight/3);
 		setContentPane(mainPanel());
-		
 	}
 	
 	/**
@@ -83,21 +88,21 @@ public class ScannerGUI extends JFrame{
 		return menu;
 	}
 	
-	private JPanel mainPanel() {
+	private JPanel mainPanel() {	
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(northPanel(), BorderLayout.NORTH);
 		panel.add(southPanel(), BorderLayout.SOUTH);
 		panel.add(centerPanel(), BorderLayout.CENTER);
+
 		return panel;
 	}
 	
 	private JPanel northPanel() {
 		JPanel nPanel = new JPanel();
 		//nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.PAGE_AXIS));
-		nPanel.setBorder(new EmptyBorder(10, 0, 10, 10));
-		
+		nPanel.setBorder(new EmptyBorder(10, 0, 10, 10));	
 		JLabel nLabel = new JLabel(TITLE_FULL);
-		nLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		nLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		nPanel.add(nLabel);
 		return nPanel;
 	}
@@ -109,11 +114,9 @@ public class ScannerGUI extends JFrame{
 		cPanel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel fileListPanel = new JPanel();
-		fileListPanel.setBorder(new EmptyBorder(00, 140, 30, 30));
+		fileListPanel.setBorder(new EmptyBorder(00, 70, 20, 70));
 		cPanel.add(fileListPanel, BorderLayout.CENTER);
-		fileListPanel.setLayout(new BoxLayout(fileListPanel, BoxLayout.X_AXIS));
-		
-		
+		fileListPanel.setLayout(new BoxLayout(fileListPanel, BoxLayout.Y_AXIS));
 		
 		JList fileListBox = new JList();
 		fileListBox.setFixedCellWidth(100);
@@ -128,12 +131,13 @@ public class ScannerGUI extends JFrame{
 		fileListPanel.add(scrollPane);
 		
 		JPanel fileActionPanel = new JPanel();
-		cPanel.add(fileActionPanel, BorderLayout.EAST);
-		fileActionPanel.setLayout(new BoxLayout(fileActionPanel, BoxLayout.Y_AXIS));
-		
+		cPanel.add(fileActionPanel, BorderLayout.SOUTH);
+		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+	
 		JButton fileAddButton = new JButton("Add File");
-		fileAddButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		fileAddButton.setPreferredSize(new Dimension(125, 30));
 		fileActionPanel.add(fileAddButton);
+	
 		fileAddButton.setMnemonic(KeyEvent.VK_A);
 		fileAddButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -147,7 +151,7 @@ public class ScannerGUI extends JFrame{
 		});
 		
 		JButton fileRemoveButton = new JButton("Remove File");
-		fileRemoveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		fileRemoveButton.setPreferredSize(new Dimension(125, 30));
 		fileActionPanel.add(fileRemoveButton);
 		fileRemoveButton.setMnemonic(KeyEvent.VK_R);
 		fileRemoveButton.addActionListener(new ActionListener() {
@@ -161,11 +165,22 @@ public class ScannerGUI extends JFrame{
 			}
 		});
 		
+
+		
+		return cPanel;
+	}
+	
+	private JPanel southPanel() {
+		
+		JPanel sPanel = new JPanel();
+		sPanel.setLayout(new BorderLayout(0, 0));
+		
 		JPanel fileScanPanel = new JPanel();
-		cPanel.add(fileScanPanel, BorderLayout.SOUTH);
+		sPanel.add(fileScanPanel, BorderLayout.NORTH);
 		fileScanPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton fileScanButton = new JButton("Scan All");
+		fileScanButton.setPreferredSize(new Dimension(125, 30));
 		fileScanPanel.add(fileScanButton);
 		fileScanButton.setMnemonic(KeyEvent.VK_S);
 		fileScanButton.addActionListener(new ActionListener() {
@@ -180,16 +195,14 @@ public class ScannerGUI extends JFrame{
 			}
 		});
 		
-		return cPanel;
-	}
-	
-	private JPanel southPanel() {
-		JPanel sPanel = new JPanel();
-		JLabel labelVersion = new JLabel("Version 0.7"); // arbitrary, could use a global version number preferably
+		
+		JLabel labelVersion = new JLabel("Version " + VERSION);
 		labelVersion.setForeground(Color.GRAY);
-		labelVersion.setHorizontalAlignment(SwingConstants.LEFT);
+		labelVersion.setHorizontalAlignment(SwingConstants.CENTER);
 		labelVersion.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		sPanel.add(labelVersion);
+		sPanel.add(labelVersion, BorderLayout.SOUTH);
+		
+		
 		return sPanel;
 	}
 	

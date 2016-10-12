@@ -14,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * This class currently handles reading in and writing out text files.  It also has read/write methods for use of the Database that includes encryption
+ * All methods in this Class are static
  * @author Brandon Dixon
  * @version 10/11/16
  *
@@ -22,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class FileHandler {
 
     private static final String ALG = "AES"; //Advanced Encryption Standard
-    private static final String KEYString = "0012408884793915";  //randomly generated key
+    private static final String KEYString = "0012408884793915";  //this is a random key
     private static final String dataFileName = "info.info";
 	
     /**

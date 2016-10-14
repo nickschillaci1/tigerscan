@@ -19,6 +19,7 @@ public class ContentScanner {
 	
 	public ContentScanner() {
 		db = new Database();
+		//additional testing can happen heres
 	}
 	
 	public void scanFiles(ArrayList<String> importedFileNames) {

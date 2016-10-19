@@ -41,7 +41,6 @@ public class ContentScanner {
 			System.err.print("The file \"" + filename + "\" was not found.");
 			return null;
 		}
-		System.out.println("getting content from " + filename);
 		return content;
 	}
 	

@@ -13,9 +13,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+
 import java.awt.Font;
-import java.awt.GridLayout;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
@@ -23,11 +25,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import java.awt.FlowLayout;
 import javax.swing.JList;
-import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.border.BevelBorder;
@@ -40,7 +42,6 @@ import javax.swing.JScrollPane;
  * 
  * TODO -- JList<String> and DefaultListModel<String> instead of
  * 		JList and DefaultListModel. breaks window builder (do before release)
- * TODO currently operates as intended, but could look cleaner
  * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
  * @author Zackary Flake
@@ -51,7 +52,7 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "Team Tiger Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
-	static final String VERSION = "0.7";
+	static final String VERSION = "0.7.2";
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -186,7 +187,7 @@ public class ScannerGUI extends JFrame{
 		fileScanButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				for(int i = 0; i < filenames.size(); i++) {
-					System.out.println("Scanning file: " + filenames.get(i)); // exact directory and file name
+					System.out.println("Scanning file: \"" + filenames.get(i) + "\""); // exact directory and file name
 					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
 					scanner.scanFiles(filenames);
 				}
@@ -195,13 +196,29 @@ public class ScannerGUI extends JFrame{
 			}
 		});
 		
+		JButton settingsButton = new JButton();
+		try {
+			settingsButton.setIcon(new ImageIcon(ImageIO.read(new File("res/settings.png"))));
+		} catch (IOException ex) {
+			settingsButton.setText("Settings");
+			settingsButton.setMnemonic(KeyEvent.VK_E);
+		}
+		settingsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
+				//working on password field or another solution
+				
+				//TODO this will be where database settings will show up (another GUI)
+			}
+		});
+		fileScanPanel.add(settingsButton);
+		
 		
 		JLabel labelVersion = new JLabel("Version " + VERSION);
 		labelVersion.setForeground(Color.GRAY);
 		labelVersion.setHorizontalAlignment(SwingConstants.CENTER);
 		labelVersion.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		sPanel.add(labelVersion, BorderLayout.SOUTH);
-		
 		
 		return sPanel;
 	}

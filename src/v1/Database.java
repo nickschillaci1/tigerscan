@@ -4,15 +4,15 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
- * This class will maintain the Database and will handle adding and removing terms.  It will also, through the FileHandler, handle the external file
+ * This class will maintain the Database and will handle adding and removing terms.  It will also, through the FileHandler, handle the external file.
  * 
  * @author Brandon Dixon
- * @version 10/8/16
+ * @version 10/20/16
  **/
 
 public class Database {
 
-    private ArrayList<String> terms = new ArrayList<String>();
+    private ArrayList<Integer> terms = new ArrayList<Integer>();
    
 
 
@@ -25,7 +25,7 @@ public class Database {
 	    Scanner strScan = new Scanner(in);
 	    
 	    while (strScan.hasNextLine()) { 
-	    	terms.add(strScan.nextLine());	
+	    	terms.add(strScan.nextLine().hashCode());	
 	    }
 	    
 	    strScan.close();
@@ -41,7 +41,7 @@ public class Database {
     public boolean hasTerm(String term) {
 		//root word manipulation will happen here - for now, use single line
 	
-		return terms.contains(term);
+		return terms.contains(term.hashCode());
     }
 
     /**
@@ -53,11 +53,12 @@ public class Database {
 		//manipulate to root word if necessary
 	
 		//throw an exception if the term is there already
-		if (terms.contains(term)) {
-		    throw new DatabaseAddTermException(term);
+    	int t = term.hashCode();
+		if (terms.contains(t)) {
+		    throw new DatabaseAddTermException(t);
 		}
 	
-		terms.add(term);
+		terms.add(term.hashCode());
 	
 		//rewrite the file
 		rewriteFile();
@@ -71,16 +72,16 @@ public class Database {
      */
     public void addTerm(ArrayList<String> termArray) throws DatabaseAddTermException {
 		//manipulate root words as necessary
-		ArrayList<String> conflicts = new ArrayList<String>();
+		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
 		//add all of the
 		int length = termArray.size();
 		for (int i=0; i<length; i++) {
 		    String temp = termArray.get(i);
-		    if (terms.contains(temp)) {
-			conflicts.add(temp);
+		    if (terms.contains(temp.hashCode())) {
+			conflicts.add(temp.hashCode());
 		    } else {
-			terms.add(temp);
+			terms.add(temp.hashCode());
 		    }
 		}
 	
@@ -101,8 +102,9 @@ public class Database {
 		//manipulate the root word if neccesary
 	
 		//throws an exception if the term does not exist
-		if (!terms.contains(term)) {
-		    throw new DatabaseRemoveTermException(term);
+    	int t = term.hashCode();
+		if (!terms.contains(t)) {
+		    throw new DatabaseRemoveTermException(t);
 		}
 	
 		terms.remove(term);
@@ -119,11 +121,11 @@ public class Database {
     public void removeTerm(ArrayList<String> termArray) throws DatabaseRemoveTermException {
 		//manipulate the root word if neccessary
 	
-		ArrayList<String> error = new ArrayList<String>();
+		ArrayList<Integer> error = new ArrayList<Integer>();
 		//remove all of the terms
 		int length = termArray.size();
 		for (int i=0; i<length; i++) {
-		    String temp = termArray.get(i);
+		    int temp = termArray.get(i).hashCode();
 		    if (!terms.contains(temp)) {
 			error.add(temp);
 		    } else {
@@ -138,7 +140,7 @@ public class Database {
 	    }
 	
 	    public void removeAllTerms() {
-		terms = new ArrayList<String>();
+		terms = new ArrayList<Integer>();
 	
 		rewriteFile();
     }

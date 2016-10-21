@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 
 import java.awt.Font;
 
@@ -25,7 +24,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import java.awt.FlowLayout;
@@ -56,6 +54,8 @@ public class ScannerGUI extends JFrame{
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
+	private int screenWidth;
+	private int screenHeight;
 	
 	public ScannerGUI(ContentScanner scanner) {
 		this.scanner = scanner;
@@ -74,8 +74,8 @@ public class ScannerGUI extends JFrame{
 			errIcon.printStackTrace();
 		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		int screenWidth = tk.getScreenSize().width;
-		int screenHeight = tk.getScreenSize().height;
+		screenWidth = tk.getScreenSize().width;
+		screenHeight = tk.getScreenSize().height;
 		setLocation(screenWidth/3, screenHeight/3);
 		setContentPane(mainPanel());
 	}
@@ -205,10 +205,22 @@ public class ScannerGUI extends JFrame{
 		}
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
-				//working on password field or another solution
+				//String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
+				//TODO working on PasswordField or another solution for isolating management from the user
 				
-				//TODO this will be where database settings will show up (another GUI)
+				//bypassing administration verification for now to get the settings functional...
+				//TODO settings need to include [Database File: ____], [Change], [Rename], [Add Term], [Remove Term], [Import Terms from File]
+				JFrame dbSettings = new JFrame();
+				dbSettings.setTitle("Settings");
+				dbSettings.setSize(FRAME_WIDTH/2, FRAME_HEIGHT);
+				dbSettings.setLocation(screenWidth/4, screenHeight/4);
+				try {
+					dbSettings.setIconImage(ImageIO.read(new File("res/settings.png")));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				dbSettings.setAlwaysOnTop(true);
+				dbSettings.setVisible(true);
 			}
 		});
 		fileScanPanel.add(settingsButton);

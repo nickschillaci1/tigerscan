@@ -6,6 +6,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import java.awt.Font;
-import java.awt.GridLayout;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
@@ -23,16 +24,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 
 import java.awt.FlowLayout;
 import javax.swing.JList;
-import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
+
+import db.SQLDatabase;
 
 
 /**
@@ -55,9 +56,11 @@ public class ScannerGUI extends JFrame{
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
+	private SQLDatabase db;
 	
-	public ScannerGUI(ContentScanner scanner) {
+	public ScannerGUI(ContentScanner scanner, SQLDatabase db) {
 		this.scanner = scanner;
+		this.db = db;
 		filenames = new ArrayList<String>();
 		initializeUI();
 	}
@@ -66,6 +69,11 @@ public class ScannerGUI extends JFrame{
 		this.setTitle(TITLE);
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				db.closeConnection();
+			}
+		});
 		//this.setJMenuBar(mainMenuBar());
 		try {
 			this.setIconImage(ImageIO.read(new File("res/icon.png")));

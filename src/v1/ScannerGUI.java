@@ -17,11 +17,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.Font;
+import java.awt.GridLayout;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -205,22 +207,7 @@ public class ScannerGUI extends JFrame{
 		}
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
-				//TODO working on PasswordField or another solution for isolating management from the user
-				
-				//bypassing administration verification for now to get the settings functional...
-				//TODO settings need to include [Database File: ____], [Change], [Rename], [Add Term], [Remove Term], [Import Terms from File]
-				JFrame dbSettings = new JFrame();
-				dbSettings.setTitle("Settings");
-				dbSettings.setSize(FRAME_WIDTH/2, FRAME_HEIGHT);
-				dbSettings.setLocation(screenWidth/4, screenHeight/4);
-				try {
-					dbSettings.setIconImage(ImageIO.read(new File("res/settings.png")));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				dbSettings.setAlwaysOnTop(true);
-				dbSettings.setVisible(true);
+				createAdminDialog();		
 			}
 		});
 		fileScanPanel.add(settingsButton);
@@ -240,5 +227,95 @@ public class ScannerGUI extends JFrame{
 		return filenames;
 	}
 	
-	
+	public void createAdminDialog(){
+		//String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
+		//TODO working on PasswordField or another solution for isolating management from the user
+		
+		//bypassing administration verification for now to get the settings functional...
+		//TODO settings need to include [Database File: ____], [Change], [Rename], [Add Term], [Remove Term], [Import Terms from File]
+		
+	    JDialog dbSettings = new JDialog((JDialog) null, "Settings", true);
+	    
+		dbSettings.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		dbSettings.setLocation(screenWidth/4, screenHeight/4);
+		try {
+			dbSettings.setIconImage(ImageIO.read(new File("res/settings.png")));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		dbSettings.setLayout(new GridLayout(1, 2));
+		
+		JPanel leftPanel = new JPanel();
+		FlowLayout leftFlow = new FlowLayout();
+		leftFlow.setVgap(20);
+		leftPanel.setLayout(leftFlow);
+		leftPanel.setBorder(new EmptyBorder(40, 0 , 0, 0));
+		
+		JButton changeButton = new JButton("Change Classification");
+		changeButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event)
+			{
+				
+			}
+		});
+		changeButton.setPreferredSize(new Dimension(160, 30));
+		
+		JButton renameButton = new JButton("Rename Term");
+		renameButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event)
+			{
+				
+			}
+		});
+		renameButton.setPreferredSize(new Dimension(160, 30));
+		
+		JButton addButton = new JButton("Add Term");
+		addButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event)
+			{
+				
+			}
+		});
+		addButton.setPreferredSize(new Dimension(160, 30));
+		
+		JButton removeButton = new JButton("Remove Term");
+		removeButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event)
+			{
+				
+			}
+		});
+		removeButton.setPreferredSize(new Dimension(160, 30));
+		
+		JButton importButton = new JButton("Import Terms");
+		importButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event)
+			{
+				
+			}
+		});
+		importButton.setPreferredSize(new Dimension(160, 30));
+		
+		leftPanel.add(addButton);
+		leftPanel.add(renameButton);
+		leftPanel.add(changeButton);
+		leftPanel.add(removeButton);
+		leftPanel.add(importButton);
+			
+		
+		JPanel rightPanel = new JPanel();
+		
+		JLabel termsLabel = new JLabel("Terms");
+		JList termsList = new JList();
+		termsList.setPreferredSize(new Dimension(200, 300));
+		
+		rightPanel.add(termsLabel);
+		rightPanel.add(termsList);
+		
+		dbSettings.add(leftPanel);
+		dbSettings.add(rightPanel);
+		dbSettings.setAlwaysOnTop(true);
+		dbSettings.setVisible(true);
+	}	
 }

@@ -120,7 +120,7 @@ public class SQLDatabase {
 	 * @throws SQLException 
 	 */
 	public HashMap<String,Integer> getTerms() throws SQLException {
-		HashMap terms = new HashMap<String,Integer>();
+		HashMap<String,Integer> terms = new HashMap<String,Integer>();
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
 		while(rs.next()) { //loop through entries in the database

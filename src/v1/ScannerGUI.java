@@ -35,6 +35,7 @@ import java.awt.Dimension;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 
 /**
@@ -58,11 +59,12 @@ public class ScannerGUI extends JFrame{
 	private ContentScanner scanner;
 	private int screenWidth;
 	private int screenHeight;
-	
+	private Database db;
 	public ScannerGUI(ContentScanner scanner) {
 		this.scanner = scanner;
 		filenames = new ArrayList<String>();
 		initializeUI();
+		db = new Database();
 	}
 	
 	private void initializeUI() {
@@ -274,7 +276,14 @@ public class ScannerGUI extends JFrame{
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{	
-				JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
+				String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
+				try{
+					db.addTerm(term);
+				}
+				catch(DatabaseAddTermException e)
+				{
+					JOptionPane.showMessageDialog(dbSettings, "Term has already been added!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		addButton.setPreferredSize(new Dimension(160, 30));
@@ -283,7 +292,14 @@ public class ScannerGUI extends JFrame{
 		removeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				JOptionPane.showInputDialog(dbSettings, "Input term to remove:", "Remove Term", JOptionPane.PLAIN_MESSAGE);
+				String term = JOptionPane.showInputDialog(dbSettings, "Input term to remove:", "Remove Term", JOptionPane.PLAIN_MESSAGE);
+				try{
+					db.removeTerm(term);
+				}
+				catch(DatabaseRemoveTermException e)
+				{
+					JOptionPane.showMessageDialog(dbSettings, "Term does not exist!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		removeButton.setPreferredSize(new Dimension(160, 30));
@@ -307,11 +323,15 @@ public class ScannerGUI extends JFrame{
 		JPanel rightPanel = new JPanel();
 		
 		JLabel termsLabel = new JLabel("Terms");
-		JList termsList = new JList();
-		termsList.setPreferredSize(new Dimension(200, 300));
+		String[] headers = new String[] { "Term", "Classification"};
+		String[][] values = new String[][] { {"Term1", "3"}, {"Term2", "4"}}; //Will be replaced with database function
+		JTable termsList = new JTable(values, headers);
+		JScrollPane tableScroll = new JScrollPane(termsList);
+		tableScroll.setPreferredSize(new Dimension(200, 300));
+		
 		
 		rightPanel.add(termsLabel);
-		rightPanel.add(termsList);
+		rightPanel.add(tableScroll);
 		
 		dbSettings.add(leftPanel);
 		dbSettings.add(rightPanel);

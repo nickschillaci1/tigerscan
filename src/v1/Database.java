@@ -1,10 +1,16 @@
 package v1;
 
 import java.util.Scanner;
+import java.util.Set;
+
+import db.SQLDatabase;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
- * This class will maintain the Database and will handle adding and removing terms.  It will also, through the FileHandler, handle the external file.
+ * This class will maintain the Database and will handle adding and removing terms.  It will also, through the SQLDatabase class, handle the external Database file.
  * 
  * @author Brandon Dixon
  * @version 10/24/16
@@ -12,8 +18,9 @@ import java.util.ArrayList;
 
 public class Database {
 
-    private ArrayList<Integer> terms = new ArrayList<Integer>();
-    private ArrayList<Integer> values = new ArrayList<Integer>();
+    
+    private HashMap<Integer,Integer> terms = new HashMap<Integer,Integer>();
+    SQLDatabase sqld;
    
 
 
@@ -21,24 +28,14 @@ public class Database {
      * This will initalize the database and load in terms if there are any to load
      */
     public Database() {  //HASHINTOVALUE - the O, not zero, is the separator
-	    String in = FileHandler.getDatabaseString();
-	    
-	    if (!in.equals("")) {
-		    
-		    Scanner strScan = new Scanner(in);
-		    String temp = "";
-		    
-		    while (strScan.hasNextLine()) {
-		    	temp = strScan.nextLine();
-		    	int ind = temp.indexOf('O');
-		    	terms.add(Integer.parseInt(temp.substring(0,ind-1)));
-		    	values.add(Integer.parseInt(temp.substring(ind+1)));
-		    	
-		    }
-		    
-		    strScan.close();
-	    
-	    }
+    	sqld = new SQLDatabase();
+    	
+    	try {
+			terms = sqld.getTerms();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 
@@ -51,7 +48,7 @@ public class Database {
     public boolean hasTerm(String term) {
 		//root word manipulation will happen here - for now, use single line
 	
-		return terms.contains(term.hashCode());
+    	return terms.containsKey(term);
     }
 
     /**
@@ -65,15 +62,18 @@ public class Database {
 	
 		//throw an exception if the term is there already
     	int t = term.hashCode();
-		if (terms.contains(t)) {
+		if (terms.containsKey(t)) {
 		    throw new DatabaseAddTermException(t);
 		}
 	
-		terms.add(term.hashCode());
-		values.add(value);
-	
-		//rewrite the file
-		rewriteFile();
+		terms.put(term.hashCode(),value);
+		
+	    try {
+			sqld.addTerm(term.hashCode(),value);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 
@@ -83,23 +83,30 @@ public class Database {
      * @param ArrayList<Integer> of the values for each String
      * @exception DabaseAddTermException if one or more words is already present in the database
      */
-    public void addTerm(ArrayList<String> termArray, ArrayList<Integer> valueArray) throws DatabaseAddTermException {
+    public void addTerm(HashMap<String,Integer> values) throws DatabaseAddTermException {
 		//manipulate root words as necessary
 		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
 		//add all of the
-		int length = termArray.size();
+		String[] keys = (String[]) values.keySet().toArray();
+		int length = keys.length;
+		
 		for (int i=0; i<length; i++) {
-		    String temp = termArray.get(i);
-		    if (terms.contains(temp.hashCode())) {
-		    	conflicts.add(temp.hashCode());
+		    int temp = keys[i].hashCode();
+		    if (terms.containsKey(temp)) {
+		    	conflicts.add(temp);
 		    } else {
-		    	terms.add(temp.hashCode());
-		    	values.add(valueArray.get(i));
+		    	int tValue = values.get(temp);
+		    	terms.put(temp,tValue);
+		    	try {
+					sqld.addTerm(temp,tValue);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 		}
 	
-		rewriteFile();
 	
 		if (conflicts.size()>0) {
 		    throw new DatabaseAddTermException(conflicts);
@@ -117,16 +124,18 @@ public class Database {
 	
 		//throws an exception if the term does not exist
     	int t = term.hashCode();
-		if (!terms.contains(t)) {
+		if (!terms.containsKey(t)) {
 		    throw new DatabaseRemoveTermException(t);
 		}
 	
-		int i = terms.indexOf(t);
-		terms.remove(term);
-		values.remove(i);
-	
-		//rewrite the file
-		rewriteFile();
+		terms.remove(t);
+		try {
+			sqld.removeTerm(t);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
     }
 
     /**
@@ -142,12 +151,16 @@ public class Database {
 		int length = termArray.size();
 		for (int i=0; i<length; i++) {
 		    int temp = termArray.get(i).hashCode();
-		    if (!terms.contains(temp)) {
+		    if (!terms.containsKey(temp)) {
 		    	error.add(temp);
 		    } else {
-		    	int ind = terms.indexOf(temp);
 		    	terms.remove(temp);
-		    	values.remove(ind);
+		    	try {
+					sqld.removeTerm(temp);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 		}
 	
@@ -161,29 +174,13 @@ public class Database {
      * This will remove all terms from the Database.  This cannot be undone.
      */
 	public void removeAllTerms() {
-		terms = new ArrayList<Integer>();
-		values = new ArrayList<Integer>();
-	
-		rewriteFile();
-    }
-
-
-    /**
-     * This is a private method that will totally rewrite the file with the contents of the ArrayList terms
-     */
-    private void rewriteFile() {
-		String allTerms = "";
-		int length = terms.size();
-	
-		for (int i=0; i<length; i++) {
-		    allTerms += terms.get(i)+"\n"+"O"+values.get(i);
+		terms = new HashMap<Integer,Integer>();
+		try {
+			sqld.removeAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	
-		if (length>0) {
-			allTerms = allTerms.substring(0,allTerms.length()-1);
-		}
-		
-		FileHandler.saveDatabaseString(allTerms);
     }
     
 }

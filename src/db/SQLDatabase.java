@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 /**
  * Database object containing the SQL database connection and information regarding how to interact with it
- * @author Nick Schillaci
+ * @author Nick Schillaci, Brandon Dixon
  *
  */
 public class SQLDatabase {
@@ -27,6 +27,20 @@ public class SQLDatabase {
 	    	Class.forName("org.sqlite.JDBC");
 	    	c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
 	    	c.setAutoCommit(false);
+	    	
+	    	//initialize the database only if its size is zero
+	    	boolean isEmpty = true;
+	    	stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
+			if (rs.next()) { //loop through entries in the database
+				isEmpty = false;
+			}
+			
+			if (isEmpty) {
+				initTable();
+			}
+			
+			
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	    }
@@ -63,7 +77,7 @@ public class SQLDatabase {
 	 * @param String term to insert
 	 * @throws SQLException
 	 */
-	public void addTerm(String term) throws SQLException {
+	public void addTerm(int term) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE) " +
     				 "VALUES (\'" + term + "\', " + defaultScore + " );";
@@ -78,7 +92,7 @@ public class SQLDatabase {
 	 * @param int score to assign to the term
 	 * @throws SQLException
 	 */
-	public void addTerm(String term, int score) throws SQLException {
+	public void addTerm(int term, int score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE) " +
     				 "VALUES (\'" + term + "\', " + score + " );";
@@ -92,9 +106,21 @@ public class SQLDatabase {
 	 * @param String term to remove
 	 * @throws SQLException
 	 */
-	public void removeTerm(String term) throws SQLException {
+	public void removeTerm(int term) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "DELETE FROM TERMS WHERE TERM=\'" + term + "\';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	/**
+	 * Performs a SQL DELETE * operation on the database (remove all terms)
+	 * @throws SQLException
+	 */
+	public void removeAll() throws SQLException {
+		stmt = c.createStatement();
+		String sql = "DELETE * FROM TERMS";
 		stmt.executeUpdate(sql);
 		stmt.close();
 		c.commit();
@@ -106,7 +132,7 @@ public class SQLDatabase {
 	 * @param int score to change previous score to
 	 * @throws SQLException
 	 */
-	public void changeScore(String term, int score) throws SQLException {
+	public void changeScore(int term, int score) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET SCORE = " + score + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);
@@ -119,12 +145,12 @@ public class SQLDatabase {
 	 * @return HashMap<%TERM%,%SCORE%> of all terms in the database
 	 * @throws SQLException 
 	 */
-	public HashMap<String,Integer> getTerms() throws SQLException {
-		HashMap<String,Integer> terms = new HashMap<String,Integer>();
+	public HashMap<Integer,Integer> getTerms() throws SQLException {
+		HashMap<Integer,Integer> terms = new HashMap<Integer,Integer>();
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
 		while(rs.next()) { //loop through entries in the database
-			terms.put(rs.getString("TERM"), rs.getInt("SCORE"));
+			terms.put(rs.getInt("TERM"), rs.getInt("SCORE"));
 		}
 		rs.close();
 		stmt.close();

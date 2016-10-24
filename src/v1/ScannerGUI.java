@@ -256,7 +256,7 @@ public class ScannerGUI extends JFrame{
 		changeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				
+				JOptionPane.showInputDialog(dbSettings, "Input term to reclassify:", "Change Classification", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		changeButton.setPreferredSize(new Dimension(160, 30));
@@ -265,7 +265,7 @@ public class ScannerGUI extends JFrame{
 		renameButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				
+				JOptionPane.showInputDialog(dbSettings, "Input term to rename:", "Rename Term", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		renameButton.setPreferredSize(new Dimension(160, 30));
@@ -273,8 +273,8 @@ public class ScannerGUI extends JFrame{
 		JButton addButton = new JButton("Add Term");
 		addButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
-			{
-				
+			{	
+				JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		addButton.setPreferredSize(new Dimension(160, 30));
@@ -283,7 +283,7 @@ public class ScannerGUI extends JFrame{
 		removeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				
+				JOptionPane.showInputDialog(dbSettings, "Input term to remove:", "Remove Term", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		removeButton.setPreferredSize(new Dimension(160, 30));
@@ -292,7 +292,7 @@ public class ScannerGUI extends JFrame{
 		importButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				
+				JOptionPane.showInputDialog(dbSettings, "Input filename of terms list:", "Import Terms", JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		importButton.setPreferredSize(new Dimension(160, 30));

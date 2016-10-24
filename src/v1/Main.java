@@ -18,18 +18,18 @@ public class Main {
 	}
 
 	//TODO ONLY FOR TESTING THE BEHAVIOR OF THE SQLDATABASE. This should be removed when we add the database management functionality.
-	public static void sqlDatabaseTesting(SQLDatabase db) {
+	public static void sqlDatabaseTesting(SQLDatabase db) {/*
 		try {
 			//db.initTable(); //remove comment when creating new database file
 			
 			//feel free to test database methods here. resulting information will be printed below
 			
-			for(String term : db.getTerms().keySet()) {
+			/*for(String term : db.getTerms().keySet()) {
 				System.out.println(term + " :: " + db.getTerms().get(term).intValue());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 }

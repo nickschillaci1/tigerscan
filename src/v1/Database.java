@@ -7,12 +7,13 @@ import java.util.ArrayList;
  * This class will maintain the Database and will handle adding and removing terms.  It will also, through the FileHandler, handle the external file.
  * 
  * @author Brandon Dixon
- * @version 10/20/16
+ * @version 10/24/16
  **/
 
 public class Database {
 
     private ArrayList<Integer> terms = new ArrayList<Integer>();
+    private ArrayList<Integer> values = new ArrayList<Integer>();
    
 
 
@@ -22,10 +23,20 @@ public class Database {
     public Database() {
 	    String in = FileHandler.getDatabaseString();
 	    
-	    Scanner strScan = new Scanner(in);
+	    //TODO: decide what input will look like and parse
+	    String inTerms=""; //these will be the terms themselves
+	    String inValues=""; //these will be the confidentiality values of each term
+	    
+	    Scanner strScan = new Scanner(inTerms);
 	    
 	    while (strScan.hasNextLine()) { 
-	    	terms.add(strScan.nextLine().hashCode());	
+	    	terms.add(strScan.nextLine());	
+	    }
+	    
+	    strScan = new Scanner(inValues);
+	    
+	    while (strScan.hasNextLine()) {
+	    	values.add(strScan.nextLine());
 	    }
 	    
 	    strScan.close();
@@ -47,9 +58,10 @@ public class Database {
     /**
      * This will add a term to the database
      * @param String term to add to the database
+     * @param int of the confidentiality value of the term
      * @exception DatabaseAddTermException if the word is already present in the database
      */
-    public void addTerm(String term) throws DatabaseAddTermException {
+    public void addTerm(String term, int value) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
 	
 		//throw an exception if the term is there already
@@ -59,6 +71,7 @@ public class Database {
 		}
 	
 		terms.add(term.hashCode());
+		values.add(value);
 	
 		//rewrite the file
 		rewriteFile();
@@ -68,9 +81,10 @@ public class Database {
     /**
      * This will add multiple terms to the database
      * @param ArrayList<Strimg> terms to add to the database
+     * @param ArrayList<Integer> of the values for each String
      * @exception DabaseAddTermException if one or more words is already present in the database
      */
-    public void addTerm(ArrayList<String> termArray) throws DatabaseAddTermException {
+    public void addTerm(ArrayList<String> termArray, ArrayList<Integer> valueArray) throws DatabaseAddTermException {
 		//manipulate root words as necessary
 		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
@@ -79,9 +93,10 @@ public class Database {
 		for (int i=0; i<length; i++) {
 		    String temp = termArray.get(i);
 		    if (terms.contains(temp.hashCode())) {
-			conflicts.add(temp.hashCode());
+		    	conflicts.add(temp.hashCode());
 		    } else {
-			terms.add(temp.hashCode());
+		    	terms.add(temp.hashCode());
+		    	values.add(valueArray.get(i));
 		    }
 		}
 	
@@ -107,7 +122,9 @@ public class Database {
 		    throw new DatabaseRemoveTermException(t);
 		}
 	
+		int i = terms.indexOf(t);
 		terms.remove(term);
+		values.remove(i);
 	
 		//rewrite the file
 		rewriteFile();
@@ -127,9 +144,11 @@ public class Database {
 		for (int i=0; i<length; i++) {
 		    int temp = termArray.get(i).hashCode();
 		    if (!terms.contains(temp)) {
-			error.add(temp);
+		    	error.add(temp);
 		    } else {
-			terms.remove(temp);
+		    	int ind = terms.indexOf(temp);
+		    	terms.remove(temp);
+		    	values.remove(ind);
 		    }
 		}
 	
@@ -137,10 +156,14 @@ public class Database {
 		    throw new DatabaseRemoveTermException(error);
 		}
 	
-	    }
+	}
 	
-	    public void removeAllTerms() {
+    /**
+     * This will remove all terms from the Database.  This cannot be undone.
+     */
+	public void removeAllTerms() {
 		terms = new ArrayList<Integer>();
+		values = new ArrayList<Integer>();
 	
 		rewriteFile();
     }

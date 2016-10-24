@@ -20,26 +20,25 @@ public class Database {
     /**
      * This will initalize the database and load in terms if there are any to load
      */
-    public Database() {
+    public Database() {  //HASHINTOVALUE - the O, not zero, is the separator
 	    String in = FileHandler.getDatabaseString();
 	    
-	    //TODO: decide what input will look like and parse
-	    String inTerms=""; //these will be the terms themselves
-	    String inValues=""; //these will be the confidentiality values of each term
+	    if (!in.equals("")) {
+		    
+		    Scanner strScan = new Scanner(in);
+		    String temp = "";
+		    
+		    while (strScan.hasNextLine()) {
+		    	temp = strScan.nextLine();
+		    	int ind = temp.indexOf('O');
+		    	terms.add(Integer.parseInt(temp.substring(0,ind-1)));
+		    	values.add(Integer.parseInt(temp.substring(ind+1)));
+		    	
+		    }
+		    
+		    strScan.close();
 	    
-	    Scanner strScan = new Scanner(inTerms);
-	    
-	    while (strScan.hasNextLine()) { 
-	    	terms.add(strScan.nextLine());	
 	    }
-	    
-	    strScan = new Scanner(inValues);
-	    
-	    while (strScan.hasNextLine()) {
-	    	values.add(strScan.nextLine());
-	    }
-	    
-	    strScan.close();
 
     }
 
@@ -177,7 +176,7 @@ public class Database {
 		int length = terms.size();
 	
 		for (int i=0; i<length; i++) {
-		    allTerms += terms.get(i)+"\n";
+		    allTerms += terms.get(i)+"\n"+"O"+values.get(i);
 		}
 	
 		if (length>0) {

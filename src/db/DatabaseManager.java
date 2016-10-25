@@ -17,8 +17,6 @@ public class DatabaseManager {
     
     private HashMap<Integer,Integer> terms;
     private SQLDatabase sqld;
-   
-
 
     /**
      * This will initialize the database and load in terms if there are any to load
@@ -108,6 +106,21 @@ public class DatabaseManager {
 		    throw new DatabaseAddTermException(conflicts);
 		}
 	}
+    
+    /**
+     * This will get the score of a particular term
+     * @param String term to search score for 
+     * @return int score
+     * @throws DatabaseNoSuchTermException if that term is not in the Database
+     */
+    public int getScore(String term) throws DatabaseNoSuchTermException {
+    	int t = term.hashCode();
+    	if (!terms.containsKey(t)) {
+    		throw new DatabaseNoSuchTermException(term);
+    	}
+    	
+    	return terms.get(t);
+    }
 	
     /**
      * This will remove a term from the database.

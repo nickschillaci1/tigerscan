@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Font;
 
@@ -45,6 +46,7 @@ import db.DatabaseManager;
  * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
  * @author Zackary Flake
+ * @author Brandon Dixon
  */
 public class ScannerGUI extends JFrame{
 
@@ -196,7 +198,8 @@ public class ScannerGUI extends JFrame{
 				for(int i = 0; i < filenames.size(); i++) {
 					System.out.println("Scanning file: " + filenames.get(i)); // exact directory and file name
 					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
-					scanner.scanFiles(filenames);
+					int score = scanner.scanFiles(filenames);
+					JOptionPane.showMessageDialog(null,"Score: "+score);
 				}
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");

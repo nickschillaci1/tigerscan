@@ -10,13 +10,11 @@ public class Main {
 		try {
 			db.addTerm("hello",10);
 		} catch (DatabaseAddTermException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			db.addTerm("cat",55);
 		} catch (DatabaseAddTermException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		ContentScanner scanner = new ContentScanner(db);

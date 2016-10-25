@@ -15,7 +15,6 @@ import java.util.HashMap;
 public class SQLDatabase {
 
 	private String databaseFileName = "database.db"; //will be serialized and saved when we allow changing the database name
-	private int defaultScore = 1;
 	private Connection c = null;
 	private Statement stmt = null;
 	
@@ -28,8 +27,8 @@ public class SQLDatabase {
 	    	c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
 	    	c.setAutoCommit(false);
 	    	
-	    	//initialize the database only if its size is zero
-	    	boolean isEmpty = true;
+	    	//TODO initialize the database only if its size is zero (we can revisit this later once we integrate renaming/creating new databases) -Nick
+	    	/*boolean isEmpty = true;
 	    	stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
 			if (rs.next()) { //loop through entries in the database
@@ -38,7 +37,7 @@ public class SQLDatabase {
 			
 			if (isEmpty) {
 				initTable();
-			}
+			}*/
 			
 			
 	    } catch (Exception e) {
@@ -75,20 +74,6 @@ public class SQLDatabase {
 	/**
 	 * Performs a SQL INSERT operation on the database
 	 * @param String term to insert
-	 * @throws SQLException
-	 */
-	public void addTerm(int term) throws SQLException {
-    	stmt = c.createStatement();
-    	String sql = "INSERT INTO TERMS (TERM,SCORE) " +
-    				 "VALUES (\'" + term + "\', " + defaultScore + " );";
-    	stmt.executeUpdate(sql);
-    	stmt.close();
-		c.commit();
-	}
-	
-	/**
-	 * Performs a SQL INSERT operation on the database
-	 * @param String term to insert
 	 * @param int score to assign to the term
 	 * @throws SQLException
 	 */
@@ -115,12 +100,13 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Performs a SQL DELETE * operation on the database (remove all terms)
+	 * Performs a SQL DELETE operation on the database (removes all terms). Maintains the table and columns
+	 * (SQLite doesn't support DELETE * or TRUNCATE)
 	 * @throws SQLException
 	 */
 	public void removeAll() throws SQLException {
 		stmt = c.createStatement();
-		String sql = "DELETE * FROM TERMS";
+		String sql = "DELETE FROM TERMS;";
 		stmt.executeUpdate(sql);
 		stmt.close();
 		c.commit();

@@ -1,9 +1,4 @@
-package v1;
-
-import java.util.Scanner;
-import java.util.Set;
-
-import db.SQLDatabase;
+package db;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,24 +11,24 @@ import java.util.HashMap;
  * @version 10/24/16
  **/
 
-public class Database {
+public class DatabaseManager {
 
     
-    private HashMap<Integer,Integer> terms = new HashMap<Integer,Integer>();
-    SQLDatabase sqld;
+    private HashMap<Integer,Integer> terms;
+    private SQLDatabase sqld;
    
 
 
     /**
-     * This will initalize the database and load in terms if there are any to load
+     * This will initialize the database and load in terms if there are any to load
      */
-    public Database() {  //HASHINTOVALUE - the O, not zero, is the separator
+    public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
+    	terms = new HashMap<Integer,Integer>();
     	sqld = new SQLDatabase();
     	
     	try {
 			terms = sqld.getTerms();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -71,7 +66,6 @@ public class Database {
 	    try {
 			sqld.addTerm(term.hashCode(),value);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -79,7 +73,7 @@ public class Database {
 
     /**
      * This will add multiple terms to the database
-     * @param ArrayList<Strimg> terms to add to the database
+     * @param ArrayList<String> terms to add to the database
      * @param ArrayList<Integer> of the values for each String
      * @exception DabaseAddTermException if one or more words is already present in the database
      */
@@ -101,7 +95,6 @@ public class Database {
 		    	try {
 					sqld.addTerm(temp,tValue);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
@@ -120,7 +113,7 @@ public class Database {
      *
      */
     public void removeTerm(String term) throws DatabaseRemoveTermException {
-		//manipulate the root word if neccesary
+		//manipulate the root word if necessary
 	
 		//throws an exception if the term does not exist
     	int t = term.hashCode();
@@ -132,7 +125,6 @@ public class Database {
 		try {
 			sqld.removeTerm(t);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -144,7 +136,7 @@ public class Database {
 	 * @exception DatabaseRemoveTermException if one or more words is not present in the database
 	 */
     public void removeTerm(ArrayList<String> termArray) throws DatabaseRemoveTermException {
-		//manipulate the root word if neccessary
+		//manipulate the root word if necessary
 	
 		ArrayList<Integer> error = new ArrayList<Integer>();
 		//remove all of the terms
@@ -158,7 +150,6 @@ public class Database {
 		    	try {
 					sqld.removeTerm(temp);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
@@ -178,9 +169,23 @@ public class Database {
 		try {
 			sqld.removeAll();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
+	
+	/**
+	 * Gets a HashMap<Integer, Integer> of terms in the database
+	 * @return HashMap<term, score>
+	 */
+	public HashMap<Integer,Integer> getTerms() {
+		return terms;
+	}
+	
+	/**
+	 * Calls the SQLDatabase method to close SQL connection to the database file
+	 */
+	public void closeSQLConnection() {
+		sqld.closeConnection();
+	}
     
 }

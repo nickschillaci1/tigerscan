@@ -3,6 +3,8 @@ package v1;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import db.DatabaseManager;
+
 /**
  * 
  * This class handles the scanning of a given file's text.
@@ -14,19 +16,17 @@ import java.util.ArrayList;
 
 public class ContentScanner {
 
-	private Database db;
+	private DatabaseManager db;
 	private int confidentialityScore;
 	
-	public ContentScanner() {
-		db = new Database();
-		//additional testing can happen heres
+	public ContentScanner(DatabaseManager db) {
+		this.db = db;
 	}
 	
 	public void scanFiles(ArrayList<String> importedFileNames) {
 		confidentialityScore = 0;
 		for(String fileName : importedFileNames) {
 			checkForSensitiveTerm(getContentFromFile(fileName));
-			//System.out.println(getContentFromFile(fileName));
 			
 		}	
 		//stop email and alert user is confidentiality score is above threshold
@@ -46,9 +46,8 @@ public class ContentScanner {
 	}
 	
 	private void foundSensitiveTerm() {
-		System.out.println("Sensitive term " + confidentialityScore + " has been found");
 		confidentialityScore++;
-		
+		System.out.println("Confidentiality score: " + confidentialityScore);
 	}
 	
 	private void checkForSensitiveTerm(String text) {

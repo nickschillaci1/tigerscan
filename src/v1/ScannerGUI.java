@@ -33,7 +33,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 
-import db.SQLDatabase;
+import db.DatabaseManager;
 
 
 /**
@@ -56,9 +56,9 @@ public class ScannerGUI extends JFrame{
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
-	private SQLDatabase db;
+	private DatabaseManager db;
 	
-	public ScannerGUI(ContentScanner scanner, SQLDatabase db) {
+	public ScannerGUI(ContentScanner scanner, DatabaseManager db) {
 		this.scanner = scanner;
 		this.db = db;
 		filenames = new ArrayList<String>();
@@ -71,7 +71,7 @@ public class ScannerGUI extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				db.closeConnection();
+				db.closeSQLConnection();
 			}
 		});
 		//this.setJMenuBar(mainMenuBar());

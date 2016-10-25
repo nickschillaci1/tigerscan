@@ -1,4 +1,4 @@
-package v1;
+package db;
 
 import static org.junit.Assert.*;
 
@@ -27,13 +27,13 @@ public class DatabaseTest {
 	
 	@Test
 	public void testRemoveAllTerms() {
-		Database db = new Database();
+		DatabaseManager db = new DatabaseManager();
 		db.removeAllTerms();
 	}
 
 	@Test
 	public void testAddTermStringInt() {
-		Database db = new Database();
+		DatabaseManager db = new DatabaseManager();
 		db.removeAllTerms();
 		
 		//test adding a term that does not exist
@@ -54,7 +54,7 @@ public class DatabaseTest {
 
 	@Test
 	public void testHasTerm() {
-		Database db = new Database();
+		DatabaseManager db = new DatabaseManager();
 
 		//test a term we do have
 		assertTrue("The term 'hello' should exist in the database.",db.hasTerm("hello"));
@@ -65,7 +65,7 @@ public class DatabaseTest {
 	
 	@Test
 	public void testRemoveTermString() {
-		Database db = new Database();
+		DatabaseManager db = new DatabaseManager();
 		
 		//remove a term we do have
 		try {
@@ -85,7 +85,7 @@ public class DatabaseTest {
 	
 	@Test
 	public void testAddTermHashMapOfStringInteger() {
-		Database db = new Database();
+		DatabaseManager db = new DatabaseManager();
 		
 		HashMap<String,Integer> test = new HashMap<String,Integer>();
 		test.put("banana",10);
@@ -112,7 +112,7 @@ public class DatabaseTest {
 
 	@Test
 	public void testRemoveTermArrayListOfString() {
-		Database db = new Database();
+		DatabaseManager db = new DatabaseManager();
 		
 		ArrayList<String> termsToRemove = new ArrayList<String>();
 		termsToRemove.add("banana");

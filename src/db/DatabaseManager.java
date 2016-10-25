@@ -3,6 +3,7 @@ package db;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class will maintain the Database and will handle adding and removing terms.  It will also, through the SQLDatabase class, handle the external Database file.
@@ -43,7 +44,7 @@ public class DatabaseManager {
     public boolean hasTerm(String term) {
 		//root word manipulation will happen here - for now, use single line
 	
-    	return terms.containsKey(term);
+    	return terms.containsKey(term.hashCode());
     }
 
     /**
@@ -55,16 +56,17 @@ public class DatabaseManager {
     public void addTerm(String term, int value) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
 	
-		//throw an exception if the term is there already
     	int t = term.hashCode();
+    	
+		//throw an exception if the term is there already
 		if (terms.containsKey(t)) {
 		    throw new DatabaseAddTermException(t);
 		}
 	
-		terms.put(term.hashCode(),value);
+		terms.put(t,value);
 		
 	    try {
-			sqld.addTerm(term.hashCode(),value);
+			sqld.addTerm(t,value);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -82,7 +84,8 @@ public class DatabaseManager {
 		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
 		//add all of the
-		String[] keys = (String[]) values.keySet().toArray();
+		Set keySet = values.keySet();
+		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
 		int length = keys.length;
 		
 		for (int i=0; i<length; i++) {
@@ -90,7 +93,7 @@ public class DatabaseManager {
 		    if (terms.containsKey(temp)) {
 		    	conflicts.add(temp);
 		    } else {
-		    	int tValue = values.get(temp);
+		    	int tValue = values.get(keys[i]);
 		    	terms.put(temp,tValue);
 		    	try {
 					sqld.addTerm(temp,tValue);

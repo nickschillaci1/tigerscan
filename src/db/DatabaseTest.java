@@ -18,7 +18,7 @@ public class DatabaseTest {
 	public void test() {
 		testRemoveAllTerms();
 		testAddTermStringInt();
-		testHasTerm();
+		testHasTermFile();
 		testRemoveTermString();
 		testAddTermHashMapOfStringInteger();
 		testRemoveTermArrayListOfString();
@@ -48,13 +48,16 @@ public class DatabaseTest {
 		} catch (DatabaseAddTermException e) {
 			//nothing, test succeeded here
 		}
+		
+		//now test to see if the program stores it locally
+		assertTrue("The term 'hello' should exist in the database.",db.hasTerm("hello"));
 	}
 
-	private void testHasTerm() {
+	private void testHasTermFile() {
 		DatabaseManager db = new DatabaseManager();
 
 		//test a term we do have
-		assertTrue("The term 'hello' should exist in the database.",db.hasTerm("hello"));
+		assertTrue("The term 'hello' should exist in the database and file.",db.hasTerm("hello"));
 		
 		//test a term we do not have
 		assertTrue("The term 'goodbye' should not exist in the database.",db.hasTerm("goodbye")==false);

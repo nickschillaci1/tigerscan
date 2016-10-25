@@ -7,16 +7,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		DatabaseManager db = new DatabaseManager();
-		try {
-			db.addTerm("hello",10);
-		} catch (DatabaseAddTermException e) {
-			e.printStackTrace();
-		}
-		try {
-			db.addTerm("cat",55);
-		} catch (DatabaseAddTermException e) {
-			e.printStackTrace();
-		}
 		ContentScanner scanner = new ContentScanner(db);
 		ScannerGUI frame = new ScannerGUI(scanner, db);
 		//frame.pack();

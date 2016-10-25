@@ -25,14 +25,12 @@ public class DatabaseTest {
 		
 	}
 	
-	@Test
-	public void testRemoveAllTerms() {
+	private void testRemoveAllTerms() {
 		DatabaseManager db = new DatabaseManager();
 		db.removeAllTerms();
 	}
 
-	@Test
-	public void testAddTermStringInt() {
+	private void testAddTermStringInt() {
 		DatabaseManager db = new DatabaseManager();
 		db.removeAllTerms();
 		
@@ -52,8 +50,7 @@ public class DatabaseTest {
 		}
 	}
 
-	@Test
-	public void testHasTerm() {
+	private void testHasTerm() {
 		DatabaseManager db = new DatabaseManager();
 
 		//test a term we do have
@@ -63,8 +60,7 @@ public class DatabaseTest {
 		assertTrue("The term 'goodbye' should not exist in the database.",db.hasTerm("goodbye")==false);
 	}
 	
-	@Test
-	public void testRemoveTermString() {
+	private void testRemoveTermString() {
 		DatabaseManager db = new DatabaseManager();
 		
 		//remove a term we do have
@@ -83,8 +79,7 @@ public class DatabaseTest {
 		}
 	}
 	
-	@Test
-	public void testAddTermHashMapOfStringInteger() {
+	private void testAddTermHashMapOfStringInteger() {
 		DatabaseManager db = new DatabaseManager();
 		
 		HashMap<String,Integer> test = new HashMap<String,Integer>();
@@ -110,8 +105,7 @@ public class DatabaseTest {
 		
 	}
 
-	@Test
-	public void testRemoveTermArrayListOfString() {
+	private void testRemoveTermArrayListOfString() {
 		DatabaseManager db = new DatabaseManager();
 		
 		ArrayList<String> termsToRemove = new ArrayList<String>();

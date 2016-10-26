@@ -6,6 +6,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +39,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import db.DatabaseAddTermException;
+import db.DatabaseManager;
+import db.DatabaseRemoveTermException;
+
 
 /**
  * Graphic interface to operate the security scanner
@@ -46,6 +52,7 @@ import javax.swing.JTable;
  * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
  * @author Zackary Flake
+ * @author Brandon Dixon
  */
 public class ScannerGUI extends JFrame{
 
@@ -59,18 +66,24 @@ public class ScannerGUI extends JFrame{
 	private ContentScanner scanner;
 	private int screenWidth;
 	private int screenHeight;
-	private Database db;
-	public ScannerGUI(ContentScanner scanner) {
+	private DatabaseManager db;
+
+	public ScannerGUI(ContentScanner scanner, DatabaseManager db) {
 		this.scanner = scanner;
+		this.db = db;
 		filenames = new ArrayList<String>();
 		initializeUI();
-		db = new Database();
 	}
 	
 	private void initializeUI() {
 		this.setTitle(TITLE);
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				db.closeSQLConnection();
+			}
+		});
 		//this.setJMenuBar(mainMenuBar());
 		try {
 			this.setIconImage(ImageIO.read(new File("res/icon.png")));
@@ -193,7 +206,8 @@ public class ScannerGUI extends JFrame{
 				for(int i = 0; i < filenames.size(); i++) {
 					System.out.println("Scanning file: \"" + filenames.get(i) + "\""); // exact directory and file name
 					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
-					scanner.scanFiles(filenames);
+					int score = scanner.scanFiles(filenames);
+					JOptionPane.showMessageDialog(null,"Score: "+score);
 				}
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");
@@ -232,9 +246,6 @@ public class ScannerGUI extends JFrame{
 	public void createAdminDialog(){
 		//String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
 		//TODO working on PasswordField or another solution for isolating management from the user
-		
-		//bypassing administration verification for now to get the settings functional...
-		//TODO settings need to include [Database File: ____], [Change], [Rename], [Add Term], [Remove Term], [Import Terms from File]
 		
 	    JDialog dbSettings = new JDialog((JDialog) null, "Settings", true);
 	    
@@ -278,7 +289,7 @@ public class ScannerGUI extends JFrame{
 			{	
 				String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
 				try{
-					db.addTerm(term);
+					db.addTerm(term, 1); //TODO add default score or require score when adding terms
 				}
 				catch(DatabaseAddTermException e)
 				{
@@ -322,7 +333,7 @@ public class ScannerGUI extends JFrame{
 		
 		JPanel rightPanel = new JPanel();
 		
-		JLabel termsLabel = new JLabel("Terms");
+		JLabel termsLabel = new JLabel("Database Terms");
 		String[] headers = new String[] { "Term", "Classification"};
 		String[][] values = new String[][] { {"Term1", "3"}, {"Term2", "4"}}; //Will be replaced with database function
 		JTable termsList = new JTable(values, headers);

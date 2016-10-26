@@ -1,4 +1,4 @@
-package v1;
+package db;
 
 import java.util.ArrayList;
 
@@ -10,22 +10,22 @@ import java.util.ArrayList;
 
 public class DatabaseAddTermException extends Exception {
 
-    private ArrayList<String> term;
+    private ArrayList<Integer> term;
 
-    public DatabaseAddTermException(String inputTerm) {
+    public DatabaseAddTermException(int inputTerm) {
 		super("The term '"+inputTerm+"' has already been added.");
-		term = new ArrayList<String>();
+		term = new ArrayList<Integer>();
 		term.add(inputTerm);
     }
 
     //add better functionality in the future
-    public DatabaseAddTermException(ArrayList<String> inputTerm) {
+    public DatabaseAddTermException(ArrayList<Integer> inputTerm) {
 		super("Some or all of these terms have already been added.  You can call the getTerms() method to find which ones.");
 	
 		term = inputTerm;
     }
 
-    public ArrayList<String> getTerms() {
+    public ArrayList<Integer> getTerms() {
 		return term;
     }
 

@@ -5,7 +5,12 @@ import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -15,6 +20,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.tartarus.snowball.ext.PorterStemmer;
 
 
 /**
@@ -35,7 +41,12 @@ public class FileIndexer {
 		//this directory will contain the indexes
 		Directory docDir = FSDirectory.open(Paths.get(indexDirectoryPath));
 
-		StandardAnalyzer analyzer = new StandardAnalyzer();
+		Map<String,Analyzer> analyzerList = new HashMap<String,Analyzer>();
+		analyzerList.put("stemmedText", new EnglishAnalyzer());
+		analyzerList.put("unstemmedText", new StandardAnalyzer());
+		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerList);
+
+//		StandardAnalyzer analyzer = new StandardAnalyzer();
 
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		writer = new IndexWriter(docDir, iwc);
@@ -49,16 +60,22 @@ public class FileIndexer {
 	 */
 	public Document addDoc(File f) throws IOException {
 		Document doc = new Document();
+		FileReader fileReader = new FileReader(f);
 		FieldType ft = new FieldType();
 		ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 
-		doc.add(new Field(LuceneConstants.CONTENTS, new FileReader(f), ft));
+		doc.add(new Field(LuceneConstants.CONTENTS, fileReader, ft));
 		doc.add(new Field(LuceneConstants.FILE_NAME, f.getName(), ft));
 		doc.add(new Field(LuceneConstants.FILE_PATH, f.getCanonicalPath(), ft));
 
 		return doc;
 	}
 
+	//TODO Need to figure out a way to index both the unstemmed and stemmed version of the test so that
+	// when we search an exact term (ie "run") that it hits docs that have the exact term and unstemmed terms
+	//(ie "runner", "running", etc).
+	//Vise Versa we should be able to search an unstemmed word and have both the exact phrase and other unstemmed terms
+	
 	/**
 	 * Closes the IndexWrtier
 	 */
@@ -100,6 +117,18 @@ public class FileIndexer {
 			}
 		}
 		return writer.numDocs();
+	}
+	
+	/**
+	 * Stems the given term down to its root word.
+	 * @param term - Word that needs to be stemmed.
+	 * @return - The root word.
+	 */
+	public String stemTerm (String term) {
+		PorterStemmer stemmer = new PorterStemmer();
+		stemmer.setCurrent(term);
+		stemmer.stem();
+		return stemmer.getCurrent();
 	}
 
 }

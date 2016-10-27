@@ -10,7 +10,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -67,6 +69,9 @@ public class ScannerGUI extends JFrame{
 	private int screenWidth;
 	private int screenHeight;
 	private DatabaseManager db;
+	
+	private JTable termsTable;
+	private CustomTableModel tableModel;
 
 	public ScannerGUI(ContentScanner scanner, DatabaseManager db) {
 		this.scanner = scanner;
@@ -269,7 +274,20 @@ public class ScannerGUI extends JFrame{
 		changeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				JOptionPane.showInputDialog(dbSettings, "Input term to reclassify:", "Change Classification", JOptionPane.PLAIN_MESSAGE);
+				if (termsTable.getSelectedRow() != -1) {
+					String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+					String newScore = (String) JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE);
+					if (newScore != term && newScore != null) {
+						try {
+							db.changeScore(Integer.parseInt(term), Integer.parseInt(newScore));
+							tableModel.fireTableDataChanged(); //TODO BUG: find out why new score is not being shown until program reloads
+						} catch (NumberFormatException e) {
+							JOptionPane.showMessageDialog(dbSettings, "Invalid score!", "Error", JOptionPane.ERROR_MESSAGE);
+						} catch (SQLException e) {
+							JOptionPane.showMessageDialog(dbSettings, "Internal database error!", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
 			}
 		});
 		changeButton.setPreferredSize(new Dimension(160, 30));
@@ -278,7 +296,23 @@ public class ScannerGUI extends JFrame{
 		renameButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				JOptionPane.showInputDialog(dbSettings, "Input term to rename:", "Rename Term", JOptionPane.PLAIN_MESSAGE);
+				if (termsTable.getSelectedRow() != -1) {
+					String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+					String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
+					if (newName != term && newName != null) {
+						try {
+							db.addTerm(newName, db.getTerms().get(Integer.parseInt(term)));
+							db.removeTermByHash(Integer.parseInt(term));
+						} catch (NumberFormatException e) {
+							JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
+						} catch (DatabaseAddTermException e) {
+							JOptionPane.showMessageDialog(dbSettings, "A Term with that name already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+						} catch (DatabaseRemoveTermException e) {
+							JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+						tableModel.fireTableDataChanged();
+					}
+				}
 			}
 		});
 		renameButton.setPreferredSize(new Dimension(160, 30));
@@ -288,12 +322,15 @@ public class ScannerGUI extends JFrame{
 			public void actionPerformed(ActionEvent event)
 			{	
 				String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
-				try{
-					db.addTerm(term, 1); //TODO add default score or require score when adding terms
-				}
-				catch(DatabaseAddTermException e)
-				{
-					JOptionPane.showMessageDialog(dbSettings, "Term has already been added!", "Error", JOptionPane.ERROR_MESSAGE);
+				if (term != null) {
+					try{
+						db.addTerm(term, 1); //TODO add default score or require score when adding terms
+						tableModel.fireTableDataChanged();
+					}
+					catch(DatabaseAddTermException e)
+					{
+						JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
@@ -303,41 +340,62 @@ public class ScannerGUI extends JFrame{
 		removeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				String term = JOptionPane.showInputDialog(dbSettings, "Input term to remove:", "Remove Term", JOptionPane.PLAIN_MESSAGE);
-				try{
-					db.removeTerm(term);
-				}
-				catch(DatabaseRemoveTermException e)
-				{
-					JOptionPane.showMessageDialog(dbSettings, "Term does not exist!", "Error", JOptionPane.ERROR_MESSAGE);
+				if (termsTable.getSelectedRow() != -1) {
+					String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+					int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove the term \"" + term + "\"?", "Remove Term", JOptionPane.YES_NO_OPTION);
+					if (response == JOptionPane.YES_OPTION) {
+						try{
+							db.removeTermByHash(Integer.parseInt(term));
+							tableModel.fireTableDataChanged();
+						}
+						catch(DatabaseRemoveTermException e)
+						{
+							JOptionPane.showMessageDialog(dbSettings, "Term does not exist!", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
 				}
 			}
 		});
 		removeButton.setPreferredSize(new Dimension(160, 30));
+		
+		JButton removeAllButton = new JButton("Remove All Terms");
+		removeAllButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event)
+			{
+				int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove all terms from the database?", "Remove All Terms", JOptionPane.YES_NO_OPTION);
+				if (response == JOptionPane.YES_OPTION) {
+					db.removeAllTerms();
+					tableModel.fireTableDataChanged(); //TODO BUG: find out why the table does't reflect the remove of all terms
+				}
+			}
+		});
+		removeAllButton.setPreferredSize(new Dimension(160, 30));
 		
 		JButton importButton = new JButton("Import Terms");
 		importButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
 				JOptionPane.showInputDialog(dbSettings, "Input filename of terms list:", "Import Terms", JOptionPane.PLAIN_MESSAGE);
+				//TODO decide on the expected file format and how we want to read these files in the program
 			}
 		});
 		importButton.setPreferredSize(new Dimension(160, 30));
 		
 		leftPanel.add(addButton);
 		leftPanel.add(renameButton);
-		leftPanel.add(changeButton);
 		leftPanel.add(removeButton);
+		leftPanel.add(removeAllButton);
+		leftPanel.add(changeButton);
 		leftPanel.add(importButton);
 			
 		
 		JPanel rightPanel = new JPanel();
 		
+		
 		JLabel termsLabel = new JLabel("Database Terms");
-		String[] headers = new String[] { "Term", "Classification"};
-		String[][] values = new String[][] { {"Term1", "3"}, {"Term2", "4"}}; //Will be replaced with database function
-		JTable termsList = new JTable(values, headers);
-		JScrollPane tableScroll = new JScrollPane(termsList);
+		tableModel = new CustomTableModel(db.getTerms());
+		termsTable = new JTable(tableModel);
+		JScrollPane tableScroll = new JScrollPane(termsTable);
 		tableScroll.setPreferredSize(new Dimension(200, 300));
 		
 		
@@ -349,4 +407,5 @@ public class ScannerGUI extends JFrame{
 		dbSettings.setAlwaysOnTop(true);
 		dbSettings.setVisible(true);
 	}	
+	
 }

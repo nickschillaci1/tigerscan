@@ -13,7 +13,6 @@ import javax.swing.table.AbstractTableModel;
 public class CustomTableModel extends AbstractTableModel {
 
 	private String[] columnNames = {"Term", "Classification" };
-	private String[][] data;
 	private HashMap<Integer,Integer> terms;
 	private int selectedRowIndex;
 	

@@ -1,5 +1,10 @@
 package db;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,15 +27,17 @@ public class SQLDatabase {
 	 * Create SQLDatabase object and initialize connection to the database file
 	 */
 	public SQLDatabase() {
-	    try {
-	    	Class.forName("org.sqlite.JDBC");
-	    	c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
-	    	c.setAutoCommit(false);
+	    	try {
+	    		Class.forName("org.sqlite.JDBC");
+				c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
+				c.setAutoCommit(false);
+				this.initTable();
+			} catch (SQLException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	    	
 	    	//TODO initialize the database only if its size is zero (we can revisit this later once we integrate renaming/creating new databases) -Nick
 			
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
 	}
 	
 	/**
@@ -46,17 +53,24 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Creates table for use. Only for use when initially creating a new database file
+	 * Creates table for use. Only occurs when initially creating a new database file
 	 * @throws SQLException
 	 */
 	public void initTable() throws SQLException {
-		stmt = c.createStatement();
-    	String sql = "CREATE TABLE TERMS " +
-    				 "(TERM VARCHAR(50), " +
-    				 "SCORE INT NOT NULL);";
-    	stmt.executeUpdate(sql);
-    	stmt.close();
-		c.commit();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(databaseFileName));
+			if (br.readLine() == null) {
+				stmt = c.createStatement();
+		    	String sql = "CREATE TABLE TERMS " +
+		    				 "(TERM VARCHAR(50), " +
+		    				 "SCORE INT NOT NULL);";
+		    	stmt.executeUpdate(sql);
+		    	stmt.close();
+				c.commit();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

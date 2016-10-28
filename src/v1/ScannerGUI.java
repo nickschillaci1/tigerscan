@@ -58,8 +58,8 @@ import db.DatabaseRemoveTermException;
  */
 public class ScannerGUI extends JFrame{
 
-	static final String TITLE = "Tiger Scan";
-	static final String TITLE_FULL = "Tiger Scan - Email Security Scanner";
+	static final String TITLE = "TigerScan";
+	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
 	static final String VERSION = "0.2.2";
@@ -370,7 +370,10 @@ public class ScannerGUI extends JFrame{
 		importButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event)
 			{
-				JOptionPane.showInputDialog(dbSettings, "Input filename of terms list:", "Import Terms", JOptionPane.PLAIN_MESSAGE);
+				FileDialog fd = new FileDialog(new JFrame(), "Choose file to import terms from", FileDialog.LOAD);
+				fd.setVisible(true);
+				/*if (fd.getFile() != null) {
+				}*/
 				//TODO decide on the expected file format and how we want to read these files in the program
 			}
 		});

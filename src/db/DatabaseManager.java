@@ -1,5 +1,7 @@
 package db;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class DatabaseManager {
     	terms = new HashMap<Integer,Integer>();
     	sqld = new SQLDatabase();
     	
-    	try {
+		try {
 			terms = sqld.getTerms();
 		} catch (SQLException e) {
 			e.printStackTrace();

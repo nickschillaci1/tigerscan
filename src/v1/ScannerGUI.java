@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -58,11 +59,11 @@ import db.DatabaseRemoveTermException;
  */
 public class ScannerGUI extends JFrame{
 
-	static final String TITLE = "Security Scanner";
-	static final String TITLE_FULL = "Team Tiger Security Scanner";
+	static final String TITLE = "Tiger Scan";
+	static final String TITLE_FULL = "Tiger Scan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
-	static final String VERSION = "0.7.2";
+	static final String VERSION = "0.2.2";
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -89,12 +90,9 @@ public class ScannerGUI extends JFrame{
 				db.closeSQLConnection();
 			}
 		});
-		//this.setJMenuBar(mainMenuBar());
-		try {
-			this.setIconImage(ImageIO.read(new File("res/icon.png")));
-		} catch (IOException errIcon) {
-			errIcon.printStackTrace();
-		}
+		URL url = Main.class.getResource("/icon.png");
+		ImageIcon icon = new ImageIcon(url);
+		this.setIconImage(icon.getImage());
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		screenWidth = tk.getScreenSize().width;
 		screenHeight = tk.getScreenSize().height;
@@ -208,24 +206,22 @@ public class ScannerGUI extends JFrame{
 		fileScanButton.setMnemonic(KeyEvent.VK_S);
 		fileScanButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				int score = 0;
 				for(int i = 0; i < filenames.size(); i++) {
 					System.out.println("Scanning file: \"" + filenames.get(i) + "\""); // exact directory and file name
 					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
-					int score = scanner.scanFiles(filenames);
-					JOptionPane.showMessageDialog(null,"Score: "+score);
+					score += scanner.scanFiles(filenames);
 				}
+				JOptionPane.showMessageDialog(null,"Score: "+score);
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");
 			}
 		});
 		
 		JButton settingsButton = new JButton();
-		try {
-			settingsButton.setIcon(new ImageIcon(ImageIO.read(new File("res/settings.png"))));
-		} catch (IOException ex) {
-			settingsButton.setText("Settings");
-			settingsButton.setMnemonic(KeyEvent.VK_E);
-		}
+		URL url = Main.class.getResource("/settings.png");
+		ImageIcon icon = new ImageIcon(url);
+		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				createAdminDialog();		

@@ -1,8 +1,6 @@
 package db;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -35,9 +33,6 @@ public class SQLDatabase {
 			} catch (SQLException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-	    	
-	    	//TODO initialize the database only if its size is zero (we can revisit this later once we integrate renaming/creating new databases) -Nick
-			
 	}
 	
 	/**
@@ -53,7 +48,8 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Creates table for use. Only occurs when initially creating a new database file
+	 * Ensures that the database file has the proper SQL table for storing terms.
+	 * If a file is not empty, but the table is invalid or missing, the database is considered corrupted and should be removed for the program to recreate it 
 	 * @throws SQLException
 	 */
 	public void initTable() throws SQLException {
@@ -68,6 +64,7 @@ public class SQLDatabase {
 		    	stmt.close();
 				c.commit();
 			}
+			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

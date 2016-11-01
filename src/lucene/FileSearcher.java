@@ -50,6 +50,7 @@ public class FileSearcher {
 	 * @throws ParseException
 	 */
 	public TopDocs search(String searchQuery) throws IOException, ParseException {
+		searchQuery = stemTerm(searchQuery);
 		query = queryParser.parse(searchQuery);
 		return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
 	}
@@ -64,4 +65,17 @@ public class FileSearcher {
 	public Document getDocument(ScoreDoc scoreDoc) throws CorruptIndexException, IOException {
 		return indexSearcher.doc(scoreDoc.doc);
 	}
+	
+	/**
+	 * Stems the given term down to its root word.
+	 * @param term - Word that needs to be stemmed.
+	 * @return - The root word.
+	 */
+	public String stemTerm (String term) {
+		PorterStemmer stemmer = new PorterStemmer();
+		stemmer.setCurrent(term);
+		stemmer.stem();
+		return stemmer.getCurrent();
+	}
+
 }

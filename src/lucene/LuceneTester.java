@@ -14,7 +14,7 @@ import org.apache.lucene.search.TopDocs;
 public class LuceneTester {
 
 	String indexDir = "C:\\Users\\Ryan\\Desktop\\Index";
-	String dataDir = "C:\\Users\\Ryan\\Desktop\\FilesToIndex";
+	String dataDir = "C:\\Users\\Ryan\\Desktop\\test directory";
 	FileIndexer indexer;
 	FileSearcher searcher;
 
@@ -23,7 +23,7 @@ public class LuceneTester {
 		try {
 			tester = new LuceneTester();
 			tester.createIndex();
-			tester.search("run");
+			tester.search("running");
 		} catch (IOException e) {
  			e.printStackTrace();
 		} catch (ParseException e) {
@@ -45,9 +45,7 @@ public class LuceneTester {
 	private void search(String searchQuery) throws IOException, ParseException {
 		searcher = new FileSearcher(indexDir);
 		long startTime = System.currentTimeMillis();
-
-
-		
+	
 		TopDocs hits = searcher.search(searchQuery);
 		long endTime = System.currentTimeMillis();
 		

@@ -275,7 +275,8 @@ public class ScannerGUI extends JFrame{
 					if (newScore != term && newScore != null) {
 						try {
 							db.changeScore(Integer.parseInt(term), Integer.parseInt(newScore));
-							tableModel.fireTableDataChanged(); //TODO BUG: find out why new score is not being shown until program reloads
+							tableModel.setValueAt(newScore, termsTable.getSelectedRow(), 1);
+							tableModel.fireTableDataChanged();
 						} catch (NumberFormatException e) {
 							JOptionPane.showMessageDialog(dbSettings, "Invalid score!", "Error", JOptionPane.ERROR_MESSAGE);
 						} catch (SQLException e) {
@@ -359,8 +360,11 @@ public class ScannerGUI extends JFrame{
 			{
 				int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove all terms from the database?", "Remove All Terms", JOptionPane.YES_NO_OPTION);
 				if (response == JOptionPane.YES_OPTION) {
+
 					db.removeAllTerms();
-					tableModel.fireTableDataChanged(); //TODO BUG: find out why the table does't reflect the remove of all terms
+					tableModel = new CustomTableModel(db.getTerms());
+					termsTable.setModel(tableModel);
+					//tableModel.fireTableDataChanged(); no longer necessary with addition new table model
 				}
 			}
 		});
@@ -372,9 +376,24 @@ public class ScannerGUI extends JFrame{
 			{
 				FileDialog fd = new FileDialog(new JFrame(), "Choose file to import terms from", FileDialog.LOAD);
 				fd.setVisible(true);
-				/*if (fd.getFile() != null) {
-				}*/
-				//TODO decide on the expected file format and how we want to read these files in the program
+				if (fd.getFile() != null) {
+					if (fd.getFile().toLowerCase().endsWith(".csv")) { //currently only supports CSV files
+						int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to import all terms from this file?", "Import Terms", JOptionPane.YES_NO_OPTION);
+						if (response == JOptionPane.YES_OPTION) {
+							for (String line : CSVReader.getLinesFromFile(fd.getDirectory() + fd.getFile())) {
+								try {
+									db.addTerm(CSVReader.getContentFromLine(line)[CSVReader.TERM], Integer.parseInt(CSVReader.getContentFromLine(line)[CSVReader.SCORE]));
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+								} catch (DatabaseAddTermException e) {
+									JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							tableModel.fireTableDataChanged();
+						}
+					}
+					else JOptionPane.showMessageDialog(dbSettings, "File format not supported! Please select a '.CSV' file.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		importButton.setPreferredSize(new Dimension(160, 30));

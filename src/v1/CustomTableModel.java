@@ -32,8 +32,9 @@ public class CustomTableModel extends AbstractTableModel {
 		return columnNames[col];
 	}
 	
-	//only implemented if we want to use the table itself to change classification score
-	/*public boolean isCellEditable(int row, int col) {
+	/*//only implemented if we want to use the table itself to change classification score
+	//(currently buggy, will need to rewrite setValueAt if we do this)
+	public boolean isCellEditable(int row, int col) {
 		return col == 1;
 	}*/
 
@@ -47,6 +48,24 @@ public class CustomTableModel extends AbstractTableModel {
 			value = terms.get(keys.get(row)).toString();
 		}
 		return value;
+	}
+	
+	public void setValueAt(Object value, int row, int col) {
+		ArrayList<Integer> keys = new ArrayList<Integer>(terms.keySet());
+		int selectedKey = keys.get(row);
+		int selectedValue = terms.get(selectedKey);
+		if (col == 0) { //if renaming a term
+			terms.remove(selectedKey);
+			terms.put(Integer.parseInt((String) value), selectedValue);
+		}
+		else { //if changing a term's score
+			terms.remove(selectedKey);
+			terms.put(selectedKey, Integer.parseInt((String) value));
+		}
+	}
+	
+	public void clearAllCells() {
+		terms.clear();
 	}
 	
 	public int getSelectedRowIndex() {

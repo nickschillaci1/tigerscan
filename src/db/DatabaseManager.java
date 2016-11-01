@@ -82,8 +82,8 @@ public class DatabaseManager {
 		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
 		//add all of the
-		Set keySet = values.keySet();
-		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
+		Set<String> keySet = values.keySet();
+		String[] keys = keySet.toArray(new String[keySet.size()]);
 		int length = keys.length;
 		
 		for (int i=0; i<length; i++) {

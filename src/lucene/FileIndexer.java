@@ -41,12 +41,7 @@ public class FileIndexer {
 		//this directory will contain the indexes
 		Directory docDir = FSDirectory.open(Paths.get(indexDirectoryPath));
 
-		Map<String,Analyzer> analyzerList = new HashMap<String,Analyzer>();
-		analyzerList.put("stemmedText", new EnglishAnalyzer());
-		analyzerList.put("unstemmedText", new StandardAnalyzer());
-		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerList);
-
-//		StandardAnalyzer analyzer = new StandardAnalyzer();
+		EnglishAnalyzer analyzer = new EnglishAnalyzer();
 
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		writer = new IndexWriter(docDir, iwc);
@@ -71,10 +66,6 @@ public class FileIndexer {
 		return doc;
 	}
 
-	//TODO Need to figure out a way to index both the unstemmed and stemmed version of the test so that
-	// when we search an exact term (ie "run") that it hits docs that have the exact term and unstemmed terms
-	//(ie "runner", "running", etc).
-	//Vise Versa we should be able to search an unstemmed word and have both the exact phrase and other unstemmed terms
 	
 	/**
 	 * Closes the IndexWrtier
@@ -118,18 +109,5 @@ public class FileIndexer {
 		}
 		return writer.numDocs();
 	}
-	
-	/**
-	 * Stems the given term down to its root word.
-	 * @param term - Word that needs to be stemmed.
-	 * @return - The root word.
-	 */
-	public String stemTerm (String term) {
-		PorterStemmer stemmer = new PorterStemmer();
-		stemmer.setCurrent(term);
-		stemmer.stem();
-		return stemmer.getCurrent();
-	}
-
 }
 

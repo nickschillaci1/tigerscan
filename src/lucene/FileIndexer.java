@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -18,6 +17,7 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.tartarus.snowball.ext.PorterStemmer;
@@ -44,7 +44,10 @@ public class FileIndexer {
 		EnglishAnalyzer analyzer = new EnglishAnalyzer();
 
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+		iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		writer = new IndexWriter(docDir, iwc);
+		
+		//TODO Find a way to delete the last index when we create a new one.
 	}
 
 	/**

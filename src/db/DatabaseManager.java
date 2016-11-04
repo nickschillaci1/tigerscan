@@ -49,7 +49,7 @@ public class DatabaseManager {
      * This will add a term to the database
      * @param String term to add to the database
      * @param int of the confidentiality value of the term
-     * @exception DatabaseAddTermException if the word is already present in the database
+     * @exception DatabaseAddTermException if the word is already present in the database, or if the confidentiality value: v<0 || v>100
      */
     public void addTerm(String term, int value) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
@@ -61,6 +61,10 @@ public class DatabaseManager {
 		    throw new DatabaseAddTermException(t);
 		}
 	
+		if (value<0 && value>100) {
+    		throw new DatabaseAddTermException(0);
+    	}
+		
 		terms.put(t,value);
 		
 	    try {
@@ -75,15 +79,15 @@ public class DatabaseManager {
      * This will add multiple terms to the database
      * @param ArrayList<String> terms to add to the database
      * @param ArrayList<Integer> of the values for each String
-     * @exception DabaseAddTermException if one or more words is already present in the database
+     * @exception DabaseAddTermException if one or more words is already present in the database, or if the confidentiality value: v<0 || v>100
      */
     public void addTerm(HashMap<String,Integer> values) throws DatabaseAddTermException {
 		//manipulate root words as necessary
 		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
 		//add all of the
-		Set keySet = values.keySet();
-		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
+		Set<String> keySet = values.keySet();
+		String[] keys = keySet.toArray(new String[keySet.size()]);
 		int length = keys.length;
 		
 		for (int i=0; i<length; i++) {
@@ -92,6 +96,10 @@ public class DatabaseManager {
 		    	conflicts.add(temp);
 		    } else {
 		    	int tValue = values.get(keys[i]);
+		    	//if the value is not between 0 and 100
+		    	if (tValue<0 && tValue>100) {
+		    		throw new DatabaseAddTermException(0);
+		    	}
 		    	terms.put(temp,tValue);
 		    	try {
 					sqld.addTerm(temp,tValue);

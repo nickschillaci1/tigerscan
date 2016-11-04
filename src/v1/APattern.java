@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class APattern {
 
 	private final double pCONFIDENTIAL = 50; //50% chance any email at all is confidential
-	private final double pNotCONFIDENTIAL = 50; //we will need this if the value above changes
+	//private final double pNotCONFIDENTIAL = 50; //we will need this if the value above changes
 	private ArrayList<Double> pConfidentialWithWord;
 	
 	/**
@@ -27,7 +27,7 @@ public class APattern {
 	 * @param p int
 	 */
 	public void addWord(double p) {
-		//this will be the probability that a message is spam given the word is in it
+		//this will be the probability that a message is confidential given the word is in it
 		pConfidentialWithWord.add(p);
 	}
 	

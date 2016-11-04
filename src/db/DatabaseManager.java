@@ -25,7 +25,7 @@ public class DatabaseManager {
     	terms = new HashMap<Integer,Integer>();
     	sqld = new SQLDatabase();
     	
-    	try {
+		try {
 			terms = sqld.getTerms();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -82,8 +82,8 @@ public class DatabaseManager {
 		ArrayList<Integer> conflicts = new ArrayList<Integer>();
 	
 		//add all of the
-		Set keySet = values.keySet();
-		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
+		Set<String> keySet = values.keySet();
+		String[] keys = keySet.toArray(new String[keySet.size()]);
 		int length = keys.length;
 		
 		for (int i=0; i<length; i++) {
@@ -176,6 +176,27 @@ public class DatabaseManager {
 		}
 	
 	}
+    
+    /**
+     * This will remove a term from the database by its already hashed value.
+     * @param int term to be removed
+     * @exception DatabaseRemoveTermException if the word is not present in the database
+     *
+     */
+    public void removeTermByHash(int term) throws DatabaseRemoveTermException {
+		//throws an exception if the term does not exist
+		if (!terms.containsKey(term)) {
+		    throw new DatabaseRemoveTermException(term);
+		}
+	
+		terms.remove(term);
+		try {
+			sqld.removeTerm(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+    }
 	
     /**
      * This will remove all terms from the Database.  This cannot be undone.
@@ -188,6 +209,16 @@ public class DatabaseManager {
 			e.printStackTrace();
 		}
     }
+	
+	/**
+	 * Change/update the score of a term in the database
+	 * @param int term is a hashed term to change the classification score of
+	 * @param int score is the new score of the term
+	 * @throws SQLException
+	 */
+	public void changeScore(int term, int score) throws SQLException {
+		sqld.changeScore(term, score);
+	}
 	
 	/**
 	 * Gets a HashMap<Integer, Integer> of terms in the database

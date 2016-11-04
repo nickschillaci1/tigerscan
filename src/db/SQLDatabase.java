@@ -1,5 +1,8 @@
 package db;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,27 +25,14 @@ public class SQLDatabase {
 	 * Create SQLDatabase object and initialize connection to the database file
 	 */
 	public SQLDatabase() {
-	    try {
-	    	Class.forName("org.sqlite.JDBC");
-	    	c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
-	    	c.setAutoCommit(false);
-	    	
-	    	//TODO initialize the database only if its size is zero (we can revisit this later once we integrate renaming/creating new databases) -Nick
-	    	/*boolean isEmpty = true;
-	    	stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
-			if (rs.next()) { //loop through entries in the database
-				isEmpty = false;
+	    	try {
+	    		Class.forName("org.sqlite.JDBC");
+				c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
+				c.setAutoCommit(false);
+				this.initTable();
+			} catch (SQLException | ClassNotFoundException e) {
+				e.printStackTrace();
 			}
-			
-			if (isEmpty) {
-				initTable();
-			}*/
-			
-			
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
 	}
 	
 	/**
@@ -58,17 +48,26 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Creates table for use. Only for use when initially creating a new database file
+	 * Ensures that the database file has the proper SQL table for storing terms.
+	 * If a file is not empty, but the table is invalid or missing, the database is considered corrupted and should be removed for the program to recreate it 
 	 * @throws SQLException
 	 */
 	public void initTable() throws SQLException {
-		stmt = c.createStatement();
-    	String sql = "CREATE TABLE TERMS " +
-    				 "(TERM VARCHAR(50), " +
-    				 "SCORE INT NOT NULL);";
-    	stmt.executeUpdate(sql);
-    	stmt.close();
-		c.commit();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(databaseFileName));
+			if (br.readLine() == null) {
+				stmt = c.createStatement();
+		    	String sql = "CREATE TABLE TERMS " +
+		    				 "(TERM VARCHAR(50), " +
+		    				 "SCORE INT NOT NULL);";
+		    	stmt.executeUpdate(sql);
+		    	stmt.close();
+				c.commit();
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -32,7 +32,7 @@ public class ContentScanner {
 	private FileIndexer indexer;
 	private FileSearcher searcher;
 	
-	String indexDir = "C:\\Users\\Ryan\\Desktop\\Index";			//Will probably get the filepath from another class later on,
+	String indexDir = "E:\\Temp\\";			//Will probably get the filepath from another class later on,
 	//String dataDir = "C:\\Users\\Ryan\\Desktop\\test directory";	//just putting these here for now.
 	
 	public ContentScanner(DatabaseManager db) {
@@ -61,7 +61,6 @@ public class ContentScanner {
 			System.err.print("The file \"" + filename + "\" was not found.");
 			return null;
 		}
-		System.out.println("getting content from " + filename);
 		return content;
 	}
 */	

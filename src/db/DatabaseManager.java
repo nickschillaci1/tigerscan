@@ -9,7 +9,7 @@ import java.util.Set;
  * This class will maintain the Database and will handle adding and removing terms.  It will also, through the SQLDatabase class, handle the external Database file.
  * 
  * @author Brandon Dixon
- * @version 10/24/16
+ * @version 11/4/16
  **/
 
 public class DatabaseManager {
@@ -21,7 +21,7 @@ public class DatabaseManager {
     /**
      * This will initialize the database and load in terms if there are any to load
      */
-    public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
+    public DatabaseManager() {
     	terms = new HashMap<Integer,Integer>();
     	sqld = new SQLDatabase();
     	

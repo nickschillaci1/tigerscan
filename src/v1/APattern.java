@@ -5,6 +5,7 @@ import java.util.ArrayList;
 /**
  * This class will handle analysis of the information to determine how likely it is that an email is confidential
  * @author Brandon Dixon
+ * @version 11/4/16
  *
  * Probabilities are from 0-100, which is where all word scores should fall between
  */

@@ -1,6 +1,7 @@
 package lucene;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -22,7 +23,7 @@ public class LuceneTester {
 		LuceneTester tester;
 		try {
 			tester = new LuceneTester();
-			tester.createIndex();
+			//tester.createIndex();
 			tester.search("running");
 		} catch (IOException e) {
  			e.printStackTrace();
@@ -31,14 +32,14 @@ public class LuceneTester {
 		}
 	}
 
-	private void createIndex() throws IOException{
+	private void createIndex(ArrayList<String> filenames) throws IOException{
 		indexer = new FileIndexer(indexDir);
 		int numIndexed;
 		long startTime = System.currentTimeMillis();	
-		numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
+		numIndexed = indexer.createIndex(filenames, new TextFileFilter());
 		long endTime = System.currentTimeMillis();
 		indexer.closeIndex();
-		System.out.println(numIndexed+" File indexed, time taken: "
+		System.out.println(numIndexed+" file(s) indexed, time taken: "
 				+(endTime-startTime)+" ms");		
 	}
 

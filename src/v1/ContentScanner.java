@@ -33,22 +33,23 @@ public class ContentScanner {
 	private FileSearcher searcher;
 	
 	String indexDir = "C:\\Users\\Ryan\\Desktop\\Index";			//Will probably get the filepath from another class later on,
-	String dataDir = "C:\\Users\\Ryan\\Desktop\\test directory";	//just putting these here for now.
+	//String dataDir = "C:\\Users\\Ryan\\Desktop\\test directory";	//just putting these here for now.
 	
 	public ContentScanner(DatabaseManager db) {
 		this.db = db;
 	}
-/*
+
 	public int scanFiles(ArrayList<String> importedFileNames) {
 		confidentialityScore = 0;
-		for(String fileName : importedFileNames) {
-			checkForSensitiveTerm(getContentFromFile(fileName));
-
-		}	
+		try {
+			this.createIndex(importedFileNames);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return confidentialityScore;
 		//stop email and alert user is confidentiality score is above threshold
 	}
-*/
+
 	
 /*	
 	 private String getContentFromFile(String filename) {
@@ -100,14 +101,14 @@ public class ContentScanner {
 		}
 	}
 	
-	private void createIndex() throws IOException{
+	private void createIndex(ArrayList<String> filenames) throws IOException{
 		indexer = new FileIndexer(indexDir);
 		int numIndexed;
 		long startTime = System.currentTimeMillis();	
-		numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
+		numIndexed = indexer.createIndex(filenames, new TextFileFilter());
 		long endTime = System.currentTimeMillis();
 		indexer.closeIndex();
-		System.out.println(numIndexed+" File indexed, time taken: "
+		System.out.println(numIndexed+" file(s) indexed, time taken: "
 				+(endTime-startTime)+" ms");		
 	}
 }

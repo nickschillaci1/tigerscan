@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,14 +100,16 @@ public class FileIndexer {
 	 * @return The number of files that were indexed.
 	 * @throws IOException
 	 */
-	public int createIndex(String dataDirPath, FileFilter filter) 
+	public int createIndex(ArrayList<String> fileNames, FileFilter filter) 
 			throws IOException{
 		//get all files in the data directory
-		File[] files = new File(dataDirPath).listFiles();
-
+		//File[] files = new File(dataDirPath).listFiles();
+		File file;
 		//a bunch of checks to see if the file can be used for indexing
-		for (File file : files) {
+		for (String fileName : fileNames) {
+			file = new File(fileName);
 			if(!file.isDirectory() && !file.isHidden() && file.exists() && file.canRead() && filter.accept(file)) {
+				System.out.println("Scanning file: " + fileName);
 				indexFile(file);
 			}
 		}

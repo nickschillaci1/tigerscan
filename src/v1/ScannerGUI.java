@@ -55,18 +55,18 @@ public class ScannerGUI extends JFrame{
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
 	static final String VERSION = "0.7";
-	
+
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
 	private DatabaseManager db;
-	
+
 	public ScannerGUI(ContentScanner scanner, DatabaseManager db) {
 		this.scanner = scanner;
 		this.db = db;
 		filenames = new ArrayList<String>();
 		initializeUI();
 	}
-	
+
 	private void initializeUI() {
 		this.setTitle(TITLE);
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -88,7 +88,7 @@ public class ScannerGUI extends JFrame{
 		setLocation(screenWidth/3, screenHeight/3);
 		setContentPane(mainPanel());
 	}
-	
+
 	/**
 	 * unused as of right now
 	 */
@@ -97,7 +97,7 @@ public class ScannerGUI extends JFrame{
 		//TODO add menu and items to menu bar
 		return menu;
 	}
-	
+
 	private JPanel mainPanel() {	
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(northPanel(), BorderLayout.NORTH);
@@ -106,7 +106,7 @@ public class ScannerGUI extends JFrame{
 
 		return panel;
 	}
-	
+
 	private JPanel northPanel() {
 		JPanel nPanel = new JPanel();
 		//nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.PAGE_AXIS));
@@ -116,18 +116,18 @@ public class ScannerGUI extends JFrame{
 		nPanel.add(nLabel);
 		return nPanel;
 	}
-	
+
 	private JPanel centerPanel() {
 		DefaultListModel listModel = new DefaultListModel();
-		
+
 		JPanel cPanel = new JPanel();
 		cPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel fileListPanel = new JPanel();
 		fileListPanel.setBorder(new EmptyBorder(00, 70, 20, 70));
 		cPanel.add(fileListPanel, BorderLayout.CENTER);
 		fileListPanel.setLayout(new BoxLayout(fileListPanel, BoxLayout.Y_AXIS));
-		
+
 		JList fileListBox = new JList();
 		fileListBox.setFixedCellWidth(100);
 		//fileListBox.setFixedCellHeight(25);
@@ -135,19 +135,19 @@ public class ScannerGUI extends JFrame{
 		fileListBox.setModel(listModel);
 		fileListBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollPane = new JScrollPane();
-		
+
 		scrollPane.add(fileListBox);
 		scrollPane.setViewportView(fileListBox);
 		fileListPanel.add(scrollPane);
-		
+
 		JPanel fileActionPanel = new JPanel();
 		cPanel.add(fileActionPanel, BorderLayout.SOUTH);
 		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
-	
+
 		JButton fileAddButton = new JButton("Add File");
 		fileAddButton.setPreferredSize(new Dimension(125, 30));
 		fileActionPanel.add(fileAddButton);
-	
+
 		fileAddButton.setMnemonic(KeyEvent.VK_A);
 		fileAddButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -159,7 +159,7 @@ public class ScannerGUI extends JFrame{
 				}
 			}
 		});
-		
+
 		JButton fileRemoveButton = new JButton("Remove File");
 		fileRemoveButton.setPreferredSize(new Dimension(125, 30));
 		fileActionPanel.add(fileRemoveButton);
@@ -174,53 +174,51 @@ public class ScannerGUI extends JFrame{
 					System.out.println("No file selected.");
 			}
 		});
-		
 
-		
+
+
 		return cPanel;
 	}
-	
+
 	private JPanel southPanel() {
-		
+
 		JPanel sPanel = new JPanel();
 		sPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel fileScanPanel = new JPanel();
 		sPanel.add(fileScanPanel, BorderLayout.NORTH);
 		fileScanPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		JButton fileScanButton = new JButton("Scan All");
 		fileScanButton.setPreferredSize(new Dimension(125, 30));
 		fileScanPanel.add(fileScanButton);
 		fileScanButton.setMnemonic(KeyEvent.VK_S);
 		fileScanButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				for(int i = 0; i < filenames.size(); i++) {
-					System.out.println("Scanning file: " + filenames.get(i)); // exact directory and file name
-					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
+				if(filenames.size() == 0)
+					System.out.println("No files to scan.");
+				else {
 					int score = scanner.scanFiles(filenames);
 					JOptionPane.showMessageDialog(null,"Score: "+score);
 				}
-				if(filenames.size() == 0)
-					System.out.println("No files to scan.");
 			}
 		});
-		
-		
+
+
 		JLabel labelVersion = new JLabel("Version " + VERSION);
 		labelVersion.setForeground(Color.GRAY);
 		labelVersion.setHorizontalAlignment(SwingConstants.CENTER);
 		labelVersion.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		sPanel.add(labelVersion, BorderLayout.SOUTH);
-		
-		
+
+
 		return sPanel;
 	}
-	
+
 	// this won't be needed when we can add the scanner to the gui
 	public ArrayList<String> getFilesToScan() {
 		return filenames;
 	}
-	
-	
+
+
 }

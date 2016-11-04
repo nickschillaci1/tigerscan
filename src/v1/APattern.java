@@ -8,29 +8,53 @@ import java.util.ArrayList;
  * @author Brandon Dixon
  * @version 11/4/16
  *
- * Probabilities are from 0-100, which is where all word scores should fall between
+ */
+
+
+/**
+ * The database should save:
+ * Words
+ * Each score's word
+ * For each word: number of emails it has appeared in
+ * For each word: average of probabilities of each email it has apperaed in, 
+ * Total number of emails we've scanned
+ * Probability that any given email is confidential
+ *
  */
 
 public class APattern {
 
-	private final double pCONFIDENTIAL = 10; //arbitrary 10% chance any email at all is confidential
-	//private final double pNotCONFIDENTIAL = 90; //we will need this if the value above changes
+	private double pConfidential;
+	private double pNotConfidential;
+	private int numberOfEmails;
 	private ArrayList<Double> pConfidentialWithWord;
+	private ArrayList<String> pWords;
+	private ArrayList<Double> pWordInConfidential;
 	
 	/**
 	 * Initialize the Class
 	 */
 	public APattern() {
 		pConfidentialWithWord = new ArrayList<Double>();
+		pWords = new ArrayList<String>();
+		//load value of pConfidential
+		pNotConfidential = 100 - pConfidential;
+		//load value of number of emails
+		pConfidentialWithWord = new ArrayList<Double>();
 	}
 	
 	/**
 	 * Report that a word with confidentially rating p has been added.  The word itself is not needed here.
-	 * @param p double
+	 * @param probabilityWordInConfidential
 	 */
-	public void addWord(double p) {
+	public void addWord(String word, double weight) {
+		double probabilityWordInConfidential; //load this in: number of emails word in/number total emails
 		//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
-		pConfidentialWithWord.add(p*pCONFIDENTIAL);
+		double partOne = probabilityWordInConfidential*pConfidential;
+		double partTwo = (100-probabilityWordInConfidential)*pNotConfidential;
+		pConfidentialWithWord.add(partOne/(partOne+partTwo)*weight);
+		pWords.add(word);
+		pWordInConfidential.add(probabilityWordInConfidential);
 	}
 	
 	/**
@@ -40,18 +64,20 @@ public class APattern {
 	public double calculateProbability() {
 		int size = pConfidentialWithWord.size();
 		if (size == 0) {
-			return pCONFIDENTIAL;
+			return pConfidential;
 		}
 		
 		double rTemp;
 		double rOne = 1;
 		double rTwo = 1;
-		double rValue;
+		double pThisIsConfidential;
 		for (int i=0; i<size; i++) {
 			rTemp=pConfidentialWithWord.get(i);
 			rOne*=rTemp;
 			rTwo*=(100-rTemp);
 		}
+		
+		pThisIsConfidential = rOne/(rOne+rTwo);
 		
 		//TODO learn from the analysis of this email
 		/* Record information to the database:
@@ -62,10 +88,21 @@ public class APattern {
 		 * Adjust probability that any given word appears in confidential messages
 		 */
 		
+		numberOfEmails ++;
+		pConfidential = (pConfidential*(numberOfEmails-1)+pThisIsConfidential)/numberOfEmails;
+		pNotConfidential = (100-pConfidential);
+		
+		//save value of number of emails
+		int wordSize = pWords.size();
+		for (int i=0; i<wordSize; i++) {
+			int nEmailsWordIn; //load in, increment by one
+			double pWC = (pWordInConfidential.get(i)*(nEmailsWordIn-1)+pThisIsConfidential)/nEmailsWordIn;
+			//store that value
+			//store number of emails word is in
+		}
 		
 		//return the value from this analysis
-		rValue = rOne/(rOne+rTwo);
 		
-		return rValue;
+		return pThisIsConfidential;
 	}
 }

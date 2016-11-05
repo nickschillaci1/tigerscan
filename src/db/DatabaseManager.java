@@ -237,6 +237,68 @@ public class DatabaseManager {
 	}
 	
 	/**
+	 * Gets the frequency of a term in the database
+	 * @param term
+	 * @return
+	 */
+	public int getFrequency(String term) {
+		int freq = 0;
+		try {
+			freq = sqld.getFrequency(term.hashCode());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return freq;
+	}
+	
+	/**
+	 * Increment the frequency of a term in the database
+	 * @param term
+	 */
+	public void incrementFrequency(String term) {
+		try {
+			sqld.incrementFrequency(term.hashCode());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Get the average probability of a term
+	 * @param term
+	 * @return
+	 */
+	public double getAverageProbability(String term) {
+		double prob = 0;
+		try {
+			prob = sqld.getAverageProbability(term.hashCode());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return prob;
+	}
+	
+	/**
+	 * Set the average probability of a term
+	 * @param term
+	 * @param prob
+	 */
+	public void setAverageProbability(String term, double prob) {
+		try {
+			sqld.setAverageProbability(term.hashCode(), prob);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Calls the SQLDatabase method to initialize the SQL connection to the database file
+	 */
+	public void initSQLConnection() {
+		sqld.initConnection();
+	}
+	
+	/**
 	 * Calls the SQLDatabase method to close SQL connection to the database file
 	 */
 	public void closeSQLConnection() {

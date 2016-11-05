@@ -1,6 +1,7 @@
 package v1;
 
 import db.DatabaseManager;
+import gui.ScannerGUI;
 
 public class Main {
 

@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * This class will maintain the Database and will handle adding and removing terms.  It will also, through the SQLDatabase class, handle the external Database file.
  * 
- * @author Brandon Dixon
+ * @author Brandon Dixon, Nick Schillaci
  * @version 11/4/16
  **/
 

@@ -93,7 +93,7 @@ public class APattern {
 		for (int i=0; i<wordSize; i++) {
 			int nEmailsWordIn = pNumberOfEmailsWordIsIn.get(i);
 			double pWC = (pWordInConfidential.get(i)*(nEmailsWordIn-1)+pThisIsConfidential)/nEmailsWordIn;
-			r.addWordAndSetValues(pWords.get(i),nEmailsWordIn,pWC);
+			r.addWordAndSetValues(pWords.get(i),pWC);
 			//store that value
 			//store number of emails word is in
 		}

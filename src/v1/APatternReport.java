@@ -14,7 +14,6 @@ public class APatternReport {
 	private double pConfidential;
 	private double pNotConfidential;
 	private ArrayList<Integer> words;
-	private ArrayList<Integer> nEmails;
 	private ArrayList<Double> aPConfidential;
 	
 	/**
@@ -28,7 +27,6 @@ public class APatternReport {
 		pConfidential = pAnyConfidential;
 		pNotConfidential = pAnyNotConfidential;
 		words = new ArrayList<Integer>();
-		nEmails = new ArrayList<Integer>();
 		aPConfidential = new ArrayList<Double>();
 	}
 	
@@ -38,9 +36,8 @@ public class APatternReport {
 	 * @param nEmailsIn incremented
 	 * @param averagePConfidential new value
 	 */
-	public void addWordAndSetValues(int word, int nEmailsIn, double averagePConfidential) {
+	public void addWordAndSetValues(int word, double averagePConfidential) {
 		words.add(word);
-		nEmails.add(nEmailsIn);
 		aPConfidential.add(averagePConfidential);
 	}
 	
@@ -77,14 +74,6 @@ public class APatternReport {
 		return words.get(i);
 	}
 	
-	/**
-	 * Get the integer number of emails at word i.
-	 * @param i index
-	 * @return int number of emails
-	 */
-	public int getNumberOfEmails(int i) {
-		return nEmails.get(i); 
-	}
 	
 	/**
 	 * Get the average probability that an email which is confidential has the word i.

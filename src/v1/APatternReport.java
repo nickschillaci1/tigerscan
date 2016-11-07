@@ -2,12 +2,18 @@ package v1;
 
 import java.util.ArrayList;
 
+/**
+ * This class is used by APattern to send results from the email evaluation back to the calling class
+ * @author Brandon Dixon
+ *
+ */
+
 public class APatternReport {
 
 	private double pConfidentialScoreOfThisEmail;
 	private double pConfidential;
 	private double pNotConfidential;
-	private ArrayList<String> words;
+	private ArrayList<Integer> words;
 	private ArrayList<Integer> nEmails;
 	private ArrayList<Double> aPConfidential;
 	
@@ -21,7 +27,7 @@ public class APatternReport {
 		pConfidentialScoreOfThisEmail = pConfidentialOfThisEmail;
 		pConfidential = pAnyConfidential;
 		pNotConfidential = pAnyNotConfidential;
-		words = new ArrayList<String>();
+		words = new ArrayList<Integer>();
 		nEmails = new ArrayList<Integer>();
 		aPConfidential = new ArrayList<Double>();
 	}
@@ -32,10 +38,34 @@ public class APatternReport {
 	 * @param nEmailsIn incremented
 	 * @param averagePConfidential new value
 	 */
-	public void addWordAndSetValues(String word, int nEmailsIn, double averagePConfidential) {
+	public void addWordAndSetValues(int word, int nEmailsIn, double averagePConfidential) {
 		words.add(word);
 		nEmails.add(nEmailsIn);
 		aPConfidential.add(averagePConfidential);
+	}
+	
+	/**
+	 * Get the probability any given email is not confidential.
+	 * @return pNotConfidential
+	 */
+	public double getProbabilityAnyEmailIsNotConfidential() {
+		return pNotConfidential;
+	}
+	
+	/**
+	 * Get the probability any given email is confidential.
+	 * @return pConfidential
+	 */
+	public double getProbabilityAnyEmailIsConfidential() {
+		return pConfidential;
+	}
+	
+	/**
+	 * Get the confidentiality score of this email
+	 * @return double
+	 */
+	public double getConfidentialityScoreOfThisEmail() {
+		return pConfidentialScoreOfThisEmail;
 	}
 	
 	/**
@@ -43,7 +73,7 @@ public class APatternReport {
 	 * @param i index
 	 * @return String word
 	 */
-	public String getWord(int i) {
+	public int getWord(int i) {
 		return words.get(i);
 	}
 	

@@ -27,7 +27,7 @@ public class APattern {
 	private double pConfidential;
 	private double pNotConfidential;
 	private ArrayList<Double> pConfidentialWithWord;
-	private ArrayList<String> pWords;
+	private ArrayList<Integer> pWords;
 	private ArrayList<Double> pWordInConfidential;
 	private ArrayList<Integer> pNumberOfEmailsWordIsIn;
 	int numberOfTotalEmails;
@@ -37,7 +37,7 @@ public class APattern {
 	 */
 	public APattern(int nTotalEmails) {
 		pConfidentialWithWord = new ArrayList<Double>();
-		pWords = new ArrayList<String>();
+		pWords = new ArrayList<Integer>();
 		//load value of pConfidential
 		pNotConfidential = 100 - pConfidential;
 		//load value of number of emails
@@ -50,7 +50,7 @@ public class APattern {
 	 * Report that a word with confidentially rating p has been added.  The word itself is not needed here.
 	 * @param probabilityWordInConfidential
 	 */
-	public void addWord(String word, double weight, int numberOfEmailsWordIsIn) {
+	public void addWord(int word, double weight, int numberOfEmailsWordIsIn) {
 		//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
 		double probabilityWordInConfidential = numberOfEmailsWordIsIn/numberOfTotalEmails;
 		double partOne = probabilityWordInConfidential*pConfidential;

@@ -164,8 +164,14 @@ public class ScannerGUI extends JFrame{
 				FileDialog fd = new FileDialog(new JFrame(), "Choose file to add", FileDialog.LOAD);
 				fd.setVisible(true);
 				if(fd.getFile() != null) {
-					filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
-					listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					int response = 0;
+					if(listModel.contains(fd.getFile())) {
+						response = JOptionPane.showConfirmDialog(new JFrame(), "A file with this name has already been added to be scanned.\nDo you wish to add a duplicate of the file?", "Add Duplicate File", JOptionPane.YES_NO_OPTION);
+					}
+					if (response == JOptionPane.YES_OPTION) {
+						filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
+						listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					}
 				}
 			}
 		});

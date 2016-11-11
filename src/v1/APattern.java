@@ -71,8 +71,9 @@ public class APattern {
 	/**
 	 * This will calculate the total probability that an email is confidential
 	 * @return probability that an email is confidential
+	 * @throws APatternException 
 	 */
-	public APatternReport calculateProbability() {
+	public APatternReport calculateProbability() throws APatternException {
 		APatternReport r;
 		
 		if (!hasAlreadyScanned) {

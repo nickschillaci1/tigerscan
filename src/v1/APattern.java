@@ -39,14 +39,12 @@ public class APattern {
 	public APattern(int nTotalEmails, double confidential) {
 		pConfidentialWithWord = new ArrayList<Double>();
 		pWords = new ArrayList<Integer>();
-		//load value of pConfidential
 		pConfidential = confidential;
 		pNotConfidential = 100 - pConfidential;
-		//load value of number of emails
 		pConfidentialWithWord = new ArrayList<Double>();
 		pNumberOfEmailsWordIsIn = new ArrayList<Integer>();
 		pWordInConfidential = new ArrayList<Double>();
-		numberOfTotalEmails = nTotalEmails;
+		numberOfTotalEmails = nTotalEmails+1;
 		hasAlreadyScanned = false;
 	}
 	
@@ -58,12 +56,13 @@ public class APattern {
 	public void addWord(int word, double weight, int numberOfEmailsWordIsIn) throws APatternException {
 		if (!hasAlreadyScanned) {
 			//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
-			double probabilityWordInConfidential = numberOfEmailsWordIsIn/numberOfTotalEmails;
+			numberOfEmailsWordIsIn++;
+			double probabilityWordInConfidential = (numberOfEmailsWordIsIn/numberOfTotalEmails)*100;
 			double partOne = probabilityWordInConfidential*pConfidential;
 			double partTwo = (100-probabilityWordInConfidential)*pNotConfidential;
-			pConfidentialWithWord.add(partOne/(partOne+partTwo)*weight);
+			pConfidentialWithWord.add(partOne/(partOne+partTwo)*weight*100);
 			pWords.add(word);
-			pWordInConfidential.add((double) (numberOfEmailsWordIsIn/numberOfTotalEmails));
+			pWordInConfidential.add(probabilityWordInConfidential);
 			pNumberOfEmailsWordIsIn.add(numberOfEmailsWordIsIn);
 		} else {
 			throw new APatternException();
@@ -80,9 +79,6 @@ public class APattern {
 		
 		if (!hasAlreadyScanned) {
 			int size = pConfidentialWithWord.size();
-			/*if (size == 0) {
-				return pConfidential;
-			}*/
 			
 			double rTemp;
 			double rOne = 1;
@@ -94,10 +90,15 @@ public class APattern {
 				rTwo*=(100-rTemp);
 			}
 			
-			pThisIsConfidential = rOne/(rOne+rTwo);
-			
-			numberOfTotalEmails ++;
-			pConfidential = (pConfidential*(numberOfTotalEmails-1)+pThisIsConfidential)/numberOfTotalEmails;
+			pThisIsConfidential = rOne/(rOne+rTwo)*100;
+				
+			//handle the case that this is the first email being scanned
+			if (numberOfTotalEmails>1) {
+				pConfidential = (pConfidential*(numberOfTotalEmails-1)+pThisIsConfidential)/numberOfTotalEmails;
+			} else {
+				pConfidential = (pConfidential+pThisIsConfidential)/2;
+			}
+				
 			pNotConfidential = (100-pConfidential);
 			r = new APatternReport(pThisIsConfidential, pConfidential, pNotConfidential);
 			
@@ -107,8 +108,6 @@ public class APattern {
 				int nEmailsWordIn = pNumberOfEmailsWordIsIn.get(i);
 				double pWC = (pWordInConfidential.get(i)*(nEmailsWordIn-1)+pThisIsConfidential)/nEmailsWordIn;
 				r.addWordAndSetValues(pWords.get(i),pWC);
-				//store that value
-				//store number of emails word is in
 			} 
 		} else {
 			throw new APatternException();

@@ -13,7 +13,7 @@ public class APatternTest {
 		double pConfidential = 50;
 		int wordInEmail = 0;
 		double cValue = 1;
-		int totalEmails = 1;
+		int totalEmails = 0;
 		
 		APattern p = new APattern(totalEmails,pConfidential);
 		APatternReport r = null;

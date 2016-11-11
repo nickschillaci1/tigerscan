@@ -58,13 +58,14 @@ public class APattern {
 	 * @param weight - the value given by the user
 	 * @param ac - the average probability of the emails the word has appeared in
 	 * @param numberOfEmailsWordIsIn
+	 * @param emailsBeforeWord - the number of emails scanned before the word was added to the database
 	 * @throws APatternException
 	 */
-	public void addWord(int word, double weight, double aC, int numberOfEmailsWordIsIn) throws APatternException {
+	public void addWord(int word, double weight, double aC, int numberOfEmailsWordIsIn, int emailsBeforeWord) throws APatternException {
 		if (!hasAlreadyScanned) {
 			//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
 			numberOfEmailsWordIsIn++;
-			double probabilityWordInConfidential = (numberOfEmailsWordIsIn/numberOfTotalEmails)*100;
+			double probabilityWordInConfidential = (numberOfEmailsWordIsIn/(numberOfTotalEmails-emailsBeforeWord))*100;
 			double partOne = probabilityWordInConfidential*pConfidential;
 			double partTwo = (100-probabilityWordInConfidential)*pNotConfidential;
 			pConfidentialWithWord.add(partOne/(partOne+partTwo)*(aC/100)*weight*100);

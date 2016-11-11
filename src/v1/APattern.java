@@ -45,6 +45,7 @@ public class APattern {
 		//load value of number of emails
 		pConfidentialWithWord = new ArrayList<Double>();
 		pNumberOfEmailsWordIsIn = new ArrayList<Integer>();
+		pWordInConfidential = new ArrayList<Double>();
 		numberOfTotalEmails = nTotalEmails;
 		hasAlreadyScanned = false;
 	}
@@ -62,7 +63,7 @@ public class APattern {
 			double partTwo = (100-probabilityWordInConfidential)*pNotConfidential;
 			pConfidentialWithWord.add(partOne/(partOne+partTwo)*weight);
 			pWords.add(word);
-			pWordInConfidential.add(probabilityWordInConfidential);
+			pWordInConfidential.add((double) (numberOfEmailsWordIsIn/numberOfTotalEmails));
 			pNumberOfEmailsWordIsIn.add(numberOfEmailsWordIsIn);
 		} else {
 			throw new APatternException();

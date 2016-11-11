@@ -15,6 +15,7 @@ public class APatternReport {
 	private double pNotConfidential;
 	private ArrayList<Integer> words;
 	private ArrayList<Double> aPConfidential;
+	boolean isLocked;
 	
 	/**
 	 * Instantiate the report
@@ -28,6 +29,7 @@ public class APatternReport {
 		pNotConfidential = pAnyNotConfidential;
 		words = new ArrayList<Integer>();
 		aPConfidential = new ArrayList<Double>();
+		isLocked = false;
 	}
 	
 	/**
@@ -35,10 +37,18 @@ public class APatternReport {
 	 * @param word String
 	 * @param nEmailsIn incremented
 	 * @param averagePConfidential new value
+	 * @throws APatternException 
 	 */
-	public void addWordAndSetValues(int word, double averagePConfidential) {
+	public void addWordAndSetValues(int word, double averagePConfidential) throws APatternException {
+		if (isLocked) {
+			throw new APatternException();
+		}
 		words.add(word);
 		aPConfidential.add(averagePConfidential);
+	}
+	
+	public void lock() {
+		isLocked = true;
 	}
 	
 	/**

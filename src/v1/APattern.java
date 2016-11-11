@@ -36,10 +36,11 @@ public class APattern {
 	/**
 	 * Initialize the Class
 	 */
-	public APattern(int nTotalEmails) {
+	public APattern(int nTotalEmails, double confidential) {
 		pConfidentialWithWord = new ArrayList<Double>();
 		pWords = new ArrayList<Integer>();
 		//load value of pConfidential
+		pConfidential = confidential;
 		pNotConfidential = 100 - pConfidential;
 		//load value of number of emails
 		pConfidentialWithWord = new ArrayList<Double>();

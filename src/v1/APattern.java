@@ -79,7 +79,7 @@ public class APattern {
 		
 		if (!hasAlreadyScanned) {
 			int size = pConfidentialWithWord.size();
-			
+		
 			double rTemp;
 			double rOne = 1;
 			double rTwo = 1;

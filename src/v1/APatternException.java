@@ -1,5 +1,5 @@
 package v1;
 
-public class APatternException extends Exception {
+public class APatternException extends RuntimeException {
 
 }

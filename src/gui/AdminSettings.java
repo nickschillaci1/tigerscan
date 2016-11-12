@@ -30,7 +30,7 @@ import db.DatabaseRemoveTermException;
 import v1.CSVReader;
 import v1.Main;
 
-public class AdminSettings {
+public class AdminSettings{
 
 	private JTable termsTable;
 	private CustomTableModel tableModel;
@@ -196,6 +196,31 @@ public class AdminSettings {
 				});
 				importButton.setPreferredSize(new Dimension(160, 30));
 				
+				JButton databaseButton = new JButton("Database Settings");
+				databaseButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						JDialog databaseDialog = new JDialog((JDialog)null, "Select Option", true);
+						
+						JButton renameDataButton = new JButton("Rename Database");
+						renameDataButton.addActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent e){
+								
+							}
+						});
+						
+						JButton changeDataButton = new JButton("Change Database");
+						changeDataButton.addActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent e){
+								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
+								fd.setVisible(true);
+								if(fd.getFile() != null){
+								}
+							}
+						});
+					}
+				});
+				
+				
 				leftPanel.add(addButton);
 				leftPanel.add(renameButton);
 				leftPanel.add(removeButton);
@@ -222,4 +247,5 @@ public class AdminSettings {
 				dbSettings.setAlwaysOnTop(true);
 				dbSettings.setVisible(true);
 	}
+	
 }

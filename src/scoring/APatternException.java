@@ -1,4 +1,4 @@
-package v1;
+package scoring;
 
 public class APatternException extends RuntimeException {
 

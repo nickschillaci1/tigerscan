@@ -1,4 +1,4 @@
-package v1;
+package scoring;
 
 import static org.junit.Assert.*;
 

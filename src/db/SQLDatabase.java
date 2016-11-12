@@ -25,7 +25,7 @@ public class SQLDatabase {
 	 * Create SQLDatabase object and initialize connection to the database file
 	 */
 	public SQLDatabase() {
-		databaseFileName = "database.db"; //will be serialized and saved when we allow changing the database name
+		databaseFileName = "data/database.db"; //will be serialized and saved when we allow changing the database name
 	    this.initConnection();
 	}
 	

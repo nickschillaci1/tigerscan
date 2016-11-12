@@ -4,13 +4,16 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URL;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -25,8 +28,9 @@ import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
 import v1.CSVReader;
+import v1.Main;
 
-public class AdminSettings {
+public class AdminSettings{
 
 	private JTable termsTable;
 	private CustomTableModel tableModel;
@@ -45,7 +49,9 @@ public class AdminSettings {
 				dbSettings.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 				dbSettings.setLocation(screenWidth/4, screenHeight/4);
 				try {
-					dbSettings.setIconImage(ImageIO.read(new File("res/settings.png")));
+					URL url = Main.class.getResource("/settings.png");
+					Image icon = tk.getImage(url);
+					dbSettings.setIconImage(icon);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -190,6 +196,31 @@ public class AdminSettings {
 				});
 				importButton.setPreferredSize(new Dimension(160, 30));
 				
+				JButton databaseButton = new JButton("Database Settings");
+				databaseButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						JDialog databaseDialog = new JDialog((JDialog)null, "Select Option", true);
+						
+						JButton renameDataButton = new JButton("Rename Database");
+						renameDataButton.addActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent e){
+								
+							}
+						});
+						
+						JButton changeDataButton = new JButton("Change Database");
+						changeDataButton.addActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent e){
+								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
+								fd.setVisible(true);
+								if(fd.getFile() != null){
+								}
+							}
+						});
+					}
+				});
+				
+				
 				leftPanel.add(addButton);
 				leftPanel.add(renameButton);
 				leftPanel.add(removeButton);
@@ -216,4 +247,5 @@ public class AdminSettings {
 				dbSettings.setAlwaysOnTop(true);
 				dbSettings.setVisible(true);
 	}
+	
 }

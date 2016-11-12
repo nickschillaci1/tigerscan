@@ -3,6 +3,7 @@ package v1;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -32,8 +33,7 @@ public class ContentScanner {
 	private FileIndexer indexer;
 	private FileSearcher searcher;
 	
-	String indexDir = "E:\\Temp\\";			//Will probably get the filepath from another class later on,
-	//String dataDir = "C:\\Users\\Ryan\\Desktop\\test directory";	//just putting these here for now.
+	String indexDir = "data\\";
 	
 	public ContentScanner(DatabaseManager db) {
 		this.db = db;
@@ -41,8 +41,14 @@ public class ContentScanner {
 
 	public int scanFiles(ArrayList<String> importedFileNames) {
 		confidentialityScore = 0;
+		HashMap<Integer, Integer> termList = db.getTerms();
 		try {
 			this.createIndex(importedFileNames);
+			for(Integer value : termList.values()) {
+				//search(value);
+				
+
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

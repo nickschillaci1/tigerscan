@@ -47,8 +47,6 @@ public class FileIndexer {
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		writer = new IndexWriter(docDir, iwc);
-		
-		//TODO Find a way to delete the last index when we create a new one.
 	}
 
 	/**

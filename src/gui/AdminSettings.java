@@ -4,13 +4,16 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URL;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -25,6 +28,7 @@ import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
 import v1.CSVReader;
+import v1.Main;
 
 public class AdminSettings {
 
@@ -45,7 +49,9 @@ public class AdminSettings {
 				dbSettings.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 				dbSettings.setLocation(screenWidth/4, screenHeight/4);
 				try {
-					dbSettings.setIconImage(ImageIO.read(new File("res/settings.png")));
+					URL url = Main.class.getResource("/settings.png");
+					Image icon = tk.getImage(url);
+					dbSettings.setIconImage(icon);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

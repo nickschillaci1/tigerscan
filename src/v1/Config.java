@@ -22,7 +22,7 @@ public class Config {
 	private static String databaseFilename;
 	
 	/**
-	 * Write current object contents to the config file
+	 * Write current attributes to the config file
 	 * @throws IOException
 	 */
 	private static void updateConfigFile() throws IOException {
@@ -30,6 +30,7 @@ public class Config {
 		bw.write(Integer.toString(numEmailsScanned));
 		bw.newLine();
 		bw.write(databaseFilename);
+		bw.newLine();
 		bw.close();
 	}
 	

@@ -8,12 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -21,13 +19,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.Font;
-import java.awt.GridLayout;
-
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -39,15 +34,10 @@ import java.awt.Dimension;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
-import db.DatabaseAddTermException;
 import db.DatabaseManager;
-import db.DatabaseRemoveTermException;
-import v1.CSVReader;
 import v1.ContentScanner;
+import v1.Config;
 import v1.Main;
-
 
 /**
  * Graphic interface to operate the security scanner
@@ -164,8 +154,14 @@ public class ScannerGUI extends JFrame{
 				FileDialog fd = new FileDialog(new JFrame(), "Choose file to add", FileDialog.LOAD);
 				fd.setVisible(true);
 				if(fd.getFile() != null) {
-					filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
-					listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					int response = 0;
+					if(listModel.contains(fd.getFile())) {
+						response = JOptionPane.showConfirmDialog(new JFrame(), "A file with this name has already been added to be scanned.\nDo you wish to add a duplicate of the file?", "Add Duplicate File", JOptionPane.YES_NO_OPTION);
+					}
+					if (response == JOptionPane.YES_OPTION) {
+						filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
+						listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					}
 				}
 			}
 		});
@@ -210,6 +206,11 @@ public class ScannerGUI extends JFrame{
 					System.out.println("Scanning file: \"" + filenames.get(i) + "\""); // exact directory and file name
 					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
 					score += scanner.scanFiles(filenames);
+					try {
+						Config.emailScanned();
+					} catch (IOException e) {
+						System.err.println("Error writing to config file");
+					}
 				}
 				JOptionPane.showMessageDialog(null,"Score: "+score);
 				if(filenames.size() == 0)

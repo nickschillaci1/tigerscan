@@ -40,10 +40,9 @@ public class ContentScanner {
 
 	public int scanFiles(ArrayList<String> importedFileNames) {
 		confidentialityScore = 0;
-		HashMap<Integer, Integer> termList = db.getTerms();
 		try {
 			this.createIndex(importedFileNames);
-			for(Integer value : termList.values()) {
+			for(Integer value : db.getTerms().keySet()) {
 				//search(value);
 				
 
@@ -107,9 +106,9 @@ public class ContentScanner {
 	
 	private void createIndex(ArrayList<String> filenames) throws IOException{
 		indexer = new FileIndexer(indexDir);
-		int numIndexed;
-		long startTime = System.currentTimeMillis();	
-		numIndexed = indexer.createIndex(filenames, new TextFileFilter());
+		int numIndexed = filenames.size();
+		long startTime = System.currentTimeMillis();
+		indexer.createIndex(filenames, new TextFileFilter());
 		long endTime = System.currentTimeMillis();
 		indexer.closeIndex();
 		System.out.println(numIndexed+" file(s) indexed, time taken: "

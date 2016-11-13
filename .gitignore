@@ -12,7 +12,5 @@
 hs_err_pid*
 /bin/
 
-# config and lucene index files (file-specific, rewritten every scan)
-/data/index/segments_*
-/data/index/write.lock
-/data/config.cfg
+# config, db and index files (system-specific, rewritten every scan)
+/data/*

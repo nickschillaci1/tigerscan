@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class SQLDatabase {
 
-	private String databaseFileName = "database.db"; //will be serialized and saved when we allow changing the database name
+	private String databaseFileName = "data/database.db"; //will be serialized and saved when we allow changing the database name
 	private Connection c = null;
 	private Statement stmt = null;
 	

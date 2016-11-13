@@ -11,3 +11,8 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /bin/
+
+# config and lucene index files (file-specific, rewritten every scan)
+/data/index/segments_*
+/data/index/write.lock
+/data/config.cfg

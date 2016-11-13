@@ -1,6 +1,5 @@
 package v1;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +32,7 @@ public class ContentScanner {
 	private FileIndexer indexer;
 	private FileSearcher searcher;
 	
-	String indexDir = "data\\";
+	String indexDir = "data/index/";
 	
 	public ContentScanner(DatabaseManager db) {
 		this.db = db;

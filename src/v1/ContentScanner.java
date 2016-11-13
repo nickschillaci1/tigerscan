@@ -43,11 +43,11 @@ public class ContentScanner {
 		try {
 			this.createIndex(importedFileNames);
 			for(Integer value : db.getTerms().keySet()) {
-				//search(value);
+				search(value.toString());
 				
 
 			}
-		} catch (IOException e) {
+		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
 		return confidentialityScore;

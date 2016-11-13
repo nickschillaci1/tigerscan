@@ -1,5 +1,6 @@
 package db;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class DatabaseManager {
      * This will initialize the database and load in terms if there are any to load
      */
     public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
+    	new File("data/").mkdir(); //ensure data folder exists for first execution
     	terms = new HashMap<Integer,Integer>();
     	sqld = new SQLDatabase();
     	

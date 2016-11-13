@@ -42,12 +42,12 @@ public class ContentScanner {
 		confidentialityScore = 0;
 		try {
 			this.createIndex(importedFileNames);
-			for(Integer value : db.getTerms().keySet()) {
-				search(value.toString());
+			for(String value : db.getTerms().keySet()) {
+				//search(value);
 				
 
 			}
-		} catch (IOException | ParseException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return confidentialityScore;

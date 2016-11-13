@@ -43,9 +43,13 @@ public class ContentScanner {
 		try {
 			this.createIndex(importedFileNames);
 			for(String value : db.getTerms().keySet()) {
-				//search(value);
-				
-
+				try {
+					System.out.println("GOt here");
+					search(value);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}			
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -100,7 +104,7 @@ public class ContentScanner {
 				" documents found. Time :" + (endTime - startTime) +" ms");
 		for(ScoreDoc scoreDoc : hits.scoreDocs) {
 			Document doc = searcher.getDocument(scoreDoc);
-			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//should be spitting out filepath
+			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//Bugged, should be spitting out filepath
 		}
 	}
 	

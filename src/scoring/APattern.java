@@ -72,14 +72,14 @@ public class APattern {
 			
 			double pWC;
 			if (numberOfEmailsWordIsIn>1) {
-				pWC = ((numberOfEmailsWordIsIn*(aC*(numberOfEmailsWordIsIn-1))))/(probabilityWordInEmail*(numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn-1+numberOfEmailsWordIsNotIn)))*100;
+				pWC = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*((numberOfEmailsWordIsIn-1)*(aC/100));
 			} else if (numberOfEmailsWordIsNotIn>0) {
 				pWC = probabilityWordInEmail;
 			} else {
 				pWC = 0.5;
 			}
 			double pTwo = ((1-pWC)*(100-pConf));
-			double pWCC = pWC*pConf; 
+			double pWCC = pWC*pConf;
 			pConfidentialWithWord.add(pWCC/(pWCC+pTwo)*weight*100);
 			
 			pAveragePerWord.add(aC);

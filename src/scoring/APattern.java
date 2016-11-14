@@ -31,6 +31,7 @@ public class APattern {
 	private ArrayList<Double> pAveragePerWord;
 	//private ArrayList<Double> pConfPerWord;
 	private ArrayList<Integer> pNumberOfEmailsWordIsNotIn;
+	private ArrayList<Double> pConfTotal;
 	boolean hasAlreadyScanned;
 	
 	/**
@@ -47,6 +48,7 @@ public class APattern {
 		pAveragePerWord = new ArrayList<Double>();
 		//pConfPerWord = new ArrayList<Double>();
 		pNumberOfEmailsWordIsNotIn = new ArrayList<Integer>();
+		pConfTotal = new ArrayList<Double>();
 		hasAlreadyScanned = false;
 	}
 	
@@ -71,8 +73,10 @@ public class APattern {
 			double pWC;
 			if (numberOfEmailsWordIsIn>1) {
 				pWC = ((numberOfEmailsWordIsIn*(aC*(numberOfEmailsWordIsIn-1))))/(probabilityWordInEmail*(numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn-1+numberOfEmailsWordIsNotIn)))*100;
-			} else {
+			} else if (numberOfEmailsWordIsNotIn>0) {
 				pWC = probabilityWordInEmail;
+			} else {
+				pWC = 0.5;
 			}
 			double pTwo = ((1-pWC)*(100-pConf));
 			double pWCC = pWC*pConf; 
@@ -80,6 +84,7 @@ public class APattern {
 			
 			pAveragePerWord.add(aC);
 			pWords.add(word);
+			pConfTotal.add(pConf);
 			//pWordInConfidential.add(probabilityWordInConfidential);
 			pNumberOfEmailsWordIsIn.add(numberOfEmailsWordIsIn);
 			pNumberOfEmailsWordIsNotIn.add(numberOfEmailsWordIsNotIn);
@@ -117,8 +122,11 @@ public class APattern {
 			int wordSize = pWords.size();
 			for (int i=0; i<wordSize; i++) {
 				int nEmailsWordIn = pNumberOfEmailsWordIsIn.get(i);
+				int nEmailsWordNotIn = pNumberOfEmailsWordIsNotIn.get(i);
+				int totalWords = nEmailsWordIn+nEmailsWordNotIn;
 				double pWC = (pAveragePerWord.get(i)*(nEmailsWordIn-1)+pThisIsConfidential)/nEmailsWordIn;
-				double confWord = (pAveragePerWord.get(i)*nEmailsWordIn+pWC)/(nEmailsWordIn+pNumberOfEmailsWordIsNotIn.get(i));
+				//double confWord = (pAveragePerWord.get(i)*(nEmailsWordIn-1)+pWC)/(nEmailsWordIn+pNumberOfEmailsWordIsNotIn.get(i));
+				double confWord = ((pConfTotal.get(i)*(totalWords-1))+pThisIsConfidential)/totalWords;
 				r.addWordAndSetValues(pWords.get(i),pWC,confWord);
 			} 
 		} else {

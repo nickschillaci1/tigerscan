@@ -12,34 +12,10 @@ public class APatternTest {
 		
 		//test what happens when the first email ever is scanned and a word is found
 		testVeryFirstEmailWithWordFound();
-
-		//when a word is not found
-		//testVeryFirstEmailWithWordNotFound();
 		
 		//test second email
 		testSecondEmailWordFound();
 	}
-	
-	/*private void testVeryFirstEmailWithWordNotFound() {
-		System.out.println("Test case: first email ever, word not found");
-		//test what happens when the first email ever is scanned
-		double pConfidential = 50;
-		int totalEmails = 0;
-		
-		APattern p = new APattern(totalEmails,pConfidential);
-		APatternReport r = null;
-		
-		r = p.calculateProbability();
-		
-		//look at the results
-		double rPConfidential = r.getProbabilityAnyEmailIsConfidential();
-		double rCEmail = r.getConfidentialityScoreOfThisEmail();
-		
-		System.out.println("P any email: "+rPConfidential);
-		System.out.println("P of this Email: "+rCEmail);
-		System.out.println();
-		
-	}*/
 
 	private void testVeryFirstEmailWithWordFound() {
 		//test what happens when the first email ever is scanned

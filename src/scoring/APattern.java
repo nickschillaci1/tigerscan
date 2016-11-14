@@ -30,8 +30,7 @@ public class APattern {
 	private ArrayList<Integer> pNumberOfEmailsWordIsIn;
 	private ArrayList<Double> pAveragePerWord;
 	//private ArrayList<Double> pConfPerWord;
-	private ArrayList<Integer> pWordsEmailsIn;
-	private ArrayList<Integer> pWordsEmailsNotIn;
+	private ArrayList<Integer> pNumberOfEmailsWordIsNotIn;
 	boolean hasAlreadyScanned;
 	
 	/**
@@ -47,8 +46,7 @@ public class APattern {
 		//pWordInConfidential = new ArrayList<Double>();
 		pAveragePerWord = new ArrayList<Double>();
 		//pConfPerWord = new ArrayList<Double>();
-		pWordsEmailsIn = new ArrayList<Integer>();
-		pWordsEmailsNotIn = new ArrayList<Integer>();
+		pNumberOfEmailsWordIsNotIn = new ArrayList<Integer>();
 		hasAlreadyScanned = false;
 	}
 	
@@ -65,16 +63,26 @@ public class APattern {
 		if (!hasAlreadyScanned) {
 			//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
 			numberOfEmailsWordIsIn++;
-			double probabilityWordInConfidential = (numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*100;
-			double partOne = probabilityWordInConfidential*pConf;
-			double partTwo = (100-probabilityWordInConfidential)*(100-pConf);
-			pConfidentialWithWord.add(partOne/(partOne+partTwo)*(aC/100)*weight*100);
+			double probabilityWordInEmail = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn));//*100;
+			/**double partOne = probabilityWordInEmail*pConf;
+			double partTwo = (1-probabilityWordInEmail)*(100-pConf);
+			pConfidentialWithWord.add((partOne/(partOne+partTwo))*(aC/100)*weight*100);**/
+			
+			double pWC;
+			if (numberOfEmailsWordIsIn>1) {
+				pWC = ((numberOfEmailsWordIsIn*(aC*(numberOfEmailsWordIsIn-1))))/(probabilityWordInEmail*(numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn-1+numberOfEmailsWordIsNotIn)))*100;
+			} else {
+				pWC = probabilityWordInEmail;
+			}
+			double pTwo = ((1-pWC)*(100-pConf));
+			double pWCC = pWC*pConf; 
+			pConfidentialWithWord.add(pWCC/(pWCC+pTwo)*weight*100);
+			
 			pAveragePerWord.add(aC);
 			pWords.add(word);
 			//pWordInConfidential.add(probabilityWordInConfidential);
 			pNumberOfEmailsWordIsIn.add(numberOfEmailsWordIsIn);
-			pWordsEmailsIn.add(numberOfEmailsWordIsIn);
-			pWordsEmailsNotIn.add(numberOfEmailsWordIsNotIn);
+			pNumberOfEmailsWordIsNotIn.add(numberOfEmailsWordIsNotIn);
 		} else {
 			throw new APatternException();
 		}
@@ -110,14 +118,15 @@ public class APattern {
 			for (int i=0; i<wordSize; i++) {
 				int nEmailsWordIn = pNumberOfEmailsWordIsIn.get(i);
 				double pWC = (pAveragePerWord.get(i)*(nEmailsWordIn-1)+pThisIsConfidential)/nEmailsWordIn;
-				int emailsIn = pWordsEmailsIn.get(i);
-				double confWord = (pAveragePerWord.get(i)*emailsIn+pWC)/(emailsIn+pWordsEmailsNotIn.get(i));
+				double confWord = (pAveragePerWord.get(i)*nEmailsWordIn+pWC)/(nEmailsWordIn+pNumberOfEmailsWordIsNotIn.get(i));
 				r.addWordAndSetValues(pWords.get(i),pWC,confWord);
 			} 
 		} else {
 			throw new APatternException();
 		}
 		
+		
+		hasAlreadyScanned = true;
 		//return the value from this analysis
 		
 		return r;

@@ -12,10 +12,10 @@ public class APatternTest {
 		testVeryFirstEmailWithWordFound();
 
 		//when a word is not found
-		testVeryFirstEmailWithWordNotFound();
+		//testVeryFirstEmailWithWordNotFound();
 	}
 	
-	private void testVeryFirstEmailWithWordNotFound() {
+	/*private void testVeryFirstEmailWithWordNotFound() {
 		System.out.println("Test case: first email ever, word not found");
 		//test what happens when the first email ever is scanned
 		double pConfidential = 50;
@@ -34,22 +34,23 @@ public class APatternTest {
 		System.out.println("P of this Email: "+rCEmail);
 		System.out.println();
 		
-	}
+	}*/
 
 	private void testVeryFirstEmailWithWordFound() {
 		//test what happens when the first email ever is scanned
 		System.out.println("Test case: first email ever, word found");
 		String cWord = "yellow";
-		double pConfidential = 50;
+		double pConfidentialWord = 50;
+		double averageConfidentialityWord = 0;
 		int wordInEmail = 0;
+		int wordNotInEmail = 0;
 		double cValue = 1;
-		int totalEmails = 0;
 		
-		APattern p = new APattern(totalEmails,pConfidential);
+		APattern p = new APattern();
 		APatternReport r = null;
 		
 		try {
-			p.addWord(cWord.hashCode(),cValue,wordInEmail);
+			p.addWord(cWord.hashCode(),cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
 			r = p.calculateProbability();
 		} catch (APatternException e) {
 			// TODO Auto-generated catch block
@@ -57,7 +58,7 @@ public class APatternTest {
 		}
 		
 		//look at the results
-		double rPConfidential = r.getProbabilityAnyEmailIsConfidential();
+		double rPConfidential = r.getProbabilityConfidentialPerWord(0);
 		double rCEmail = r.getConfidentialityScoreOfThisEmail();
 		double aPWord = r.getAverageProbabilityConfidential(0);
 		

@@ -11,10 +11,9 @@ import java.util.ArrayList;
 public class APatternReport {
 
 	private double pConfidentialScoreOfThisEmail;
-	private double pConfidential;
-	private double pNotConfidential;
 	private ArrayList<Integer> words;
 	private ArrayList<Double> aPConfidential;
+	private ArrayList<Double> aPAnyC;
 	boolean isLocked;
 	
 	/**
@@ -23,12 +22,11 @@ public class APatternReport {
 	 * @param pAnyConfidential the new value of the probability that any email is confidential
 	 * @param pAnyNotConfidential (1-pAnyConfidential)
 	 */
-	public APatternReport(double pConfidentialOfThisEmail, double pAnyConfidential, double pAnyNotConfidential) {
+	public APatternReport(double pConfidentialOfThisEmail) {
 		pConfidentialScoreOfThisEmail = pConfidentialOfThisEmail;
-		pConfidential = pAnyConfidential;
-		pNotConfidential = pAnyNotConfidential;
 		words = new ArrayList<Integer>();
 		aPConfidential = new ArrayList<Double>();
+		aPAnyC = new ArrayList<Double>();
 		isLocked = false;
 	}
 	
@@ -39,32 +37,17 @@ public class APatternReport {
 	 * @param averagePConfidential new value
 	 * @throws APatternException 
 	 */
-	public void addWordAndSetValues(int word, double averagePConfidential) throws APatternException {
+	public void addWordAndSetValues(int word, double averagePConfidential, double pC) throws APatternException {
 		if (isLocked) {
 			throw new APatternException();
 		}
 		words.add(word);
 		aPConfidential.add(averagePConfidential);
+		aPAnyC.add(pC);
 	}
 	
 	public void lock() {
 		isLocked = true;
-	}
-	
-	/**
-	 * Get the probability any given email is not confidential.
-	 * @return pNotConfidential
-	 */
-	public double getProbabilityAnyEmailIsNotConfidential() {
-		return pNotConfidential;
-	}
-	
-	/**
-	 * Get the probability any given email is confidential.
-	 * @return pConfidential
-	 */
-	public double getProbabilityAnyEmailIsConfidential() {
-		return pConfidential;
 	}
 	
 	/**
@@ -92,5 +75,14 @@ public class APatternReport {
 	 */
 	public double getAverageProbabilityConfidential(int i) {
 		return aPConfidential.get(i);
+	}
+	
+	/**
+	 * Get the probability that any email is confidential (word per word basis)
+	 * @param i index
+	 * @return double
+	 */
+	public double getProbabilityConfidentialPerWord(int i) {
+		return aPAnyC.get(i);
 	}
 }

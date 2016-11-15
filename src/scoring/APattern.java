@@ -6,21 +6,11 @@ import java.util.ArrayList;
  * This class will handle analysis of the information to determine how likely it is that an email is confidential
  * This is a modification of Bayes Spam Filtering 
  * @author Brandon Dixon
- * @version 11/4/16
+ * @version 11/11/16
  *
  */
 
 
-/**
- * The database should save:
- * Words
- * Each score's word
- * For each word: number of emails it has appeared in
- * For each word: average of probabilities of each email it has apperaed in, 
- * Total number of emails we've scanned
- * Probability that any given email is confidential
- *
- */
 
 public class APattern {
 

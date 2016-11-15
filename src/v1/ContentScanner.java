@@ -39,7 +39,7 @@ public class ContentScanner {
 		this.db = db;
 	}
 
-	public HashMap<String,APatternReport> scanFiles(ArrayList<String> importedFileNames) {
+	public HashMap<String,Double> scanFiles(ArrayList<String> importedFileNames) {
 		//confidentialityScore = 0;
 		
 		//create APattern reports for each email
@@ -48,7 +48,7 @@ public class ContentScanner {
 		for (int i=0; i<size; i++) {
 			emailAP.put(importedFileNames.get(i),new APattern());
 		}
-		HashMap<String,APatternReport> emailAPR = new HashMap<String,APatternReport>();
+		//HashMap<String,APatternReport> emailAPR = new HashMap<String,APatternReport>();
 		
 		//create queryWords
 		HashMap<String,Integer> queryWords = new HashMap<String,Integer>();
@@ -76,7 +76,7 @@ public class ContentScanner {
 			}
 		}
 		System.out.println("Woa we made it to the end");
-		return emailAPR;
+		//return emailAPR;
 		//stop email and alert user is confidentiality score is above threshold
 	}
 

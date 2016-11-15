@@ -14,3 +14,4 @@ hs_err_pid*
 
 # config, db and index files (system-specific, rewritten every scan)
 /data/*
+/target/

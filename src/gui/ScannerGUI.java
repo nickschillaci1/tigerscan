@@ -8,7 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+<<<<<<< HEAD
 import java.io.IOException;
+=======
+>>>>>>> lucene-dev
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -200,21 +203,15 @@ public class ScannerGUI extends JFrame{
 		fileScanPanel.add(fileScanButton);
 		fileScanButton.setMnemonic(KeyEvent.VK_S);
 		fileScanButton.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent event) {
-				int score = 0;
-				for(int i = 0; i < filenames.size(); i++) {
-					System.out.println("Scanning file: \"" + filenames.get(i) + "\""); // exact directory and file name
-					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
-					score += scanner.scanFiles(filenames);
-					try {
-						Config.emailScanned();
-					} catch (IOException e) {
-						System.err.println("Error writing to config file");
-					}
-				}
-				JOptionPane.showMessageDialog(null,"Score: "+score);
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");
+				else {
+					int score = scanner.scanFiles(filenames);
+					JOptionPane.showMessageDialog(null,"Score: "+score);
+				}
+
 			}
 		});
 		

@@ -96,9 +96,9 @@ public class DatabaseManager {
 		    } else {
 		    	int tValue = values.get(keys[i]);
 		    	//if the value is not between 0 and 100
-		    	if (tValue<0 && tValue>100) {
-		    		throw new DatabaseAddTermException(0);
-		    	}
+		    	/*if (tValue<0 && tValue>100) {
+		    		throw new DatabaseAddTermException("");
+		    	}*/
 		    	terms.put(temp,tValue);
 		    	try {
 					sqld.addTerm(temp,tValue);

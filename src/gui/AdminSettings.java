@@ -62,7 +62,7 @@ public class AdminSettings{
 				FlowLayout leftFlow = new FlowLayout();
 				leftFlow.setVgap(20);
 				leftPanel.setLayout(leftFlow);
-				leftPanel.setBorder(new EmptyBorder(20, 0 , 0, 0));
+				leftPanel.setBorder(new EmptyBorder(-5, 0 , 0, 0));
 				
 				JButton changeButton = new JButton("Change Classification");
 				changeButton.addActionListener(new ActionListener(){
@@ -73,7 +73,7 @@ public class AdminSettings{
 							String newScore = (String) JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE);
 							if (newScore != term && newScore != null) {
 								try {
-									db.changeScore(Integer.parseInt(term), Integer.parseInt(newScore));
+									db.changeScore(term, Integer.parseInt(newScore));
 									tableModel.setValueAt(newScore, termsTable.getSelectedRow(), 1);
 									tableModel.fireTableDataChanged();
 								} catch (NumberFormatException e) {
@@ -97,7 +97,7 @@ public class AdminSettings{
 							if (newName != term && newName != null) {
 								try {
 									db.addTerm(newName, db.getTerms().get(Integer.parseInt(term)));
-									db.removeTermByHash(Integer.parseInt(term));
+									db.removeTerm(term);
 								} catch (NumberFormatException e) {
 									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (DatabaseAddTermException e) {
@@ -140,7 +140,7 @@ public class AdminSettings{
 							int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove the term \"" + term + "\"?", "Remove Term", JOptionPane.YES_NO_OPTION);
 							if (response == JOptionPane.YES_OPTION) {
 								try{
-									db.removeTermByHash(Integer.parseInt(term));
+									db.removeTerm(term);
 									tableModel.fireTableDataChanged();
 								}
 								catch(DatabaseRemoveTermException e)
@@ -199,14 +199,40 @@ public class AdminSettings{
 				JButton databaseButton = new JButton("Database Settings");
 				databaseButton.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent e){
-						JDialog databaseDialog = new JDialog((JDialog)null, "Select Option", true);
+						JDialog databaseDialog = new JDialog(dbSettings, "Select Option", true);
+						databaseDialog.setSize(400, 90);
+						databaseDialog.setLocation(screenWidth/3, screenHeight/3);
+						
+						JPanel databasePanel = new JPanel();
+						databasePanel.setLayout(new FlowLayout());
+						databasePanel.setBorder(new EmptyBorder(5,0,0,0));
 						
 						JButton renameDataButton = new JButton("Rename Database");
 						renameDataButton.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e){
+								String filename = JOptionPane.showInputDialog(databasePanel, "Enter new name for database file:", 
+																				"Input New Filename", JOptionPane.PLAIN_MESSAGE);
+								if(filename != null)
+								{
+								if(!filename.contains(".db")) filename += ".db";	
+								String oldDBFile = db.getDatabaseFilename();
+								File oldDB = new File(oldDBFile);
+								String[] pathArray = oldDBFile.split("/.*.db");
 								
+								String newPath = pathArray[0] + "/" + filename;
+								
+								try{
+									oldDB.renameTo(new File(newPath));
+									db.setSQLFilename(newPath);
+								}
+								catch(SQLException exception)
+								{
+									JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}
 							}
 						});
+						renameDataButton.setPreferredSize(new Dimension(160, 30));
 						
 						JButton changeDataButton = new JButton("Change Database");
 						changeDataButton.addActionListener(new ActionListener(){
@@ -214,13 +240,25 @@ public class AdminSettings{
 								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
 								fd.setVisible(true);
 								if(fd.getFile() != null){
-									db.setSQLFilename(fd.getFile());
+									try{
+										db.setSQLFilename(fd.getFile());
+									}
+									catch(SQLException exception)
+									{
+										JOptionPane.showMessageDialog(null, "Unable to change database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+									}
 								}
 							}
 						});
+						changeDataButton.setPreferredSize(new Dimension(160, 30));
+						
+						databasePanel.add(renameDataButton);
+						databasePanel.add(changeDataButton);
+						databaseDialog.add(databasePanel);
+						databaseDialog.setVisible(true);
 					}
 				});
-				
+				databaseButton.setPreferredSize(new Dimension(160, 30));
 				
 				leftPanel.add(addButton);
 				leftPanel.add(renameButton);
@@ -228,10 +266,9 @@ public class AdminSettings{
 				leftPanel.add(removeAllButton);
 				leftPanel.add(changeButton);
 				leftPanel.add(importButton);
+				leftPanel.add(databaseButton);
 					
-				
 				JPanel rightPanel = new JPanel();
-				
 				
 				JLabel termsLabel = new JLabel("Database Terms");
 				tableModel = new CustomTableModel(db.getTerms());

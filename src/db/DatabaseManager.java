@@ -309,7 +309,20 @@ public class DatabaseManager {
 	 * Used with AdminSettings so the database filename can be changed.
 	 * @return sqld
 	 */
-	public void setSQLFilename(String filename){
-		sqld.setDatabaseFileName(filename);
+	public void setSQLFilename(String filename) throws SQLException{
+		try{
+			sqld.setDatabaseFileName(filename);
+		}
+		catch(SQLException e)
+		{
+			throw e;
+		}
 	}
+	
+	public String getFilename()
+	{
+		return sqld.getDatabaseFileName();
+	}
+	
+	
 }

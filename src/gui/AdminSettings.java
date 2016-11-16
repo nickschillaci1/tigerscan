@@ -9,7 +9,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
@@ -27,7 +29,9 @@ import javax.swing.border.EmptyBorder;
 import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
+import java.nio.file.Path;
 import v1.CSVReader;
+import v1.Config;
 import v1.Main;
 
 public class AdminSettings{
@@ -220,12 +224,21 @@ public class AdminSettings{
 								String[] pathArray = oldDBFile.split("/.*.db");
 								
 								String newPath = pathArray[0] + "/" + filename;
+								File newDB = new File(newPath);
 								
 								try{
-									oldDB.renameTo(new File(newPath));
+									oldDB.renameTo(newDB);
+									Config.setDatabaseFilename(newPath);
 									db.setSQLFilename(newPath);
+									
+									JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newPath, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
+									oldDB.delete();
 								}
 								catch(SQLException exception)
+								{
+									JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+								}
+								catch(IOException exception)
 								{
 									JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
 								}

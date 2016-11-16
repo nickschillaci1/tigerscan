@@ -73,7 +73,7 @@ public class AdminSettings{
 							String newScore = (String) JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE);
 							if (newScore != term && newScore != null) {
 								try {
-									db.changeScore(Integer.parseInt(term), Integer.parseInt(newScore));
+									db.changeScore(term, Integer.parseInt(newScore));
 									tableModel.setValueAt(newScore, termsTable.getSelectedRow(), 1);
 									tableModel.fireTableDataChanged();
 								} catch (NumberFormatException e) {
@@ -96,8 +96,10 @@ public class AdminSettings{
 							String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
 							if (newName != term && newName != null) {
 								try {
-									db.addTerm(newName, db.getTerms().get(Integer.parseInt(term)));
-									db.removeTermByHash(Integer.parseInt(term));
+									db.addTerm(newName, db.getTerms().get(term));
+									db.removeTerm(term);
+									tableModel = new CustomTableModel(db.getTerms()); //refresh terms
+									termsTable.setModel(tableModel);
 								} catch (NumberFormatException e) {
 									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (DatabaseAddTermException e) {
@@ -120,6 +122,8 @@ public class AdminSettings{
 						if (term != null) {
 							try{
 								db.addTerm(term, 1); //TODO add default score or require score when adding terms
+								tableModel = new CustomTableModel(db.getTerms()); //refresh terms
+								termsTable.setModel(tableModel);
 								tableModel.fireTableDataChanged();
 							}
 							catch(DatabaseAddTermException e)
@@ -140,7 +144,9 @@ public class AdminSettings{
 							int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove the term \"" + term + "\"?", "Remove Term", JOptionPane.YES_NO_OPTION);
 							if (response == JOptionPane.YES_OPTION) {
 								try{
-									db.removeTermByHash(Integer.parseInt(term));
+									db.removeTerm(term);
+									tableModel = new CustomTableModel(db.getTerms()); //refresh terms
+									termsTable.setModel(tableModel);
 									tableModel.fireTableDataChanged();
 								}
 								catch(DatabaseRemoveTermException e)
@@ -161,7 +167,7 @@ public class AdminSettings{
 						if (response == JOptionPane.YES_OPTION) {
 
 							db.removeAllTerms();
-							tableModel = new CustomTableModel(db.getTerms());
+							tableModel = new CustomTableModel(db.getTerms()); //refresh terms (empty)
 							termsTable.setModel(tableModel);
 						}
 					}

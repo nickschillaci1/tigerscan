@@ -18,6 +18,7 @@ import java.util.HashMap;
 public class SQLDatabase {
 
 	private String databaseFileName;
+
 	private Connection c = null;
 	private Statement stmt = null;
 	
@@ -86,7 +87,7 @@ public class SQLDatabase {
 	 * @param int score to assign to the term
 	 * @throws SQLException
 	 */
-	public void addTerm(int term, int score) throws SQLException {
+	public void addTerm(String term, int score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE,FREQUENCY,AVGPROB) " +
     				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ");";
@@ -100,7 +101,7 @@ public class SQLDatabase {
 	 * @param String term to remove
 	 * @throws SQLException
 	 */
-	public void removeTerm(int term) throws SQLException {
+	public void removeTerm(String term) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "DELETE FROM TERMS WHERE TERM=\'" + term + "\';";
 		stmt.executeUpdate(sql);
@@ -127,7 +128,7 @@ public class SQLDatabase {
 	 * @param int score to change previous score to
 	 * @throws SQLException
 	 */
-	public void changeScore(int term, int score) throws SQLException {
+	public void changeScore(String term, int score) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET SCORE = " + score + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);
@@ -140,12 +141,12 @@ public class SQLDatabase {
 	 * @return HashMap<%TERM%,%SCORE%> of all terms in the database
 	 * @throws SQLException 
 	 */
-	public HashMap<Integer,Integer> getTerms() throws SQLException {
-		HashMap<Integer,Integer> terms = new HashMap<Integer,Integer>();
+	public HashMap<String,Integer> getTerms() throws SQLException {
+		HashMap<String,Integer> terms = new HashMap<String,Integer>();
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
 		while(rs.next()) { //loop through entries in the database
-			terms.put(rs.getInt("TERM"), rs.getInt("SCORE"));
+			terms.put(rs.getString("TERM"), rs.getInt("SCORE"));
 		}
 		rs.close();
 		stmt.close();
@@ -159,7 +160,7 @@ public class SQLDatabase {
 	 * @return frequency of the term
 	 * @throws SQLException
 	 */
-	public int getFrequency(int term) throws SQLException {
+	public int getFrequency(String term) throws SQLException {
 		int freq = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
@@ -177,7 +178,7 @@ public class SQLDatabase {
 	 * @param int term to increment frequency of
 	 * @throws SQLException
 	 */
-	public void incrementFrequency(int term) throws SQLException {
+	public void incrementFrequency(String term) throws SQLException {
 		int freq = this.getFrequency(term);
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET FREQUENCY = " + (++freq) + " WHERE TERM='" + term + "';";
@@ -192,7 +193,7 @@ public class SQLDatabase {
 	 * @return probability of the term
 	 * @throws SQLException
 	 */
-	public double getAverageProbability(int term) throws SQLException {
+	public double getAverageProbability(String term) throws SQLException {
 		double prob = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
@@ -211,7 +212,7 @@ public class SQLDatabase {
 	 * @param prob new average probability to set for the term
 	 * @throws SQLException
 	 */
-	public void setAverageProbability(int term, double prob) throws SQLException {
+	public void setAverageProbability(String term, double prob) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET AVGPROB = " + prob + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);

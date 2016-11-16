@@ -3,6 +3,7 @@ package v1;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -35,7 +36,7 @@ public class ContentScanner {
 	
 	//for scanning
 	private HashMap<String,APattern> emailAP;
-	private HashMap<String,APatternReport> emailAPR;
+	//private HashMap<String,APatternReport> emailAPR;
 	private HashMap<String,Double> emailValues;
 
 	String indexDir = "data/index/";
@@ -53,7 +54,7 @@ public class ContentScanner {
 		for (int i=0; i<size; i++) {
 			emailAP.put(importedFileNames.get(i),new APattern());
 		}
-		emailAPR = new HashMap<String,APatternReport>();
+		//emailAPR = new HashMap<String,APatternReport>();
 		emailValues = new HashMap<String,Double>();
 		
 		//create queryWords
@@ -82,6 +83,41 @@ public class ContentScanner {
 			}
 		}
 		System.out.println("Woa we made it to the end");
+		
+		//get the APatternReports and save proper word values
+		HashMap<Integer,String> wordsFound = new HashMap<Integer,String>();
+		int value = 0;
+		for (int i=0; i<size; i++) {
+			String fName = importedFileNames.get(i);
+			APatternReport r = emailAP.get(fName).calculateProbability();
+			
+			emailValues.put(fName,r.getConfidentialityScoreOfThisEmail());
+			
+			//save the necessary values
+			int sizeWords = r.getNumbWords();
+			for (int j=0; j<sizeWords; j++) {
+				String rWord = r.getWord(j);
+				db.setAverageProbability(rWord,r.getAverageProbabilityConfidential(j));
+				db.setProbabilityAny(rWord,r.getProbabilityConfidentialPerWord(sizeWords));
+				db.incrementNumbEmailsIn(rWord);
+				if (!wordsFound.containsKey(value)) {
+					wordsFound.put(value,rWord);
+					value++;
+				}
+			}
+			
+		}
+		
+		//increment number of emails word not in for all values
+		String[] allTerms = (String[]) queryWords.keySet().toArray();
+		int numbTerms = allTerms.length;
+		for (int i=0; i<numbTerms; i++) {
+			String currentTerm = allTerms[i];
+			if (!wordsFound.containsKey(currentTerm)) {
+				db.incrementNumbEmailsNotIn(currentTerm);
+			}
+		}
+		
 		//return emailAPR;
 		return emailValues;
 		//stop email and alert user is confidentiality score is above threshold
@@ -101,9 +137,13 @@ public class ContentScanner {
 		return content;
 	}
 	 */	
-	private void foundSensitiveTerm(String term) {
-		String fileName = ""; //get the real filename
-		emailAP.get(fileName).addWord(db.getScore(term),db.getAverageProbability(term),db.getNumberOfEmailsIn(term),db.getNumberOfEmailsNotIn(term),db.getProbabilityAny(term));
+	/*private void foundSensitiveTerm(String fileName, String term) {
+		try {
+			emailAP.get(fileName).addWord(term.hashCode(),db.getScore(term),db.getAverageProbability(term),db.getNumbEmailsIn(term),db.getNumbEmailsNotIn(term),db.getProbabilityAny(term));
+		} catch (APatternException | DatabaseNoSuchTermException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		/*try {
 			confidentialityScore += db.getScore(term);
@@ -111,8 +151,8 @@ public class ContentScanner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Confidentiality score: " + confidentialityScore);*/
-	}
+		System.out.println("Confidentiality score: " + confidentialityScore);
+	}*/
 	/*
 	private void checkForSensitiveTerm(String text) {
 		//delete punctuation, convert words to lowercase and split based on spaces
@@ -136,7 +176,18 @@ public class ContentScanner {
 				" documents found. Time :" + (endTime - startTime) +" ms");
 		for(ScoreDoc scoreDoc : hits.scoreDocs) {
 			Document doc = searcher.getDocument(scoreDoc);
-			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//Bugged, should be spitting out filepath
+			String fileName = doc.get(LuceneConstants.FILE_PATH);
+			
+			//add the term
+			try {
+				emailAP.get(fileName).addWord(searchQuery,db.getScore(searchQuery),db.getAverageProbability(searchQuery),db.getNumbEmailsIn(searchQuery),db.getNumbEmailsNotIn(searchQuery),db.getProbabilityAny(searchQuery));
+			} catch (APatternException | DatabaseNoSuchTermException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.out.println(fileName);
+			//System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//Bugged, should be spitting out filepath
 		}
 	}
 

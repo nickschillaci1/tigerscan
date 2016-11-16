@@ -18,28 +18,29 @@ import java.util.HashMap;
 public class SQLDatabase {
 
 	private String databaseFileName;
-
 	private Connection c = null;
 	private Statement stmt = null;
 	
 	/**
 	 * Create SQLDatabase object and initialize connection to the database file
+	 * @throws SQLException 
 	 */
-	public SQLDatabase() {
-		databaseFileName = "data/database.db"; //will be serialized and saved when we allow changing the database name
+	public SQLDatabase(String databaseFileName) throws SQLException {
+		this.databaseFileName = databaseFileName;
 	    this.initConnection();
 	}
 	
 	/**
 	 * Initialize connection to the SQL Database
+	 * @throws SQLException 
 	 */
-	public void initConnection() {
+	public void initConnection() throws SQLException {
 		try {
     		Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
 			c.setAutoCommit(false);
 			this.initTable();
-		} catch (SQLException | ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -230,8 +231,9 @@ public class SQLDatabase {
 	/**
 	 * Set the file name of the database and re-initialize connection to it
 	 * @param String filename of the new SQLite database
+	 * @throws SQLException 
 	 */
-	public void setDatabaseFileName(String filename) {
+	public void setDatabaseFileName(String filename) throws SQLException {
 		databaseFileName = filename;
 		this.initConnection();
 	}

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import v1.Config;
 import v1.CryptoUtility;
 
 /**
@@ -27,14 +28,13 @@ public class DatabaseManager {
     public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
     	new File("data/").mkdir(); //ensure data folder exists for first execution
     	terms = new HashMap<String,Integer>();
-    	sqld = new SQLDatabase();
-    	
-		try {
+    	try {
+			sqld = new SQLDatabase(Config.getDatabaseFilename());
 			terms = sqld.getTerms();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.err.println("A proper SQL connection could not be made to the \""+Config.getDatabaseFilename()+"\"");
 		}
-
+  
     }
 
 
@@ -274,9 +274,27 @@ public class DatabaseManager {
 	}
 	
 	/**
-	 * Calls the SQLDatabase method to initialize the SQL connection to the database file
+	 * Get the file name of the database
+	 * @return file name of the database
 	 */
-	public void initSQLConnection() {
+	public String getDatabaseFilename() {
+		return sqld.getDatabaseFileName();
+	}
+	
+	/**
+	 * Set the file name of the database
+	 * @param filename
+	 * @throws SQLException 
+	 */
+	public void setDatabaseFilename(String filename) throws SQLException {
+		sqld.setDatabaseFileName(filename);
+	}
+	
+	/**
+	 * Calls the SQLDatabase method to initialize the SQL connection to the database file
+	 * @throws SQLException 
+	 */
+	public void initSQLConnection() throws SQLException {
 		sqld.initConnection();
 	}
 	

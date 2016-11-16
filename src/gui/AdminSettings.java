@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 
@@ -28,6 +29,7 @@ import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
 import v1.CSVReader;
+import v1.Config;
 import v1.Main;
 
 public class AdminSettings{
@@ -93,7 +95,7 @@ public class AdminSettings{
 					{
 						if (termsTable.getSelectedRow() != -1) {
 							String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
-							String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
+							String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Rename Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
 							if (newName != term && newName != null) {
 								try {
 									db.addTerm(newName, db.getTerms().get(term));
@@ -210,7 +212,12 @@ public class AdminSettings{
 						JButton renameDataButton = new JButton("Rename Database");
 						renameDataButton.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e){
-								
+								String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the database of terms.", "Rename Database File", JOptionPane.PLAIN_MESSAGE, null, null, db.getDatabaseFilename());
+								String currName = Config.getDatabaseFilename();
+								if (newName != null) {
+									new File(currName).renameTo(new File(newName));
+									connectToNewFileName(currName, newName); //notes below
+								}
 							}
 						});
 						
@@ -220,9 +227,27 @@ public class AdminSettings{
 								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
 								fd.setVisible(true);
 								if(fd.getFile() != null){
+									String oldFileName = db.getDatabaseFilename();
+									connectToNewFileName(oldFileName, fd.getFile()); //notes below
 								}
 							}
 						});
+					}
+					
+					private void connectToNewFileName(String oldName, String newName) {
+						try {
+							db.setDatabaseFilename(newName);
+							Config.setDatabaseFilename(newName);
+						} catch (IOException e1) { //thrown if error in configuration file. database was already changed, needs to be reset
+							JOptionPane.showMessageDialog(dbSettings, "Error accessing config file!", "Error", JOptionPane.ERROR_MESSAGE);
+							try {
+								db.setDatabaseFilename(oldName); //connect to old file
+							} catch (SQLException e2) { //this exception won't be caught, just resetting the filename back to its original
+								System.err.println("An unexpected database error has occured");
+							}
+						} catch (SQLException e1) { //thrown if error connecting to database file. configuration has not been touched yet
+							JOptionPane.showMessageDialog(dbSettings, "Selected file is not in the proper database format!", "Error", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				});
 				

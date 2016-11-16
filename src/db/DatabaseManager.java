@@ -305,4 +305,11 @@ public class DatabaseManager {
 		sqld.closeConnection();
 	}
     
+	/**
+	 * Used with AdminSettings so the database filename can be changed.
+	 * @return sqld
+	 */
+	public void setSQLFilename(String filename){
+		sqld.setDatabaseFileName(filename);
+	}
 }

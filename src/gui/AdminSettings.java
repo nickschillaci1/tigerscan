@@ -214,6 +214,7 @@ public class AdminSettings{
 								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
 								fd.setVisible(true);
 								if(fd.getFile() != null){
+									db.setSQLFilename(fd.getFile());
 								}
 							}
 						});

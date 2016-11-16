@@ -221,14 +221,14 @@ public class DatabaseManager {
 	}
 	
 	/**
-	 * Gets the frequency of a term in the database
+	 * Gets the number of emails a term has appeared in since it was added
 	 * @param term
 	 * @return
 	 */
-	public int getFrequency(String term) {
+	public int getNumbEmailsIn(String term) {
 		int freq = 0;
 		try {
-			freq = sqld.getFrequency(term.hashCode());
+			freq = sqld.getNumbEmailsIn(term.hashCode());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -239,9 +239,36 @@ public class DatabaseManager {
 	 * Increment the frequency of a term in the database
 	 * @param term
 	 */
-	public void incrementFrequency(String term) {
+	public void incrementNumbEmailsIn(String term) {
 		try {
-			sqld.incrementFrequency(term.hashCode());
+			sqld.incrementNumbEmailsIn(term.hashCode());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gets the number of emails a term has not appeared in since it was added
+	 * @param term
+	 * @return
+	 */
+	public int getNumbEmailsNotIn(String term) {
+		int freq = 0;
+		try {
+			freq = sqld.getNumbEmailsNotIn(term.hashCode());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return freq;
+	}
+	
+	/**
+	 * Increment the frequency of a term in the database
+	 * @param term
+	 */
+	public void incrementNumbEmailsNotIn(String term) {
+		try {
+			sqld.incrementNumbEmailsNotIn(term.hashCode());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -270,6 +297,34 @@ public class DatabaseManager {
 	public void setAverageProbability(String term, double prob) {
 		try {
 			sqld.setAverageProbability(term.hashCode(), prob);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Get the average probability of a term
+	 * @param term
+	 * @return
+	 */
+	public double getProbabilityAny(String term) {
+		double prob = 0;
+		try {
+			prob = sqld.getProbabilityAny(term.hashCode());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return prob;
+	}
+	
+	/**
+	 * Set the average probability of a term
+	 * @param term
+	 * @param prob
+	 */
+	public void setProbabilityAny(String term, double prob) {
+		try {
+			sqld.setProbabilityAny(term.hashCode(), prob);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

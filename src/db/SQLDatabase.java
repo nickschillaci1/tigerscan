@@ -69,8 +69,10 @@ public class SQLDatabase {
 		    	String sql = "CREATE TABLE TERMS " +
 		    				 "(TERM TEXT, " +
 		    				 "SCORE INTEGER NOT NULL," +
-		    				 "FREQUENCY INTEGER NOT NULL," +
-		    				 "AVGPROB REAL NOT NULL)";
+		    				 "EMAILSIN INTEGER NOT NULL," +
+		    				 "EMAILSNOTIN INTEGER NOT NULL," +
+		    				 "AVGPROB REAL NOT NULL," +
+		    				 "PROBCONF REAL NOT NULL)";
 		    	stmt.executeUpdate(sql);
 		    	stmt.close();
 				c.commit();
@@ -90,7 +92,7 @@ public class SQLDatabase {
 	public void addTerm(String term, int score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE,FREQUENCY,AVGPROB) " +
-    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ");";
+    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", "+0+", "+0+");";
     	stmt.executeUpdate(sql);
     	stmt.close();
 		c.commit();
@@ -155,17 +157,17 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Get the frequency of a specified term
+	 * Get the number of emails a term has been found in (since it was added)
 	 * @param term
 	 * @return frequency of the term
 	 * @throws SQLException
 	 */
-	public int getFrequency(int term) throws SQLException {
+	public int getNumbEmailsIn(int term) throws SQLException {
 		int freq = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
 		while(rs.next()) {
-			freq = rs.getInt("FREQUENCY");
+			freq = rs.getInt("EMAILSIN");
 		}
 		rs.close();
 		stmt.close();
@@ -174,14 +176,61 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Increment the frequency of a term to report that an instance of it has been found
+	 * Get the number of emails a term has not been found in (since the term as added)
+	 * @param term
+	 * @return frequency of the term
+	 * @throws SQLException
+	 */
+	public int getNumbEmailsNotIn(int term) throws SQLException {
+		int freq = 0;
+		stmt = c.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
+		while(rs.next()) {
+			freq = rs.getInt("EMAILSNOTIN");
+		}
+		rs.close();
+		stmt.close();
+		c.commit();
+		return freq;
+	}
+	
+	/**
+	 * Increment the number of emails a word not was found in
 	 * @param int term to increment frequency of
 	 * @throws SQLException
 	 */
-	public void incrementFrequency(int term) throws SQLException {
-		int freq = this.getFrequency(term);
+	public void incrementEmailsNotIn(int term) throws SQLException {
+		int freq = this.getNumbEmailsNotIn(term);
 		stmt = c.createStatement();
-		String sql = "UPDATE TERMS SET FREQUENCY = " + (++freq) + " WHERE TERM='" + term + "';";
+		String sql = "UPDATE TERMS SET EMAILSNOTIN = " + (++freq) + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	/**
+	 * Increment the number of emails a word was found in
+	 * @param int term to increment frequency of
+	 * @throws SQLException
+	 */
+	public void incrementNumbEmailsIn(int term) throws SQLException {
+		int freq = this.getNumbEmailsIn(term);
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET EMAILSIN = " + (++freq) + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	/**
+	 * Increment the number of emails a word was found in
+	 * @param int term to increment frequency of
+	 * @throws SQLException
+	 */
+	public void incrementNumbEmailsNotIn(int term) throws SQLException {
+		int freq = this.getNumbEmailsIn(term);
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET EMAILSNOTIN = " + (++freq) + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);
 		stmt.close();
 		c.commit();
@@ -219,6 +268,40 @@ public class SQLDatabase {
 		stmt.close();
 		c.commit();
 	}
+	
+	/**
+	 * Get the probability any email is confidential based on a term
+	 * @param term to get probability of
+	 * @return probability of the term
+	 * @throws SQLException
+	 */
+	public double getProbabilityAny(int term) throws SQLException {
+		double prob = 0;
+		stmt = c.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
+		while(rs.next()) {
+			prob = rs.getDouble("PROBCONF");
+		}
+		rs.close();
+		stmt.close();
+		c.commit();
+		return prob;
+	}
+	
+	/**
+	 * Set the new average probability of a specified term after calculation
+	 * @param term to set probability for
+	 * @param prob new average probability to set for the term
+	 * @throws SQLException
+	 */
+	public void setProbabilityAny(int term, double prob) throws SQLException {
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET PROBCONF = " + prob + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
 	
 	/**
 	 * @return the file name of the database

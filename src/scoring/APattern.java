@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class APattern {
 
 	private ArrayList<Double> pConfidentialWithWord;
-	private ArrayList<Integer> pWords;
+	private ArrayList<String> pWords;
 	//private ArrayList<Double> pWordInConfidential;
 	private ArrayList<Integer> pNumberOfEmailsWordIsIn;
 	private ArrayList<Double> pAveragePerWord;
@@ -31,7 +31,7 @@ public class APattern {
 	 */
 	public APattern() {
 		pConfidentialWithWord = new ArrayList<Double>();
-		pWords = new ArrayList<Integer>();
+		pWords = new ArrayList<String>();
 		pConfidentialWithWord = new ArrayList<Double>();
 		pNumberOfEmailsWordIsIn = new ArrayList<Integer>();
 		//pWordInConfidential = new ArrayList<Double>();

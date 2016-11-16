@@ -29,9 +29,14 @@ import scoring.*;
 public class ContentScanner {
 
 	private DatabaseManager db;
-	private int confidentialityScore;
+	//private int confidentialityScore;
 	private FileIndexer indexer;
 	private FileSearcher searcher;
+	
+	//for scanning
+	private HashMap<String,APattern> emailAP;
+	private HashMap<String,APatternReport> emailAPR;
+	private HashMap<String,Double> emailValues;
 
 	String indexDir = "data/index/";
 
@@ -43,12 +48,13 @@ public class ContentScanner {
 		//confidentialityScore = 0;
 		
 		//create APattern reports for each email
-		HashMap<String,APattern> emailAP = new HashMap<String,APattern>();
+		emailAP = new HashMap<String,APattern>();
 		int size = importedFileNames.size();
 		for (int i=0; i<size; i++) {
 			emailAP.put(importedFileNames.get(i),new APattern());
 		}
-		//HashMap<String,APatternReport> emailAPR = new HashMap<String,APatternReport>();
+		emailAPR = new HashMap<String,APatternReport>();
+		emailValues = new HashMap<String,Double>();
 		
 		//create queryWords
 		HashMap<String,Integer> queryWords = new HashMap<String,Integer>();
@@ -77,6 +83,7 @@ public class ContentScanner {
 		}
 		System.out.println("Woa we made it to the end");
 		//return emailAPR;
+		return emailValues;
 		//stop email and alert user is confidentiality score is above threshold
 	}
 
@@ -95,13 +102,16 @@ public class ContentScanner {
 	}
 	 */	
 	private void foundSensitiveTerm(String term) {
-		try {
+		String fileName = ""; //get the real filename
+		emailAP.get(fileName).addWord(db.getScore(term),db.getAverageProbability(term),db.getNumberOfEmailsIn(term),db.getNumberOfEmailsNotIn(term),db.getProbabilityAny(term));
+		
+		/*try {
 			confidentialityScore += db.getScore(term);
 		} catch (DatabaseNoSuchTermException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Confidentiality score: " + confidentialityScore);
+		System.out.println("Confidentiality score: " + confidentialityScore);*/
 	}
 	/*
 	private void checkForSensitiveTerm(String text) {

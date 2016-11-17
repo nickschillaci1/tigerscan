@@ -42,7 +42,7 @@ public class APatternTest {
 		APatternReport r = null;
 		
 		try {
-			p.addWord(cWord.hashCode(),cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
+			p.addWord(cWord,cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
 			r = p.calculateProbability();
 		} catch (APatternException e) {
 			// TODO Auto-generated catch block
@@ -81,7 +81,7 @@ public class APatternTest {
 		APatternReport r = null;
 		
 		try {
-			p.addWord(cWord.hashCode(),cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
+			p.addWord(cWord,cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
 			r = p.calculateProbability();
 		} catch (APatternException e) {
 			// TODO Auto-generated catch block
@@ -122,7 +122,7 @@ public class APatternTest {
 		APatternReport r = null;
 		
 		try {
-			p.addWord(cWord.hashCode(),cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
+			p.addWord(cWord,cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
 			r = p.calculateProbability();
 		} catch (APatternException e) {
 			// TODO Auto-generated catch block

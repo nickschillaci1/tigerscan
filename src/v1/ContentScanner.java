@@ -66,14 +66,10 @@ public class ContentScanner {
 			e.printStackTrace();
 		}
 		queryWords = db.getTerms();
-		System.out.println("queryWords.keySet() = " + queryWords.keySet());
 
 		for(String term : queryWords.keySet()){
-			System.out.println("we GOT IN THE LOOP");
 			try {
-				System.out.println("We bout to search");
 				search(term);
-				System.out.println("Oh shit we searched i think");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				System.out.println("IOException " + e);
@@ -82,7 +78,6 @@ public class ContentScanner {
 				System.out.println("ParseException " + e);
 			}
 		}
-		System.out.println("Woa we made it to the end");
 		
 		//get the APatternReports and save proper word values
 		HashMap<Integer,String> wordsFound = new HashMap<Integer,String>();

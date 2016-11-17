@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -204,8 +205,10 @@ public class ScannerGUI extends JFrame{
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");
 				else {
-					int score = scanner.scanFiles(filenames);
-					JOptionPane.showMessageDialog(null,"Score: "+score);
+					HashMap<String,Double> r = scanner.scanFiles(filenames);
+					
+					
+					JOptionPane.showMessageDialog(null,"Scanning complete.  Implement better scan report");
 				}
 
 			}

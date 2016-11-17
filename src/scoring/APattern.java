@@ -56,9 +56,6 @@ public class APattern {
 			//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
 			numberOfEmailsWordIsIn++;
 			double probabilityWordInEmail = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn));//*100;
-			/**double partOne = probabilityWordInEmail*pConf;
-			double partTwo = (1-probabilityWordInEmail)*(100-pConf);
-			pConfidentialWithWord.add((partOne/(partOne+partTwo))*(aC/100)*weight*100);**/
 			
 			double pWC;
 			if (numberOfEmailsWordIsIn>1) {

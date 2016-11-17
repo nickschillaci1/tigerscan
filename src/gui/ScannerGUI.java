@@ -206,9 +206,15 @@ public class ScannerGUI extends JFrame{
 					System.out.println("No files to scan.");
 				else {
 					HashMap<String,Double> r = scanner.scanFiles(filenames);
+					String sReport = "";
+					int size = r.size();
+					String[] fileNames = r.keySet().toArray(new String[0]);
 					
+					for (int i=0; i<size; i++) {
+						sReport+=fileNames[i]+": "+r.get(fileNames[i])+"\n";
+					}
 					
-					JOptionPane.showMessageDialog(null,"Scanning complete.  Implement better scan report");
+					JOptionPane.showMessageDialog(null,"Scanning complete:\n"+sReport);
 				}
 
 			}

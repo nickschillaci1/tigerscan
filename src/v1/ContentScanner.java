@@ -93,7 +93,7 @@ public class ContentScanner {
 			for (int j=0; j<sizeWords; j++) {
 				String rWord = r.getWord(j);
 				db.setAverageProbability(rWord,r.getAverageProbabilityConfidential(j));
-				db.setProbabilityAny(rWord,r.getProbabilityConfidentialPerWord(sizeWords));
+				db.setProbabilityAny(rWord,r.getProbabilityConfidentialPerWord(j));
 				db.incrementNumbEmailsIn(rWord);
 				if (!wordsFound.containsKey(value)) {
 					wordsFound.put(value,rWord);
@@ -117,48 +117,6 @@ public class ContentScanner {
 		return emailValues;
 		//stop email and alert user is confidentiality score is above threshold
 	}
-
-
-	/*	
-	 private String getContentFromFile(String filename) {
-		String content;
-		try {
-			content = FileHandler.getStringFromFile(filename);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			System.err.print("The file \"" + filename + "\" was not found.");
-			return null;
-		}
-		return content;
-	}
-	 */	
-	/*private void foundSensitiveTerm(String fileName, String term) {
-		try {
-			emailAP.get(fileName).addWord(term.hashCode(),db.getScore(term),db.getAverageProbability(term),db.getNumbEmailsIn(term),db.getNumbEmailsNotIn(term),db.getProbabilityAny(term));
-		} catch (APatternException | DatabaseNoSuchTermException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		/*try {
-			confidentialityScore += db.getScore(term);
-		} catch (DatabaseNoSuchTermException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Confidentiality score: " + confidentialityScore);
-	}*/
-	/*
-	private void checkForSensitiveTerm(String text) {
-		//delete punctuation, convert words to lowercase and split based on spaces
-		String words[] = text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
-
-		for(int i=0; i<words.length; i++) {
-			if(db.hasTerm(words[i]))
-				foundSensitiveTerm(words[i]);
-		}
-	}
-	 */
 
 	private void search(String searchQuery) throws IOException, ParseException {
 		searcher = new FileSearcher(indexDir);

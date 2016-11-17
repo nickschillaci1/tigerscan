@@ -92,7 +92,7 @@ public class SQLDatabase {
 	public void addTerm(String term, int score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE,EMAILSIN,EMAILSNOTIN,AVGPROB,PROBCONF) " +
-    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", " + 0 + ", " +0 + ");";
+    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 50 + ");";
     	stmt.executeUpdate(sql);
     	stmt.close();
 		c.commit();
@@ -194,19 +194,6 @@ public class SQLDatabase {
 		return freq;
 	}
 	
-	/**
-	 * Increment the number of emails a word not was found in
-	 * @param int term to increment frequency of
-	 * @throws SQLException
-	 */
-	public void incrementEmailsNotIn(int term) throws SQLException {
-		int freq = this.getNumbEmailsNotIn(term);
-		stmt = c.createStatement();
-		String sql = "UPDATE TERMS SET EMAILSNOTIN = " + (++freq) + " WHERE TERM='" + term + "';";
-		stmt.executeUpdate(sql);
-		stmt.close();
-		c.commit();
-	}
 	
 	/**
 	 * Increment the number of emails a word was found in

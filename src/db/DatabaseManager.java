@@ -228,7 +228,7 @@ public class DatabaseManager {
 	public int getNumbEmailsIn(String term) {
 		int freq = 0;
 		try {
-			freq = sqld.getNumbEmailsIn(term.hashCode());
+			freq = sqld.getNumbEmailsIn(term);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -241,7 +241,7 @@ public class DatabaseManager {
 	 */
 	public void incrementNumbEmailsIn(String term) {
 		try {
-			sqld.incrementNumbEmailsIn(term.hashCode());
+			sqld.incrementNumbEmailsIn(term);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -255,7 +255,7 @@ public class DatabaseManager {
 	public int getNumbEmailsNotIn(String term) {
 		int freq = 0;
 		try {
-			freq = sqld.getNumbEmailsNotIn(term.hashCode());
+			freq = sqld.getNumbEmailsNotIn(term);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -268,7 +268,7 @@ public class DatabaseManager {
 	 */
 	public void incrementNumbEmailsNotIn(String term) {
 		try {
-			sqld.incrementNumbEmailsNotIn(term.hashCode());
+			sqld.incrementNumbEmailsNotIn(term);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -282,7 +282,7 @@ public class DatabaseManager {
 	public double getAverageProbability(String term) {
 		double prob = 0;
 		try {
-			prob = sqld.getAverageProbability(term.hashCode());
+			prob = sqld.getAverageProbability(term);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -296,7 +296,7 @@ public class DatabaseManager {
 	 */
 	public void setAverageProbability(String term, double prob) {
 		try {
-			sqld.setAverageProbability(term.hashCode(), prob);
+			sqld.setAverageProbability(term, prob);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -310,7 +310,7 @@ public class DatabaseManager {
 	public double getProbabilityAny(String term) {
 		double prob = 0;
 		try {
-			prob = sqld.getProbabilityAny(term.hashCode());
+			prob = sqld.getProbabilityAny(term);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -324,7 +324,7 @@ public class DatabaseManager {
 	 */
 	public void setProbabilityAny(String term, double prob) {
 		try {
-			sqld.setProbabilityAny(term.hashCode(), prob);
+			sqld.setProbabilityAny(term, prob);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

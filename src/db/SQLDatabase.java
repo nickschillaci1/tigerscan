@@ -162,7 +162,7 @@ public class SQLDatabase {
 	 * @return frequency of the term
 	 * @throws SQLException
 	 */
-	public int getNumbEmailsIn(int term) throws SQLException {
+	public int getNumbEmailsIn(String term) throws SQLException {
 		int freq = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
@@ -181,7 +181,7 @@ public class SQLDatabase {
 	 * @return frequency of the term
 	 * @throws SQLException
 	 */
-	public int getNumbEmailsNotIn(int term) throws SQLException {
+	public int getNumbEmailsNotIn(String term) throws SQLException {
 		int freq = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
@@ -200,7 +200,7 @@ public class SQLDatabase {
 	 * @param int term to increment frequency of
 	 * @throws SQLException
 	 */
-	public void incrementNumbEmailsIn(int term) throws SQLException {
+	public void incrementNumbEmailsIn(String term) throws SQLException {
 		int freq = this.getNumbEmailsIn(term);
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET EMAILSIN = " + (++freq) + " WHERE TERM='" + term + "';";
@@ -214,7 +214,7 @@ public class SQLDatabase {
 	 * @param int term to increment frequency of
 	 * @throws SQLException
 	 */
-	public void incrementNumbEmailsNotIn(int term) throws SQLException {
+	public void incrementNumbEmailsNotIn(String term) throws SQLException {
 		int freq = this.getNumbEmailsIn(term);
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET EMAILSNOTIN = " + (++freq) + " WHERE TERM='" + term + "';";
@@ -229,7 +229,7 @@ public class SQLDatabase {
 	 * @return probability of the term
 	 * @throws SQLException
 	 */
-	public double getAverageProbability(int term) throws SQLException {
+	public double getAverageProbability(String term) throws SQLException {
 		double prob = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
@@ -248,7 +248,7 @@ public class SQLDatabase {
 	 * @param prob new average probability to set for the term
 	 * @throws SQLException
 	 */
-	public void setAverageProbability(int term, double prob) throws SQLException {
+	public void setAverageProbability(String term, double prob) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET AVGPROB = " + prob + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);
@@ -262,7 +262,7 @@ public class SQLDatabase {
 	 * @return probability of the term
 	 * @throws SQLException
 	 */
-	public double getProbabilityAny(int term) throws SQLException {
+	public double getProbabilityAny(String term) throws SQLException {
 		double prob = 0;
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
@@ -281,7 +281,7 @@ public class SQLDatabase {
 	 * @param prob new average probability to set for the term
 	 * @throws SQLException
 	 */
-	public void setProbabilityAny(int term, double prob) throws SQLException {
+	public void setProbabilityAny(String term, double prob) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET PROBCONF = " + prob + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);

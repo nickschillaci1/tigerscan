@@ -15,6 +15,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -62,13 +63,12 @@ public class FileIndexer {
 		ft.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 
 		doc.add(new Field(LuceneConstants.CONTENTS, fileReader, ft));
-		doc.add(new Field(LuceneConstants.FILE_NAME, f.getName(), ft));
-		doc.add(new Field(LuceneConstants.FILE_PATH, f.getCanonicalPath(), ft));
+		doc.add(new TextField(LuceneConstants.FILE_NAME, f.getName(), Field.Store.YES));
+		doc.add(new TextField(LuceneConstants.FILE_PATH, f.getCanonicalPath(), Field.Store.YES));
 
 		return doc;
 	}
 
-	
 	/**
 	 * Closes the IndexWrtier
 	 */
@@ -79,7 +79,6 @@ public class FileIndexer {
 			System.out.println("Got an Exception: " + e.getMessage()); 
 		} 
 	}
-
 
 	/**
 	 * Creates a Document then adds the Document to the IndexWriter

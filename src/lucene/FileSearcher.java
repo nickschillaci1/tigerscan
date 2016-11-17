@@ -27,7 +27,7 @@ public class FileSearcher {
 	QueryParser queryParser;
 	IndexSearcher indexSearcher;
 	Query query;
-	
+
 	/**
 	 * Creates a Query Parser from one of lucene's analyzer's, opens the index directory,
 	 * then creates an indexSearcher from the index.
@@ -40,7 +40,7 @@ public class FileSearcher {
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirPath)));
 		indexSearcher = new IndexSearcher(reader);
 	}
-	
+
 	/**
 	 * Performs a search on the specified query through all documents in the index.
 	 * @param searchQuery - Term or word that the user wants to search for in the documents.
@@ -62,10 +62,10 @@ public class FileSearcher {
 	 * @throws CorruptIndexException
 	 * @throws IOException
 	 */
-	public Document getDocument(ScoreDoc scoreDoc) throws CorruptIndexException, IOException {
-		return indexSearcher.doc(scoreDoc.doc);
+	public Document getDocument(int docID) throws CorruptIndexException, IOException {
+		return indexSearcher.doc(docID);
 	}
-	
+
 	/**
 	 * Stems the given term down to its root word.
 	 * @param term - Word that needs to be stemmed.

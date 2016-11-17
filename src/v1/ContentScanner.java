@@ -107,10 +107,13 @@ public class ContentScanner {
 		long endTime = System.currentTimeMillis();
 
 		System.out.println(hits.totalHits +
-				" documents found. Time :" + (endTime - startTime) +" ms");
-		for(ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = searcher.getDocument(scoreDoc);
-			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//Bugged, should be spitting out filepath
+				" documents found. Time :" + (endTime - startTime) +" ms");//
+		ScoreDoc[] scoreDoc = hits.scoreDocs;
+
+		for(int i = 0; i < scoreDoc.length; i++){
+			int docId = scoreDoc[i].doc;
+			Document doc = searcher.getDocument(docId);
+			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));
 		}
 	}
 

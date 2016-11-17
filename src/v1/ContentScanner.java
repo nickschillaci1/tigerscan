@@ -104,7 +104,7 @@ public class ContentScanner {
 		}
 		
 		//increment number of emails word not in for all values
-		String[] allTerms = (String[]) queryWords.keySet().toArray();
+		String[] allTerms = queryWords.keySet().toArray(new String[0]);
 		int numbTerms = allTerms.length;
 		for (int i=0; i<numbTerms; i++) {
 			String currentTerm = allTerms[i];

@@ -129,8 +129,8 @@ public class ContentScanner {
 		for(int i = 0; i < scoreDoc.length; i++){
 			int docId = scoreDoc[i].doc;
 			Document doc = searcher.getDocument(docId);
-			String fileName = LuceneConstants.FILE_PATH;
-			System.out.println("File: "+ doc.get(fileName));
+			String fileName = doc.get(LuceneConstants.FILE_PATH);
+			System.out.println("File: "+ fileName);
 			
 			//add the term
 			try {

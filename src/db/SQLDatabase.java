@@ -93,7 +93,7 @@ public class SQLDatabase {
 	public void addTerm(String term, int score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE,EMAILSIN,EMAILSNOTIN,AVGPROB,PROBCONF) " +
-    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 50 + ");";
+    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", " + 0 + ", 50);";
     	stmt.executeUpdate(sql);
     	stmt.close();
 		c.commit();

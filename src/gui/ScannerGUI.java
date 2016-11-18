@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -35,8 +36,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import db.DatabaseManager;
 import v1.ContentScanner;
+import v1.Config;
 import v1.Main;
-
 
 /**
  * Graphic interface to operate the security scanner
@@ -153,8 +154,14 @@ public class ScannerGUI extends JFrame{
 				FileDialog fd = new FileDialog(new JFrame(), "Choose file to add", FileDialog.LOAD);
 				fd.setVisible(true);
 				if(fd.getFile() != null) {
-					filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
-					listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					int response = 0;
+					if(listModel.contains(fd.getFile())) {
+						response = JOptionPane.showConfirmDialog(new JFrame(), "A file with this name has already been added to be scanned.\nDo you wish to add a duplicate of the file?", "Add Duplicate File", JOptionPane.YES_NO_OPTION);
+					}
+					if (response == JOptionPane.YES_OPTION) {
+						filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
+						listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					}
 				}
 			}
 		});
@@ -194,12 +201,20 @@ public class ScannerGUI extends JFrame{
 		fileScanButton.setMnemonic(KeyEvent.VK_S);
 		fileScanButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				int score = 0;
+				for(int i = 0; i < filenames.size(); i++) {
+					System.out.println("Scanning file: \"" + filenames.get(i) + "\""); // exact directory and file name
+					//System.out.println("Scanning file (simple): " + listModel.getElementAt(i).toString()); // file name only
+					score += scanner.scanFiles(filenames);
+					try {
+						Config.emailScanned();
+					} catch (IOException e) {
+						System.err.println("Error writing to config file");
+					}
+				}
+				JOptionPane.showMessageDialog(null,"Score: "+score);
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");
-				else {
-					int score = scanner.scanFiles(filenames);
-					JOptionPane.showMessageDialog(null,"Score: "+score);
-				}
 			}
 		});
 		

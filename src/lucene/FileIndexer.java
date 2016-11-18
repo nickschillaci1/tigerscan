@@ -6,12 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
@@ -19,10 +14,8 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.tartarus.snowball.ext.PorterStemmer;
 
 /**
  * This class takes text files and creates indexes from them that can be searched
@@ -68,7 +61,6 @@ public class FileIndexer {
 		return doc;
 	}
 
-	
 	/**
 	 * Closes the IndexWrtier
 	 */
@@ -79,7 +71,6 @@ public class FileIndexer {
 			System.out.println("Got an Exception: " + e.getMessage()); 
 		} 
 	}
-
 
 	/**
 	 * Creates a Document then adds the Document to the IndexWriter

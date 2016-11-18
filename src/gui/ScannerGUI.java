@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +36,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import db.DatabaseManager;
-import v1.ContentScanner;
 import v1.Config;
+import v1.ContentScanner;
 import v1.Main;
 
 /**
@@ -55,7 +56,7 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
-	static final String VERSION = "0.2.2";
+	static final String VERSION = "0.3";
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -213,10 +214,13 @@ public class ScannerGUI extends JFrame{
 					for (int i=0; i<size; i++) {
 						sReport+=fileNames[i]+": "+r.get(fileNames[i])+"\n";
 					}
-					
+					try {
+						Config.emailScanned();
+					} catch (IOException e) {
+						System.err.println("Error accessing config file.");
+					}
 					JOptionPane.showMessageDialog(null,"Scanning complete:\n"+sReport);
 				}
-
 			}
 		});
 		

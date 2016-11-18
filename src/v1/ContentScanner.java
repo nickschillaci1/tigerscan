@@ -3,8 +3,6 @@ package v1;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
@@ -100,7 +98,6 @@ public class ContentScanner {
 					value++;
 				}
 			}
-			
 		}
 		
 		//increment number of emails word not in for all values
@@ -127,9 +124,13 @@ public class ContentScanner {
 
 		System.out.println(hits.totalHits +
 				" documents found. Time :" + (endTime - startTime) +" ms");
-		for(ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = searcher.getDocument(scoreDoc);
-			String fileName = doc.get(LuceneConstants.FILE_PATH);
+		ScoreDoc[] scoreDoc = hits.scoreDocs;
+
+		for(int i = 0; i < scoreDoc.length; i++){
+			int docId = scoreDoc[i].doc;
+			Document doc = searcher.getDocument(docId);
+			String fileName = LuceneConstants.FILE_PATH;
+			System.out.println("File: "+ doc.get(fileName));
 			
 			//add the term
 			try {

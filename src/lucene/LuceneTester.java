@@ -26,7 +26,7 @@ public class LuceneTester {
 			//tester.createIndex();
 			tester.search("running");
 		} catch (IOException e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -46,15 +46,18 @@ public class LuceneTester {
 	private void search(String searchQuery) throws IOException, ParseException {
 		searcher = new FileSearcher(indexDir);
 		long startTime = System.currentTimeMillis();
-	
+
 		TopDocs hits = searcher.search(searchQuery);
 		long endTime = System.currentTimeMillis();
-		
+
 		System.out.println(hits.totalHits +
-				" documents found. Time :" + (endTime - startTime) +" ms");
-		for(ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = searcher.getDocument(scoreDoc);
-			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//should be spitting out filepath
+				" documents found. Time :" + (endTime - startTime) +" ms");//
+		ScoreDoc[] scoreDoc = hits.scoreDocs;
+
+		for(int i = 0; i < scoreDoc.length; i++){
+			int docId = scoreDoc[i].doc;
+			Document doc = searcher.getDocument(docId);
+			System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));
 		}
 	}
 }

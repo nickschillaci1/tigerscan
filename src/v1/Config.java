@@ -40,8 +40,10 @@ public class Config {
 	 */
 	public static void initConfig() {
 		BufferedReader br;
+		new File("data/").mkdir(); //ensure data folder exists for first execution
 		configFile = new File(configFilename);
 		try {
+			
 			if (configFile.createNewFile()) { //returns true if file did not exist and it needed to be created
 				numEmailsScanned = 0;
 				databaseFilename = defaultDatabaseFilename;

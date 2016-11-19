@@ -93,11 +93,7 @@ public class DatabaseManager {
 		    	int tValue = values.get(keys[i]);
 		    	//if the value is not between 0 and 100
 		    	/*if (tValue<0 && tValue>100) {
-<<<<<<< HEAD
 		    		throw new DatabaseAddTermException("");
-=======
-		    		throw new DatabaseAddTermException(0);
->>>>>>> dev
 		    	}*/
 		    	terms.put(temp,tValue);
 		    	try {
@@ -202,10 +198,15 @@ public class DatabaseManager {
 	 * @param int term is a hashed term to change the classification score of
 	 * @param int score is the new score of the term
 	 * @throws SQLException
+	 * @throws DatabaseAddTermException 
 	 */
-	public void changeScore(String term, int score) throws SQLException {
+	public void changeScore(String term, int score) throws SQLException, DatabaseAddTermException {
+		if (terms.containsKey(term)) {
+		    throw new DatabaseAddTermException(term);
+		}
 		String encryptedTerm = CryptoUtility.encryptString(term);
 		sqld.changeScore(encryptedTerm, score);
+		terms.put(encryptedTerm,score); //overwrite the current term with the new entry sporting the new score
 	}
 	
 	/**
@@ -364,18 +365,16 @@ public class DatabaseManager {
     
 	/**
 	 * Used with AdminSettings so the database filename can be changed.
-	 * @return sqld
+	 * @throws SQLException
 	 */
-	public void setSQLFilename(String filename) throws SQLException{
-		try{
+	public void setFilename(String filename) throws SQLException{
 			sqld.setDatabaseFileName(filename);
-		}
-		catch(SQLException e)
-		{
-			throw e;
-		}
 	}
 	
+	/**
+	 * Gets the filename of the local SQL database
+	 * @return String filename of the database
+	 */
 	public String getFilename()
 	{
 		return sqld.getDatabaseFileName();

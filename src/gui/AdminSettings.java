@@ -82,7 +82,7 @@ public class AdminSettings{
 									tableModel.fireTableDataChanged();
 								} catch (NumberFormatException e) {
 									JOptionPane.showMessageDialog(dbSettings, "Invalid score!", "Error", JOptionPane.ERROR_MESSAGE);
-								} catch (SQLException e) {
+								} catch (SQLException | DatabaseAddTermException e) {
 									JOptionPane.showMessageDialog(dbSettings, "Internal database error!", "Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}
@@ -100,16 +100,16 @@ public class AdminSettings{
 							String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
 							if (newName != term && newName != null) {
 								try {
-									db.addTerm(newName, db.getTerms().get(Integer.parseInt(term)));
+									db.addTerm(newName, db.getTerms().get(term));
 									db.removeTerm(term);
-								} catch (NumberFormatException e) {
+									tableModel = new CustomTableModel(db.getTerms());
+									termsTable.setModel(tableModel);
+									//tableModel.fireTableDataChanged();
+								} catch (NumberFormatException | DatabaseRemoveTermException e) {
 									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (DatabaseAddTermException e) {
 									JOptionPane.showMessageDialog(dbSettings, "A Term with that name already exists!", "Error", JOptionPane.ERROR_MESSAGE);
-								} catch (DatabaseRemoveTermException e) {
-									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								}
-								tableModel.fireTableDataChanged();
 							}
 						}
 					}
@@ -124,7 +124,9 @@ public class AdminSettings{
 						if (term != null) {
 							try{
 								db.addTerm(term, 1); //TODO add default score or require score when adding terms
-								tableModel.fireTableDataChanged();
+								tableModel = new CustomTableModel(db.getTerms());
+								termsTable.setModel(tableModel);
+								//tableModel.fireTableDataChanged();
 							}
 							catch(DatabaseAddTermException e)
 							{
@@ -145,7 +147,9 @@ public class AdminSettings{
 							if (response == JOptionPane.YES_OPTION) {
 								try{
 									db.removeTerm(term);
-									tableModel.fireTableDataChanged();
+									tableModel = new CustomTableModel(db.getTerms());
+									termsTable.setModel(tableModel);
+									//tableModel.fireTableDataChanged();
 								}
 								catch(DatabaseRemoveTermException e)
 								{
@@ -191,7 +195,9 @@ public class AdminSettings{
 											JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
 										}
 									}
-									tableModel.fireTableDataChanged();
+									tableModel = new CustomTableModel(db.getTerms());
+									termsTable.setModel(tableModel);
+									//tableModel.fireTableDataChanged();
 								}
 							}
 							else JOptionPane.showMessageDialog(dbSettings, "File format not supported! Please select a '.CSV' file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -214,8 +220,8 @@ public class AdminSettings{
 						JButton renameDataButton = new JButton("Rename Database");
 						renameDataButton.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e){
-								String filename = JOptionPane.showInputDialog(databasePanel, "Enter new name for database file:", 
-																				"Input New Filename", JOptionPane.PLAIN_MESSAGE);
+								String filename = (String ) JOptionPane.showInputDialog(databasePanel, "Enter new name for database file:", 
+																			"Input New Filename", JOptionPane.PLAIN_MESSAGE, null, null, db.getFilename());
 								if(filename != null)
 								{
 								if(!filename.contains(".db")) filename += ".db";	
@@ -227,18 +233,15 @@ public class AdminSettings{
 								File newDB = new File(newPath);
 								
 								try{
+									db.closeSQLConnection(); //close connection to current file name
 									oldDB.renameTo(newDB);
 									Config.setDatabaseFilename(newPath);
-									db.setSQLFilename(newPath);
-									
+									db.setFilename(newPath);
+									db.initSQLConnection(); //initialize connection to new file name
 									JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newPath, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
-									oldDB.delete();
+									//oldDB.delete();
 								}
-								catch(SQLException exception)
-								{
-									JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
-								}
-								catch(IOException exception)
+								catch(SQLException | IOException exception)
 								{
 									JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
 								}
@@ -254,7 +257,9 @@ public class AdminSettings{
 								fd.setVisible(true);
 								if(fd.getFile() != null){
 									try{
-										db.setSQLFilename(fd.getFile());
+										db.closeSQLConnection(); //close connection to current file name
+										db.setFilename(fd.getFile());
+										db.initSQLConnection(); //initialize connection to new file name
 									}
 									catch(SQLException exception)
 									{

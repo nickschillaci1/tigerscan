@@ -1,18 +1,18 @@
 package db;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import v1.CryptoUtility;
+import main.Config;
+import main.CryptoUtility;
 
 /**
  * This class will maintain the Database and will handle adding and removing terms.  It will also, through the SQLDatabase class, handle the external Database file.
  * 
- * @author Brandon Dixon
- * @version 10/24/16
+ * @author Brandon Dixon, Nick Schillaci
+ * @version 11/4/16
  **/
 
 public class DatabaseManager {
@@ -25,16 +25,14 @@ public class DatabaseManager {
      * This will initialize the database and load in terms if there are any to load
      */
     public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
-    	new File("data/").mkdir(); //ensure data folder exists for first execution
     	terms = new HashMap<String,Integer>();
-    	sqld = new SQLDatabase();
-    	
-		try {
+    	try {
+			sqld = new SQLDatabase(Config.getDatabaseFilename());
 			terms = sqld.getTerms();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.err.println("A proper SQL connection could not be made to the \""+Config.getDatabaseFilename()+"\"");
 		}
-
+  
     }
 
 
@@ -53,7 +51,7 @@ public class DatabaseManager {
      * This will add a term to the database
      * @param String term to add to the database
      * @param int of the confidentiality value of the term
-     * @exception DatabaseAddTermException if the word is already present in the database
+     * @exception DatabaseAddTermException if the word is already present in the database, or if the confidentiality value: v<0 || v>100
      */
     public void addTerm(String term, int value) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
@@ -76,7 +74,7 @@ public class DatabaseManager {
      * This will add multiple terms to the database
      * @param ArrayList<String> terms to add to the database
      * @param ArrayList<Integer> of the values for each String
-     * @exception DabaseAddTermException if one or more words is already present in the database
+     * @exception DabaseAddTermException if one or more words is already present in the database, or if the confidentiality value: v<0 || v>100
      */
     public void addTerm(HashMap<String,Integer> values) throws DatabaseAddTermException {
 		//manipulate root words as necessary
@@ -93,6 +91,10 @@ public class DatabaseManager {
 		    	conflicts.add(temp);
 		    } else {
 		    	int tValue = values.get(keys[i]);
+		    	//if the value is not between 0 and 100
+		    	/*if (tValue<0 && tValue>100) {
+		    		throw new DatabaseAddTermException("");
+		    	}*/
 		    	terms.put(temp,tValue);
 		    	try {
 					sqld.addTerm(temp,tValue);
@@ -196,10 +198,15 @@ public class DatabaseManager {
 	 * @param int term is a hashed term to change the classification score of
 	 * @param int score is the new score of the term
 	 * @throws SQLException
+	 * @throws DatabaseAddTermException 
 	 */
-	public void changeScore(String term, int score) throws SQLException {
+	public void changeScore(String term, int score) throws SQLException, DatabaseAddTermException {
+		if (terms.containsKey(term)) {
+		    throw new DatabaseAddTermException(term);
+		}
 		String encryptedTerm = CryptoUtility.encryptString(term);
 		sqld.changeScore(encryptedTerm, score);
+		terms.put(encryptedTerm,score); //overwrite the current term with the new entry sporting the new score
 	}
 	
 	/**
@@ -215,10 +222,163 @@ public class DatabaseManager {
 	}
 	
 	/**
+	 * Gets the number of emails a term has appeared in since it was added
+	 * @param term
+	 * @return
+	 */
+	public int getNumbEmailsIn(String term) {
+		int freq = 0;
+		try {
+			freq = sqld.getNumbEmailsIn(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return freq;
+	}
+	
+	/**
+	 * Increment the frequency of a term in the database
+	 * @param term
+	 */
+	public void incrementNumbEmailsIn(String term) {
+		try {
+			sqld.incrementNumbEmailsIn(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gets the number of emails a term has not appeared in since it was added
+	 * @param term
+	 * @return
+	 */
+	public int getNumbEmailsNotIn(String term) {
+		int freq = 0;
+		try {
+			freq = sqld.getNumbEmailsNotIn(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return freq;
+	}
+	
+	/**
+	 * Increment the frequency of a term in the database
+	 * @param term
+	 */
+	public void incrementNumbEmailsNotIn(String term) {
+		try {
+			sqld.incrementNumbEmailsNotIn(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Get the average probability of a term
+	 * @param term
+	 * @return
+	 */
+	public double getAverageProbability(String term) {
+		double prob = 0;
+		try {
+			prob = sqld.getAverageProbability(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return prob;
+	}
+	
+	/**
+	 * Set the average probability of a term
+	 * @param term
+	 * @param prob
+	 */
+	public void setAverageProbability(String term, double prob) {
+		try {
+			sqld.setAverageProbability(term, prob);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Get the average probability of a term
+	 * @param term
+	 * @return
+	 */
+	public double getProbabilityAny(String term) {
+		double prob = 0;
+		try {
+			prob = sqld.getProbabilityAny(term);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return prob;
+	}
+	
+	/**
+	 * Set the average probability of a term
+	 * @param term
+	 * @param prob
+	 */
+	public void setProbabilityAny(String term, double prob) {
+		try {
+			sqld.setProbabilityAny(term, prob);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Get the file name of the database
+	 * @return file name of the database
+	 */
+	public String getDatabaseFilename() {
+		return sqld.getDatabaseFileName();
+	}
+	
+	/**
+	 * Set the file name of the database
+	 * @param filename
+	 * @throws SQLException 
+	 */
+	public void setDatabaseFilename(String filename) throws SQLException {
+		sqld.setDatabaseFileName(filename);
+	}
+	
+	/**
+	 * Calls the SQLDatabase method to initialize the SQL connection to the database file
+	 * @throws SQLException 
+	 */
+	public void initSQLConnection() throws SQLException {
+		sqld.initConnection();
+	}
+	
+	/**
 	 * Calls the SQLDatabase method to close SQL connection to the database file
 	 */
 	public void closeSQLConnection() {
 		sqld.closeConnection();
 	}
     
+	/**
+	 * Used with AdminSettings so the database filename can be changed.
+	 * @throws SQLException
+	 */
+	public void setFilename(String filename) throws SQLException{
+			sqld.setDatabaseFileName(filename);
+	}
+	
+	/**
+	 * Gets the filename of the local SQL database
+	 * @return String filename of the database
+	 */
+	public String getFilename()
+	{
+		return sqld.getDatabaseFileName();
+	}
+	
+	
 }

@@ -17,22 +17,32 @@ import java.util.HashMap;
  */
 public class SQLDatabase {
 
-	private String databaseFileName = "data/database.db"; //will be serialized and saved when we allow changing the database name
+	private String databaseFileName;
 	private Connection c = null;
 	private Statement stmt = null;
 	
 	/**
 	 * Create SQLDatabase object and initialize connection to the database file
+	 * @throws SQLException 
 	 */
-	public SQLDatabase() {
-	    	try {
-	    		Class.forName("org.sqlite.JDBC");
-				c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
-				c.setAutoCommit(false);
-				this.initTable();
-			} catch (SQLException | ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+	public SQLDatabase(String databaseFileName) throws SQLException {
+		this.databaseFileName = databaseFileName;
+	    this.initConnection();
+	}
+	
+	/**
+	 * Initialize connection to the SQL Database
+	 * @throws SQLException 
+	 */
+	public void initConnection() throws SQLException {
+		try {
+    		Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:" + databaseFileName);
+			c.setAutoCommit(false);
+			this.initTable();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -58,8 +68,12 @@ public class SQLDatabase {
 			if (br.readLine() == null) {
 				stmt = c.createStatement();
 		    	String sql = "CREATE TABLE TERMS " +
-		    				 "(TERM VARCHAR(50), " +
-		    				 "SCORE INT NOT NULL);";
+		    				 "(TERM TEXT, " +
+		    				 "SCORE INTEGER NOT NULL," +
+		    				 "EMAILSIN INTEGER NOT NULL," +
+		    				 "EMAILSNOTIN INTEGER NOT NULL," +
+		    				 "AVGPROB REAL NOT NULL," +
+		    				 "PROBCONF REAL NOT NULL)";
 		    	stmt.executeUpdate(sql);
 		    	stmt.close();
 				c.commit();
@@ -78,8 +92,8 @@ public class SQLDatabase {
 	 */
 	public void addTerm(String term, int score) throws SQLException {
     	stmt = c.createStatement();
-    	String sql = "INSERT INTO TERMS (TERM,SCORE) " +
-    				 "VALUES (\'" + term + "\', " + score + " );";
+    	String sql = "INSERT INTO TERMS (TERM,SCORE,EMAILSIN,EMAILSNOTIN,AVGPROB,PROBCONF) " +
+    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", " + 0 + ", 50);";
     	stmt.executeUpdate(sql);
     	stmt.close();
 		c.commit();
@@ -144,10 +158,154 @@ public class SQLDatabase {
 	}
 	
 	/**
+	 * Get the number of emails a term has been found in (since it was added)
+	 * @param term
+	 * @return frequency of the term
+	 * @throws SQLException
+	 */
+	public int getNumbEmailsIn(String term) throws SQLException {
+		int freq = 0;
+		stmt = c.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
+		while(rs.next()) {
+			freq = rs.getInt("EMAILSIN");
+		}
+		rs.close();
+		stmt.close();
+		c.commit();
+		return freq;
+	}
+	
+	/**
+	 * Get the number of emails a term has not been found in (since the term as added)
+	 * @param term
+	 * @return frequency of the term
+	 * @throws SQLException
+	 */
+	public int getNumbEmailsNotIn(String term) throws SQLException {
+		int freq = 0;
+		stmt = c.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
+		while(rs.next()) {
+			freq = rs.getInt("EMAILSNOTIN");
+		}
+		rs.close();
+		stmt.close();
+		c.commit();
+		return freq;
+	}
+	
+	
+	/**
+	 * Increment the number of emails a word was found in
+	 * @param int term to increment frequency of
+	 * @throws SQLException
+	 */
+	public void incrementNumbEmailsIn(String term) throws SQLException {
+		int freq = this.getNumbEmailsIn(term);
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET EMAILSIN = " + (++freq) + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	/**
+	 * Increment the number of emails a word was found in
+	 * @param int term to increment frequency of
+	 * @throws SQLException
+	 */
+	public void incrementNumbEmailsNotIn(String term) throws SQLException {
+		int freq = this.getNumbEmailsIn(term);
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET EMAILSNOTIN = " + (++freq) + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	/**
+	 * Get the average probability of a specified term
+	 * @param term to get probability of
+	 * @return probability of the term
+	 * @throws SQLException
+	 */
+	public double getAverageProbability(String term) throws SQLException {
+		double prob = 0;
+		stmt = c.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
+		while(rs.next()) {
+			prob = rs.getDouble("AVGPROB");
+		}
+		rs.close();
+		stmt.close();
+		c.commit();
+		return prob;
+	}
+	
+	/**
+	 * Set the new average probability of a specified term after calculation
+	 * @param term to set probability for
+	 * @param prob new average probability to set for the term
+	 * @throws SQLException
+	 */
+	public void setAverageProbability(String term, double prob) throws SQLException {
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET AVGPROB = " + prob + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	/**
+	 * Get the probability any email is confidential based on a term
+	 * @param term to get probability of
+	 * @return probability of the term
+	 * @throws SQLException
+	 */
+	public double getProbabilityAny(String term) throws SQLException {
+		double prob = 0;
+		stmt = c.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS WHERE TERM='" + term + "';");
+		while(rs.next()) {
+			prob = rs.getDouble("PROBCONF");
+		}
+		rs.close();
+		stmt.close();
+		c.commit();
+		return prob;
+	}
+	
+	/**
+	 * Set the new average probability of a specified term after calculation
+	 * @param term to set probability for
+	 * @param prob new average probability to set for the term
+	 * @throws SQLException
+	 */
+	public void setProbabilityAny(String term, double prob) throws SQLException {
+		stmt = c.createStatement();
+		String sql = "UPDATE TERMS SET PROBCONF = " + prob + " WHERE TERM='" + term + "';";
+		stmt.executeUpdate(sql);
+		stmt.close();
+		c.commit();
+	}
+	
+	
+	/**
 	 * @return the file name of the database
 	 */
 	public String getDatabaseFileName() {
 		return databaseFileName;
+	}
+	
+	/**
+	 * Set the file name of the database and re-initialize connection to it
+	 * @param String filename of the new SQLite database
+	 * @throws SQLException 
+	 */
+	public void setDatabaseFileName(String filename) throws SQLException {
+		databaseFileName = filename;
+		this.initConnection();
 	}
 	
 }

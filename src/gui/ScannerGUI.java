@@ -8,8 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,9 +36,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import db.DatabaseManager;
-import v1.ContentScanner;
-import v1.Main;
-
+import main.Config;
+import main.ContentScanner;
+import main.Main;
 
 /**
  * Graphic interface to operate the security scanner
@@ -54,7 +56,7 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
-	static final String VERSION = "0.2.2";
+	static final String VERSION = "0.3";
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -153,8 +155,14 @@ public class ScannerGUI extends JFrame{
 				FileDialog fd = new FileDialog(new JFrame(), "Choose file to add", FileDialog.LOAD);
 				fd.setVisible(true);
 				if(fd.getFile() != null) {
-					filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
-					listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					int response = 0;
+					if(listModel.contains(fd.getFile())) {
+						response = JOptionPane.showConfirmDialog(new JFrame(), "A file with this name has already been added to be scanned.\nDo you wish to add a duplicate of the file?", "Add Duplicate File", JOptionPane.YES_NO_OPTION);
+					}
+					if (response == JOptionPane.YES_OPTION) {
+						filenames.add(fd.getDirectory() + fd.getFile()); // ArrayList filenames has the exact directory and file name
+						listModel.addElement(/*fd.getDirectory() + */fd.getFile()); // currently displaying file name without directory
+					}
 				}
 			}
 		});
@@ -193,12 +201,25 @@ public class ScannerGUI extends JFrame{
 		fileScanPanel.add(fileScanButton);
 		fileScanButton.setMnemonic(KeyEvent.VK_S);
 		fileScanButton.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent event) {
 				if(filenames.size() == 0)
 					System.out.println("No files to scan.");
 				else {
-					int score = scanner.scanFiles(filenames);
-					JOptionPane.showMessageDialog(null,"Score: "+score);
+					HashMap<String,Double> r = scanner.scanFiles(filenames);
+					String sReport = "";
+					int size = r.size();
+					String[] fileNames = r.keySet().toArray(new String[0]);
+					
+					for (int i=0; i<size; i++) {
+						sReport+=fileNames[i]+": "+r.get(fileNames[i])+"\n";
+					}
+					try {
+						Config.emailScanned();
+					} catch (IOException e) {
+						System.err.println("Error accessing config file.");
+					}
+					JOptionPane.showMessageDialog(null,"Scanning complete:\n"+sReport);
 				}
 			}
 		});

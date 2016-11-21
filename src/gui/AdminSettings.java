@@ -29,10 +29,11 @@ import javax.swing.border.EmptyBorder;
 import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
+import main.CSVReader;
+import main.Config;
+import main.Main;
+
 import java.nio.file.Path;
-import v1.CSVReader;
-import v1.Config;
-import v1.Main;
 
 public class AdminSettings{
 

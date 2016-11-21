@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import v1.Config;
-import v1.CryptoUtility;
+import main.Config;
+import main.CryptoUtility;
 
 /**
  * This class will maintain the Database and will handle adding and removing terms.  It will also, through the SQLDatabase class, handle the external Database file.

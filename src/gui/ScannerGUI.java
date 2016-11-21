@@ -36,9 +36,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import db.DatabaseManager;
-import v1.Config;
-import v1.ContentScanner;
-import v1.Main;
+import main.Config;
+import main.ContentScanner;
+import main.Main;
 
 /**
  * Graphic interface to operate the security scanner

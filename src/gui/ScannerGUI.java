@@ -56,17 +56,18 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
-	static final String VERSION = "0.3";
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
 	private int screenWidth;
 	private int screenHeight;
 	private DatabaseManager db;
+	private String version;
 	
-	public ScannerGUI(ContentScanner scanner, DatabaseManager db) {
+	public ScannerGUI(ContentScanner scanner, DatabaseManager db, String version) {
 		this.scanner = scanner;
 		this.db = db;
+		this.version = version;
 		filenames = new ArrayList<String>();
 		initializeUI();
 	}
@@ -236,7 +237,7 @@ public class ScannerGUI extends JFrame{
 		fileScanPanel.add(settingsButton);
 		
 		
-		JLabel labelVersion = new JLabel("Version " + VERSION);
+		JLabel labelVersion = new JLabel("Version " + version);
 		labelVersion.setForeground(Color.GRAY);
 		labelVersion.setHorizontalAlignment(SwingConstants.CENTER);
 		labelVersion.setFont(new Font("Tahoma", Font.PLAIN, 9));

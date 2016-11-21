@@ -13,5 +13,6 @@ hs_err_pid*
 /bin/
 
 # config, db and index files (system-specific, rewritten every scan)
-/data/*
-/target/*
+/data/
+/lib/
+/target/

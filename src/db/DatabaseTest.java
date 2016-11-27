@@ -1,4 +1,5 @@
 package db;
+import main.Config;
 
 import static org.junit.Assert.*;
 
@@ -16,6 +17,8 @@ public class DatabaseTest {
 
 	@Test
 	public void test() {
+		Config.initConfig();
+		
 		testRemoveAllTerms();
 		testAddTermStringInt();
 		testHasTermFile();
@@ -36,14 +39,14 @@ public class DatabaseTest {
 		
 		//test adding a term that does not exist
 		try {
-			db.addTerm("hello",10);
+			db.addTerm("hello",1);
 		} catch (DatabaseAddTermException e) {
 			fail("The add term test failed: "+e);
 		}
 		
 		//test a term that should exist
 		try {
-			db.addTerm("hello",10);
+			db.addTerm("hello",1);
 			fail("The add term test failed: 'hello' has already been added and should not be able to be added again");
 		} catch (DatabaseAddTermException e) {
 			//nothing, test succeeded here
@@ -86,9 +89,9 @@ public class DatabaseTest {
 		DatabaseManager db = new DatabaseManager();
 		
 		HashMap<String,Integer> test = new HashMap<String,Integer>();
-		test.put("banana",10);
-		test.put("apple",10);
-		test.put("carrot",20);
+		test.put("banana",1);
+		test.put("apple",1);
+		test.put("carrot",2);
 		
 		//this should work 
 		try {

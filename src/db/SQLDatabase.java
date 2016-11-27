@@ -98,7 +98,7 @@ public class SQLDatabase {
     			+ score + ", "
     			+ 0 + ", "
     			+ 0 + ", "
-    			+ 0 + ", "
+    			+ 50 + ", "
     			+ 50 +");";
     	stmt.executeUpdate(sql);
     	stmt.close();

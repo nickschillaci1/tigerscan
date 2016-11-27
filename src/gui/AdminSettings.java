@@ -221,30 +221,40 @@ public class AdminSettings{
 						JButton renameDataButton = new JButton("Rename Database");
 						renameDataButton.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e){
+								String oldFilename = new File(db.getDatabaseFilename()).getName();
 								String filename = (String ) JOptionPane.showInputDialog(databasePanel, "Enter new name for database file:", 
-																			"Input New Filename", JOptionPane.PLAIN_MESSAGE, null, null, db.getFilename());
+																			"Input New Filename", JOptionPane.PLAIN_MESSAGE, null, null, oldFilename);
 								if(filename != null)
 								{
 								if(!filename.contains(".db")) filename += ".db";	
 								String oldDBFile = db.getDatabaseFilename();
 								File oldDB = new File(oldDBFile);
-								String[] pathArray = oldDBFile.split("/.*.db");
+								String[] pathArray = oldDBFile.split("/.*.db"); //pathArray[0] contains "data"
 								
 								String newPath = pathArray[0] + "/" + filename;
 								File newDB = new File(newPath);
-								
-								try{
-									db.closeSQLConnection(); //close connection to current file name
-									oldDB.renameTo(newDB);
-									Config.setDatabaseFilename(newPath);
-									db.setFilename(newPath);
-									db.initSQLConnection(); //initialize connection to new file name
-									JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newPath, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
-									//oldDB.delete();
+								if(!newDB.exists()) {
+									try{
+										db.closeSQLConnection(); //close connection to current file name
+										oldDB.renameTo(newDB);
+										Config.setDatabaseFilename(newPath);
+										db.setDatabaseFilename(newPath);
+										db.initSQLConnection(); //initialize connection to new file name
+										JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newPath, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
+										//oldDB.delete();
+									}
+									catch(SQLException | IOException exception)
+									{
+										JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+										try {
+											Config.setDatabaseFilename(pathArray[0] + "/" + oldFilename);
+										} catch (IOException e1) {
+											//should never fail, just reverting back to what it was
+										}
+									}
 								}
-								catch(SQLException | IOException exception)
-								{
-									JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+								else {
+									JOptionPane.showMessageDialog(dbSettings, "A file already exists with that name!", "Database Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 							}
@@ -259,7 +269,7 @@ public class AdminSettings{
 								if(fd.getFile() != null){
 									try{
 										db.closeSQLConnection(); //close connection to current file name
-										db.setFilename(fd.getFile());
+										db.setDatabaseFilename(fd.getFile());
 										db.initSQLConnection(); //initialize connection to new file name
 									}
 									catch(SQLException exception)

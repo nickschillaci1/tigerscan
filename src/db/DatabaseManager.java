@@ -362,23 +362,5 @@ public class DatabaseManager {
 	public void closeSQLConnection() {
 		sqld.closeConnection();
 	}
-    
-	/**
-	 * Used with AdminSettings so the database filename can be changed.
-	 * @throws SQLException
-	 */
-	public void setFilename(String filename) throws SQLException{
-			sqld.setDatabaseFileName(filename);
-	}
-	
-	/**
-	 * Gets the filename of the local SQL database
-	 * @return String filename of the database
-	 */
-	public String getFilename()
-	{
-		return sqld.getDatabaseFileName();
-	}
-	
 	
 }

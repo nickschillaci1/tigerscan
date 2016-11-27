@@ -60,6 +60,7 @@ public class APattern {
 			double pWC;
 			if (numberOfEmailsWordIsIn>1) {
 				pWC = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*((numberOfEmailsWordIsIn-1)*(aC/100));
+				System.out.println("Word nEmailsNotIn "+numberOfEmailsWordIsNotIn);
 			} else if (numberOfEmailsWordIsNotIn>0) {
 				pWC = probabilityWordInEmail;
 			} else {
@@ -97,6 +98,7 @@ public class APattern {
 			double pThisIsConfidential;
 			for (int i=0; i<size; i++) {
 				rTemp=pConfidentialWithWord.get(i);
+				System.out.println("Word "+i+": "+rTemp);
 				rOne*=rTemp;
 				rTwo*=(100-rTemp);
 			}

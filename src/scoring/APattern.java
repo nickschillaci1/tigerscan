@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * This class will handle analysis of the information to determine how likely it is that an email is confidential
  * This is a modification of Bayes Spam Filtering 
  * @author Brandon Dixon
- * @version 11/11/16
+ * @version 11/28/16
  *
  */
 
@@ -14,6 +14,9 @@ import java.util.ArrayList;
 
 public class APattern {
 
+	
+	private final double TOTAL_MULTIPLIER = 0.75;
+	
 	private ArrayList<Double> pConfidentialWithWord;
 	private ArrayList<String> pWords;
 	//private ArrayList<Double> pWordInConfidential;
@@ -22,7 +25,7 @@ public class APattern {
 	//private ArrayList<Double> pConfPerWord;
 	private ArrayList<Integer> pNumberOfEmailsWordIsNotIn;
 	private ArrayList<Double> pConfTotal;
-	boolean hasAlreadyScanned;
+	private boolean hasAlreadyScanned;
 	
 	/**
 	 * Initialize the Class
@@ -100,7 +103,7 @@ public class APattern {
 				rTemp=pConfidentialWithWord.get(i);
 				System.out.println("Word "+i+": "+rTemp);
 				rOne*=rTemp;
-				rTwo*=Math.max((100-rTemp),1);
+				rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
 				System.out.println("rOne: "+rOne+"\nrTwo: "+rTwo);
 			}
 			

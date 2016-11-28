@@ -100,7 +100,7 @@ public class APattern {
 				rTemp=pConfidentialWithWord.get(i);
 				System.out.println("Word "+i+": "+rTemp);
 				rOne*=rTemp;
-				rTwo*=(100-rTemp);
+				rTwo*=Math.max((100-rTemp),1);
 				System.out.println("rOne: "+rOne+"\nrTwo: "+rTwo);
 			}
 			

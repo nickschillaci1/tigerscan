@@ -59,8 +59,8 @@ public class APattern {
 			
 			double pWC;
 			if (numberOfEmailsWordIsIn>1) {
-				pWC = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*((numberOfEmailsWordIsIn-1)*(aC/100));
-				System.out.println("Word aC: "+aC);
+				pWC = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*(aC/100);
+				System.out.println("Word n: "+(numberOfEmailsWordIsIn-1)*(aC/100));
 			} else if (numberOfEmailsWordIsNotIn>0) {
 				pWC = probabilityWordInEmail;
 			} else {

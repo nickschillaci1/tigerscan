@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import db.DatabaseAddTermException;
@@ -121,19 +122,58 @@ public class AdminSettings{
 				addButton.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent event)
 					{	
-						String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
-						if (term != null) {
-							try{
-								db.addTerm(term, 1); //TODO add default score or require score when adding terms
-								tableModel = new CustomTableModel(db.getTerms());
-								termsTable.setModel(tableModel);
-								//tableModel.fireTableDataChanged();
-							}
-							catch(DatabaseAddTermException e)
-							{
-								JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
-							}
-						}
+						//String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
+					//	if (term != null) {
+								JDialog termDialog = new JDialog(dbSettings, "Add Term", true);
+								termDialog.setLayout(new GridLayout(2,1));
+								
+								JPanel termPanel = new JPanel();
+								termPanel.setLayout(new GridLayout(1,2));
+		
+								JPanel termLeftPanel = new JPanel();
+								termLeftPanel.setLayout(new GridLayout(2,1));
+								termLeftPanel.setBorder(new EmptyBorder(0,15,0,15));
+								JLabel termLabel = new JLabel("Term");
+								JTextField termField = new JTextField(10);
+								termLeftPanel.add(termLabel);
+								termLeftPanel.add(termField);
+								
+								JPanel termRightPanel = new JPanel();
+								termRightPanel.setLayout(new GridLayout(2,1));
+								termRightPanel.setBorder(new EmptyBorder(0,15,0,15));
+								JLabel classLabel = new JLabel("Classification Score");
+								JTextField classField = new JTextField(10);
+								termRightPanel.add(classLabel);
+								termRightPanel.add(classField);
+								
+								termPanel.add(termLeftPanel);
+								termPanel.add(termRightPanel);
+								termDialog.add(termPanel);
+								
+								JButton addButton = new JButton("Add");
+								addButton.addActionListener(new ActionListener(){ 
+									public void actionPerformed(ActionEvent ev){
+										try{
+										String term = termField.getText();
+										int classScore = Integer.parseInt(classField.getText());
+										db.addTerm(term, classScore);
+										tableModel = new CustomTableModel(db.getTerms());
+										termsTable.setModel(tableModel);
+										//tableModel.fireTableDataChanged();
+										}
+										catch(DatabaseAddTermException e)
+										{
+											JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+										}
+									}});
+								JPanel addPanel = new JPanel();
+								addPanel.add(addButton);
+								termDialog.add(addPanel);
+								
+								termDialog.setSize(500, 110);
+								termDialog.setLocation(screenWidth/3, screenHeight/3);
+								termDialog.setVisible(true);
+						//}
 					}
 				});
 				addButton.setPreferredSize(new Dimension(160, 30));

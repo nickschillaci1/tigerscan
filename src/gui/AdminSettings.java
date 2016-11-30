@@ -230,7 +230,6 @@ public class AdminSettings{
 								String oldDBFile = db.getDatabaseFilename();
 								File oldDB = new File(oldDBFile);
 								String[] pathArray = oldDBFile.split("/.*.db"); //pathArray[0] contains "data"
-								
 								String newPath = pathArray[0] + "/" + filename;
 								File newDB = new File(newPath);
 								if(!newDB.exists()) {
@@ -248,9 +247,11 @@ public class AdminSettings{
 										JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
 										try {
 											Config.setDatabaseFilename(pathArray[0] + "/" + oldFilename);
-										} catch (IOException e1) {
+											db.initSQLConnection();
+										} catch (IOException | SQLException e1) {
 											//should never fail, just reverting back to what it was
 										}
+										
 									}
 								}
 								else {
@@ -267,14 +268,22 @@ public class AdminSettings{
 								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
 								fd.setVisible(true);
 								if(fd.getFile() != null){
+									File newFile = new File(fd.getFile());
+									String oldFileName = db.getDatabaseFilename();
 									try{
 										db.closeSQLConnection(); //close connection to current file name
 										db.setDatabaseFilename(fd.getFile());
+										Config.setDatabaseFilename(newFile.getName()); //TODO maybe play with getAbsolutePath() ?
 										db.initSQLConnection(); //initialize connection to new file name
 									}
-									catch(SQLException exception)
+									catch(SQLException | IOException exception)
 									{
 										JOptionPane.showMessageDialog(null, "Unable to change database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+										try {
+											Config.setDatabaseFilename(oldFileName);
+										} catch (IOException e1) {
+											//should never fail, just reverting back to what it was
+										}
 									}
 								}
 							}

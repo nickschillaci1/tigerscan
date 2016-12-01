@@ -105,7 +105,7 @@ public class AdminSettings{
 								} catch (NumberFormatException | DatabaseRemoveTermException e) {
 									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (DatabaseAddTermException e) {
-									JOptionPane.showMessageDialog(dbSettings, "A Term with that name already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(dbSettings, "A term with that name already exists!", "Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 						}

@@ -11,11 +11,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.sql.SQLException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -33,8 +30,6 @@ import db.DatabaseRemoveTermException;
 import main.CSVReader;
 import main.Config;
 import main.Main;
-
-import java.nio.file.Path;
 
 public class AdminSettings{
 
@@ -124,56 +119,68 @@ public class AdminSettings{
 					{	
 						//String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
 					//	if (term != null) {
-								JDialog termDialog = new JDialog(dbSettings, "Add Term", true);
-								termDialog.setLayout(new GridLayout(2,1));
-								
-								JPanel termPanel = new JPanel();
-								termPanel.setLayout(new GridLayout(1,2));
-		
-								JPanel termLeftPanel = new JPanel();
-								termLeftPanel.setLayout(new GridLayout(2,1));
-								termLeftPanel.setBorder(new EmptyBorder(0,15,0,15));
-								JLabel termLabel = new JLabel("Term");
-								JTextField termField = new JTextField(10);
-								termLeftPanel.add(termLabel);
-								termLeftPanel.add(termField);
-								
-								JPanel termRightPanel = new JPanel();
-								termRightPanel.setLayout(new GridLayout(2,1));
-								termRightPanel.setBorder(new EmptyBorder(0,15,0,15));
-								JLabel classLabel = new JLabel("Classification Score");
-								JTextField classField = new JTextField(10);
-								termRightPanel.add(classLabel);
-								termRightPanel.add(classField);
-								
-								termPanel.add(termLeftPanel);
-								termPanel.add(termRightPanel);
-								termDialog.add(termPanel);
-								
-								JButton addButton = new JButton("Add");
-								addButton.addActionListener(new ActionListener(){ 
-									public void actionPerformed(ActionEvent ev){
-										try{
-										String term = termField.getText();
-										int classScore = Integer.parseInt(classField.getText());
-										db.addTerm(term, classScore);
-										tableModel = new CustomTableModel(db.getTerms());
-										termsTable.setModel(tableModel);
-										//tableModel.fireTableDataChanged();
-										}
-										catch(DatabaseAddTermException e)
-										{
-											JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
-										}
-									}});
-								JPanel addPanel = new JPanel();
-								addPanel.add(addButton);
-								termDialog.add(addPanel);
-								
-								termDialog.setSize(500, 110);
-								termDialog.setLocation(screenWidth/3, screenHeight/3);
-								termDialog.setVisible(true);
-						//}
+						JPanel termPanel = new JPanel();
+						termPanel.setLayout(new GridLayout(1,2));
+
+						JPanel termLeftPanel = new JPanel();
+						termLeftPanel.setLayout(new GridLayout(2,1));
+						termLeftPanel.setBorder(new EmptyBorder(0,15,0,15));
+						JLabel termLabel = new JLabel("Term");
+						JTextField termField = new JTextField(10);
+						termLeftPanel.add(termLabel);
+						termLeftPanel.add(termField);
+						
+						JPanel termRightPanel = new JPanel();
+						termRightPanel.setLayout(new GridLayout(2,1));
+						termRightPanel.setBorder(new EmptyBorder(0,15,0,15));
+						JLabel classLabel = new JLabel("Classification Score");
+						JTextField classField = new JTextField(10);
+						termRightPanel.add(classLabel);
+						termRightPanel.add(classField);
+						
+						termPanel.add(termLeftPanel);
+						termPanel.add(termRightPanel);
+						JDialog termDialog = new JDialog(dbSettings, "Add Term", true);
+						termDialog.setLayout(new GridLayout(2,1));
+						termDialog.add(termPanel);
+						
+						JButton addButton = new JButton("Add");
+						addButton.addActionListener(new ActionListener() {
+							boolean closeWindowFlag;
+							public void actionPerformed(ActionEvent ev) {
+								try{
+									String term = termField.getText();
+									String scoreString = classField.getText();
+									int classScore = Integer.parseInt(classField.getText());
+									db.addTerm(term, classScore);
+									tableModel = new CustomTableModel(db.getTerms());
+									termsTable.setModel(tableModel);
+									//tableModel.fireTableDataChanged();
+									closeWindowFlag = true;
+								}
+								catch(DatabaseAddTermException e)
+								{
+									JOptionPane.showMessageDialog(dbSettings, "Term already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+									closeWindowFlag = false;
+								}
+								catch(NumberFormatException e)
+								{
+									JOptionPane.showMessageDialog(dbSettings, "Invalid score!", "Error", JOptionPane.ERROR_MESSAGE);
+									closeWindowFlag = false;
+								}
+								if(closeWindowFlag) {
+									termDialog.dispose(); // close dialog box after adding term
+								}
+							}
+						});
+						JPanel addPanel = new JPanel();
+						addPanel.add(addButton);
+						termDialog.add(addPanel);
+						
+						termDialog.setSize(500, 110);
+						termDialog.setLocation(screenWidth/3, screenHeight/3);
+						termDialog.setVisible(true);
+					//}
 					}
 				});
 				addButton.setPreferredSize(new Dimension(160, 30));

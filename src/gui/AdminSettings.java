@@ -14,6 +14,7 @@ import java.net.URL;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -120,7 +121,7 @@ public class AdminSettings{
 						//String term = JOptionPane.showInputDialog(dbSettings, "Input term to add:", "Add Term", JOptionPane.PLAIN_MESSAGE);
 					//	if (term != null) {
 						JPanel termPanel = new JPanel();
-						termPanel.setLayout(new GridLayout(1,2));
+						termPanel.setLayout(new GridLayout(1,3));
 
 						JPanel termLeftPanel = new JPanel();
 						termLeftPanel.setLayout(new GridLayout(2,1));
@@ -140,6 +141,16 @@ public class AdminSettings{
 						
 						termPanel.add(termLeftPanel);
 						termPanel.add(termRightPanel);
+						
+						//Set an "Override" so any email containing this term is immediately flagged.
+						JCheckBox overCheck = new JCheckBox("IMMEDIATELY FLAG EMAILS");
+						overCheck.addActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent ev){
+								classField.setEnabled(!classField.isEnabled());
+							}
+						});
+						
+						termPanel.add(overCheck);
 						JDialog termDialog = new JDialog(dbSettings, "Add Term", true);
 						termDialog.setLayout(new GridLayout(2,1));
 						termDialog.add(termPanel);
@@ -150,9 +161,15 @@ public class AdminSettings{
 							public void actionPerformed(ActionEvent ev) {
 								try{
 									String term = termField.getText();
-									String scoreString = classField.getText();
 									int classScore = Integer.parseInt(classField.getText());
-									db.addTerm(term, classScore);
+									if(classField.isEnabled())
+									{
+										db.addTerm(term, classScore);
+									}
+									else
+									{
+										db.addTerm(term, -1);
+									}
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
@@ -177,7 +194,7 @@ public class AdminSettings{
 						addPanel.add(addButton);
 						termDialog.add(addPanel);
 						
-						termDialog.setSize(500, 110);
+						termDialog.setSize(650, 110);
 						termDialog.setLocation(screenWidth/3, screenHeight/3);
 						termDialog.setVisible(true);
 					//}

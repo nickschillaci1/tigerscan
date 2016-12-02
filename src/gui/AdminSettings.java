@@ -268,43 +268,43 @@ public class AdminSettings{
 						JButton renameDataButton = new JButton("Rename Database");
 						renameDataButton.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent e){
-								String oldFilename = new File(db.getDatabaseFilename()).getName();
+								File oldDBFile = new File(db.getDatabaseFilename());
+								String oldAbsoluteFilename = oldDBFile.getAbsolutePath();
+								String directory = oldAbsoluteFilename.substring(0, oldAbsoluteFilename.lastIndexOf(File.separator)+1);
 								String filename = (String ) JOptionPane.showInputDialog(databasePanel, "Enter new name for database file:", 
-																			"Input New Filename", JOptionPane.PLAIN_MESSAGE, null, null, oldFilename);
+																			"Input New Filename", JOptionPane.PLAIN_MESSAGE, null, null, oldDBFile.getName());
 								if(filename != null)
 								{
-								if(!filename.contains(".db")) filename += ".db";	
-								String oldDBFile = db.getDatabaseFilename();
-								File oldDB = new File(oldDBFile);
-								String[] pathArray = oldDBFile.split("/.*.db"); //pathArray[0] contains "data"
-								String newPath = pathArray[0] + "/" + filename;
-								File newDB = new File(newPath);
-								if(!newDB.exists()) {
-									try{
-										db.closeSQLConnection(); //close connection to current file name
-										oldDB.renameTo(newDB);
-										Config.setDatabaseFilename(newPath);
-										db.setDatabaseFilename(newPath);
-										db.initSQLConnection(); //initialize connection to new file name
-										JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newPath, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
-										//oldDB.delete();
-									}
-									catch(SQLException | IOException exception)
-									{
-										JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
-										try {
-											Config.setDatabaseFilename(pathArray[0] + "/" + oldFilename);
-											db.initSQLConnection();
-										} catch (IOException | SQLException e1) {
-											//should never fail, just reverting back to what it was
+									String extension = new File(filename).getName().substring(filename.length() - 3);
+									if(!extension.equalsIgnoreCase(".db")) filename += ".db";
+									File newDBFile = new File(directory+filename);
+									String newAbsoluteFilename = newDBFile.getAbsolutePath();
+									if(!newDBFile.exists()) {
+										try{
+											db.closeSQLConnection(); //close connection to current file name
+											oldDBFile.renameTo(newDBFile);
+											Config.setDatabaseFilename(newAbsoluteFilename);
+											db.setDatabaseFilename(newAbsoluteFilename);
+											db.initSQLConnection(); //initialize connection to new file name
+											JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newAbsoluteFilename, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
+											//oldDB.delete();
 										}
+										catch(SQLException | IOException exception)
+										{
+											JOptionPane.showMessageDialog(dbSettings, "Unable to rename database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+											try {
+												Config.setDatabaseFilename(oldAbsoluteFilename);
+												db.initSQLConnection();
+											} catch (IOException | SQLException e1) {
+												//should never fail, just reverting back to what it was
+											}
 										
+										}
+									}
+									else {
+									JOptionPane.showMessageDialog(dbSettings, "A file already exists with that name!", "Database Error", JOptionPane.ERROR_MESSAGE);
 									}
 								}
-								else {
-									JOptionPane.showMessageDialog(dbSettings, "A file already exists with that name!", "Database Error", JOptionPane.ERROR_MESSAGE);
-								}
-							}
 							}
 						});
 						renameDataButton.setPreferredSize(new Dimension(160, 30));
@@ -314,22 +314,34 @@ public class AdminSettings{
 							public void actionPerformed(ActionEvent e){
 								FileDialog fd = new FileDialog(new JFrame(), "Select database file", FileDialog.LOAD);
 								fd.setVisible(true);
-								if(fd.getFile() != null){
-									File newFile = new File(fd.getFile());
-									String oldFileName = db.getDatabaseFilename();
-									try{
-										db.closeSQLConnection(); //close connection to current file name
-										db.setDatabaseFilename(fd.getFile());
-										Config.setDatabaseFilename(newFile.getName()); //TODO maybe play with getAbsolutePath() ?
-										db.initSQLConnection(); //initialize connection to new file name
+								String filename = fd.getFile();
+								if(filename != null){
+									String extension = new File(filename).getName().substring(filename.length() - 3);
+									if(!extension.equalsIgnoreCase(".db")) {
+										JOptionPane.showMessageDialog(null, "Not a valid database file!", "Database Error", JOptionPane.ERROR_MESSAGE);
 									}
-									catch(SQLException | IOException exception)
-									{
-										JOptionPane.showMessageDialog(null, "Unable to change database!", "Database Error", JOptionPane.ERROR_MESSAGE);
-										try {
-											Config.setDatabaseFilename(oldFileName);
-										} catch (IOException e1) {
-											//should never fail, just reverting back to what it was
+									else {
+										String oldAbsoluteFilename = new File(db.getDatabaseFilename()).getAbsolutePath();
+										String newAbsoluteFilename = new File(fd.getDirectory() + filename).getAbsolutePath();
+										try{
+											db.closeSQLConnection(); //close connection to current file name
+											Config.setDatabaseFilename(newAbsoluteFilename);
+											db.setDatabaseFilename(newAbsoluteFilename);
+											db.initSQLConnection(); //initialize connection to new file name
+											db.updateLocalTerms();
+											tableModel = new CustomTableModel(db.getTerms());
+											termsTable.setModel(tableModel);
+											//tableModel.fireTableDataChanged();
+										}
+										catch(SQLException | IOException exception)
+										{
+											JOptionPane.showMessageDialog(null, "Unable to change database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+											try {
+												Config.setDatabaseFilename(oldAbsoluteFilename);
+												db.initSQLConnection();
+											} catch (IOException | SQLException e1) {
+												//should never fail, just reverting back to what it was
+											}
 										}
 									}
 								}

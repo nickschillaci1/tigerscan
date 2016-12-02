@@ -29,7 +29,7 @@ public class Config {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(configFilename));
 		bw.write(Integer.toString(numEmailsScanned));
 		bw.newLine();
-		bw.write(databaseFilename);
+		bw.write(new File(databaseFilename).getAbsolutePath()); //save the ENTIRE path name specific to the user's machine
 		bw.newLine();
 		bw.close();
 	}

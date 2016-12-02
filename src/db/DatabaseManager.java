@@ -26,15 +26,20 @@ public class DatabaseManager {
      */
     public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
     	terms = new HashMap<String,Integer>();
+    	this.updateLocalTerms();
+    }
+
+    /**
+     * This will update the local HashMap terms for proper manipulation and analysis
+     */
+    public void updateLocalTerms() {
     	try {
-			sqld = new SQLDatabase(Config.getDatabaseFilename());
+    		sqld = new SQLDatabase(Config.getDatabaseFilename());
 			terms = sqld.getTerms();
 		} catch (SQLException e) {
 			System.err.println("A proper SQL connection could not be made to the \""+Config.getDatabaseFilename()+"\"");
 		}
-  
     }
-
 
     /**
      * This will check to see if the database contains a certain term.
@@ -370,23 +375,6 @@ public class DatabaseManager {
 	 */
 	public void closeSQLConnection() {
 		sqld.closeConnection();
-	}
-    
-	/**
-	 * Used with AdminSettings so the database filename can be changed.
-	 * @throws SQLException
-	 */
-	public void setFilename(String filename) throws SQLException{
-			sqld.setDatabaseFileName(filename);
-	}
-	
-	/**
-	 * Gets the filename of the local SQL database
-	 * @return String filename of the database
-	 */
-	public String getFilename()
-	{
-		return sqld.getDatabaseFileName();
 	}
 	
 	

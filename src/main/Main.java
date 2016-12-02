@@ -5,15 +5,19 @@ import gui.ScannerGUI;
 
 public class Main {
 
-	private static final String VERSION = "0.3.2";
+	private static final String VERSION = "0.3.5";
 	
 	public static void main(String[] args) {
 		Config.initConfig();
 		DatabaseManager db = new DatabaseManager();
 		ContentScanner scanner = new ContentScanner(db);
-		ScannerGUI frame = new ScannerGUI(scanner, db, VERSION);
-		//frame.pack();
-		frame.setVisible(true);
+		if (args.length != 0)
+			new ConsoleLauncher(args, scanner, VERSION);
+		else {
+			ScannerGUI frame = new ScannerGUI(scanner, db, VERSION);
+			//frame.pack();
+			frame.setVisible(true);
+		}
 	}
 
 }

@@ -296,12 +296,16 @@ public class AdminSettings{
 									if(!newDBFile.exists()) {
 										try{
 											db.closeSQLConnection(); //close connection to current file name
-											oldDBFile.renameTo(newDBFile);
-											Config.setDatabaseFilename(newAbsoluteFilename);
-											db.setDatabaseFilename(newAbsoluteFilename);
-											db.initSQLConnection(); //initialize connection to new file name
-											JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newAbsoluteFilename, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
-											//oldDB.delete();
+											if (oldDBFile.renameTo(newDBFile)) { //returns true if FileSystem.rename was successful
+												Config.setDatabaseFilename(newAbsoluteFilename);
+												db.setDatabaseFilename(newAbsoluteFilename);
+												db.initSQLConnection(); //initialize connection to new file name
+												JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newAbsoluteFilename, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
+											}
+											else {
+												db.initSQLConnection(); //re-initialize connection to the old file
+												JOptionPane.showMessageDialog(dbSettings, "An error occured; Please restart the program and try again.", "Database Error", JOptionPane.ERROR_MESSAGE);
+											}
 										}
 										catch(SQLException | IOException exception)
 										{

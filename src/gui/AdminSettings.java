@@ -161,15 +161,12 @@ public class AdminSettings{
 							public void actionPerformed(ActionEvent ev) {
 								try{
 									String term = termField.getText();
-									int classScore = Integer.parseInt(classField.getText());
+									int classScore;
 									if(classField.isEnabled())
-									{
-										db.addTerm(term, classScore);
-									}
+										classScore = Integer.parseInt(classField.getText());
 									else
-									{
-										db.addTerm(term, -1);
-									}
+										classScore = -1;
+									db.addTerm(term, classScore);
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();

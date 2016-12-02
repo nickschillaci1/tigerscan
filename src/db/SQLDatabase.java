@@ -17,6 +17,10 @@ import java.util.HashMap;
  */
 public class SQLDatabase {
 
+	private final double INITIAL_AVERAGE_PROBABILITY = 50;
+	private final double INITIAL_AVERAGE_ANY_CONFIDENTIAL = 50;
+	//any changes to the above values will require you to delete and re-create the database, or old words will not be updated
+	
 	private String databaseFileName;
 	private Connection c = null;
 	private Statement stmt = null;
@@ -93,7 +97,13 @@ public class SQLDatabase {
 	public void addTerm(String term, int score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE,EMAILSIN,EMAILSNOTIN,AVGPROB,PROBCONF) " +
-    				 "VALUES (\'" + term + "\', " + score + ", " + 0 + ", " + 0 + ", " + 0 + ", 50);";
+    				 "VALUES (\'" 
+    			+ term + "\', "
+    			+ score + ", "
+    			+ 0 + ", "
+    			+ 0 + ", "
+    			+ INITIAL_AVERAGE_PROBABILITY + ", "
+    			+ INITIAL_AVERAGE_ANY_CONFIDENTIAL +");";
     	stmt.executeUpdate(sql);
     	stmt.close();
 		c.commit();

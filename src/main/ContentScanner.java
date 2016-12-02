@@ -78,8 +78,7 @@ public class ContentScanner {
 		}
 		
 		//get the APatternReports and save proper word values
-		HashMap<Integer,String> wordsFound = new HashMap<Integer,String>();
-		int value = 0;
+		ArrayList<String> wordsFound = new ArrayList<String>();
 		for (int i=0; i<size; i++) {
 			String fName = importedFileNames.get(i);
 			APatternReport r = emailAP.get(fName).calculateProbability();
@@ -93,19 +92,18 @@ public class ContentScanner {
 				db.setAverageProbability(rWord,r.getAverageProbabilityConfidential(j));
 				db.setProbabilityAny(rWord,r.getProbabilityConfidentialPerWord(j));
 				db.incrementNumbEmailsIn(rWord);
-				if (!wordsFound.containsKey(value)) {
-					wordsFound.put(value,rWord);
-					value++;
+				if (!wordsFound.contains(rWord)) {
+					wordsFound.add(rWord);
 				}
 			}
 		}
 		
 		//increment number of emails word not in for all values
-		String[] allTerms = queryWords.keySet().toArray(new String[0]);
+		String[] allTerms = queryWords.keySet().toArray(new String[queryWords.size()]);
 		int numbTerms = allTerms.length;
 		for (int i=0; i<numbTerms; i++) {
 			String currentTerm = allTerms[i];
-			if (!wordsFound.containsKey(currentTerm)) {
+			if (!wordsFound.contains(currentTerm)) {
 				db.incrementNumbEmailsNotIn(currentTerm);
 			}
 		}

@@ -7,7 +7,7 @@ TigerScan can be fully built outside of an IDE by utilizing [Maven](http://maven
 ```
 mvn clean package
 ```
-That's it! Maven will build two versions of TigerScan and output them into the "target" directory. The first .jar file will omit dependencies, while the second will include them so the program can be executed properly.
+That's it! Maven will build the program and output a runnable .jar file into the "target" directory.
 
 
 ### Java

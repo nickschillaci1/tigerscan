@@ -30,6 +30,7 @@ import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
 import main.CSVReader;
 import main.Config;
+import main.EventLog;
 import main.Main;
 
 public class AdminSettings{
@@ -78,6 +79,7 @@ public class AdminSettings{
 									db.changeScore(term, Integer.parseInt(newScore));
 									tableModel.setValueAt(newScore, termsTable.getSelectedRow(), 1);
 									tableModel.fireTableDataChanged();
+									EventLog.writeTermClassificationChanged(new File(db.getDatabaseFilename()).getName());
 								} catch (NumberFormatException e) {
 									JOptionPane.showMessageDialog(dbSettings, "Invalid score!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (SQLException | DatabaseAddTermException e) {
@@ -103,6 +105,7 @@ public class AdminSettings{
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
+									EventLog.writeTermRemoved(new File(db.getDatabaseFilename()).getName());
 								} catch (NumberFormatException | DatabaseRemoveTermException e) {
 									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (DatabaseAddTermException e) {
@@ -170,6 +173,7 @@ public class AdminSettings{
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
+									EventLog.writeTermAdded(new File(db.getDatabaseFilename()).getName());
 									closeWindowFlag = true;
 								}
 								catch(DatabaseAddTermException e)
@@ -212,6 +216,7 @@ public class AdminSettings{
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
+									EventLog.writeTermRemoved(new File(db.getDatabaseFilename()).getName());
 								}
 								catch(DatabaseRemoveTermException e)
 								{
@@ -233,6 +238,7 @@ public class AdminSettings{
 							db.removeAllTerms();
 							tableModel = new CustomTableModel(db.getTerms());
 							termsTable.setModel(tableModel);
+							EventLog.writeTermRemovedAll(new File(db.getDatabaseFilename()).getName());
 						}
 					}
 				});
@@ -260,6 +266,7 @@ public class AdminSettings{
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
+									EventLog.writeTermImported(new File(db.getDatabaseFilename()).getName(), fd.getDirectory() + fd.getFile());
 								}
 							}
 							else JOptionPane.showMessageDialog(dbSettings, "File format not supported! Please select a '.CSV' file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -300,6 +307,7 @@ public class AdminSettings{
 												Config.setDatabaseFilename(newAbsoluteFilename);
 												db.setDatabaseFilename(newAbsoluteFilename);
 												db.initSQLConnection(); //initialize connection to new file name
+												EventLog.writeDatabaseRenamed(oldDBFile.getName(), newDBFile.getName());
 												JOptionPane.showMessageDialog(databasePanel, "Database Renamed to " + newAbsoluteFilename, "Database Renamed", JOptionPane.PLAIN_MESSAGE);
 											}
 											else {
@@ -350,6 +358,7 @@ public class AdminSettings{
 											tableModel = new CustomTableModel(db.getTerms());
 											termsTable.setModel(tableModel);
 											//tableModel.fireTableDataChanged();
+											EventLog.writeDatabaseChanged(oldAbsoluteFilename, newAbsoluteFilename);
 										}
 										catch(SQLException | IOException exception)
 										{

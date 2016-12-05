@@ -108,6 +108,7 @@ public class ContentScanner {
 			}
 		}
 		
+		EventLog.writeScanned(importedFileNames);
 		//return emailAPR;
 		return emailValues;
 		//stop email and alert user is confidentiality score is above threshold

@@ -13,10 +13,10 @@ import javax.swing.table.AbstractTableModel;
 public class CustomTableModel extends AbstractTableModel {
 
 	private String[] columnNames = {"Term", "Classification" };
-	private HashMap<String,Integer> terms;
+	private HashMap<Integer,Integer> terms;
 	private int selectedRowIndex;
 	
-	public CustomTableModel(HashMap<String, Integer> hashMap) {
+	public CustomTableModel(HashMap<Integer, Integer> hashMap) {
 		this.terms = hashMap;
 	}
 	
@@ -39,24 +39,24 @@ public class CustomTableModel extends AbstractTableModel {
 	}*/
 
 	public Object getValueAt(int row, int col) {
-		String value = null;
-		ArrayList<String> keys = new ArrayList<String>(terms.keySet());
+		int value;
+		ArrayList<Integer> keys = new ArrayList<Integer>(terms.keySet());
 		if (col == 0) { //if getting a term
 			value = keys.get(row);
 		}
 		else { //if getting a term's score
-			value = terms.get(keys.get(row)).toString();
+			value = terms.get(keys.get(row));
 		}
 		return value;
 	}
 	
 	public void setValueAt(Object value, int row, int col) {
-		ArrayList<String> keys = new ArrayList<String>(terms.keySet());
-		String selectedKey = keys.get(row);
+		ArrayList<Integer> keys = new ArrayList<Integer>(terms.keySet());
+		int selectedKey = keys.get(row);
 		int selectedValue = terms.get(selectedKey);
 		if (col == 0) { //if renaming a term
 			terms.remove(selectedKey);
-			terms.put((String) value, selectedValue);
+			terms.put((Integer) value, selectedValue);
 		}
 		else { //if changing a term's score
 			terms.remove(selectedKey);

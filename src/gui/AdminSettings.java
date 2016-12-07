@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import db.DBHash;
 import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
@@ -71,11 +72,12 @@ public class AdminSettings{
 					public void actionPerformed(ActionEvent event)
 					{
 						if (termsTable.getSelectedRow() != -1) {
-							String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
-							String newScore = (String) JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE);
-							if (newScore != term && newScore != null) {
+							int term = (int) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+							int newScore = Integer.parseInt((JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE)));
+							//if (newScore != term && newScore != null) {
+							if (newScore != 0) {
 								try {
-									db.changeScore(term, Integer.parseInt(newScore));
+									db.changeScore(term, newScore);
 									tableModel.setValueAt(newScore, termsTable.getSelectedRow(), 1);
 									tableModel.fireTableDataChanged();
 								} catch (NumberFormatException e) {
@@ -94,12 +96,13 @@ public class AdminSettings{
 					public void actionPerformed(ActionEvent event)
 					{
 						if (termsTable.getSelectedRow() != -1) {
-							String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+							int term = (int) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
 							String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
-							if (newName != term && newName != null) {
+							//if (newName != term && newName != null) {
+							if (!newName.equals("")) {
 								try {
 									db.addTerm(newName, db.getTerms().get(term));
-									db.removeTerm(term);
+									db.removeTerm(DBHash.hashCode(newName));
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
@@ -204,7 +207,7 @@ public class AdminSettings{
 					public void actionPerformed(ActionEvent event)
 					{
 						if (termsTable.getSelectedRow() != -1) {
-							String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+							int term = (int)termsTable.getValueAt(termsTable.getSelectedRow(), 0);
 							int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove the term \"" + term + "\"?", "Remove Term", JOptionPane.YES_NO_OPTION);
 							if (response == JOptionPane.YES_OPTION) {
 								try{

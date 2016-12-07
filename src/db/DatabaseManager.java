@@ -221,10 +221,10 @@ public class DatabaseManager {
 	 * Gets a HashMap<String, Integer> of terms in the database
 	 * @return HashMap<term, score>
 	 */
-	public HashMap<String,Integer> getTerms() {
-		HashMap<String,Integer> decryptedTerms = new HashMap<String,Integer>();
+	public HashMap<Integer,Integer> getTerms() {
+		HashMap<Integer,Integer> decryptedTerms = new HashMap<Integer,Integer>();
 		for (String term : terms.keySet()) {
-			decryptedTerms.put(CryptoUtility.decryptString(term), terms.get(term));
+			decryptedTerms.put(Integer.parseInt(CryptoUtility.decryptString(term)), terms.get(term));
 		}
 		return decryptedTerms;
 	}

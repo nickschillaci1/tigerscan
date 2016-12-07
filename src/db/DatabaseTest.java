@@ -1,6 +1,10 @@
 package db;
 import main.Config;
 
+/**
+ * This covers test scripts 3,
+ */
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -19,119 +23,148 @@ public class DatabaseTest {
 	public void test() {
 		Config.initConfig();
 		
-		testRemoveAllTerms();
-		testAddTermStringInt();
-		testHasTermFile();
-		testRemoveTermString();
-		testAddTermHashMapOfStringInteger();
-		testRemoveTermArrayListOfString();
+		testAddAndCheckTerm();
+		testDuplicateTermAdd();
+		testAddAndCheckMultipleTerms();
+		testDuplicateTermsAdd();
+		testRemoveSingleTerm();
+		testRemoveMultipleTerms();
+		
+	}
+	
+	private void testAddAndCheckTerm() {
+		String term = "pizza";
+		DatabaseManager dM = new DatabaseManager();
+		dM.removeAllTerms();
+		
+		//add the term
+		try {
+			dM.addTerm(term,1);
+		} catch (DatabaseAddTermException e) {
+			// TODO Auto-generated catch block
+			fail("Add and check term test failed: "+term+" is not in database, no error should be thrown");
+		}
+		
+		//check for the term
+		assertTrue("Add and check term test failed: test denied that "+term+" was in the database",dM.hasTerm(term));
+	
+	}
+	
+	private void testDuplicateTermAdd() {
+		String term = "pizza";
+		DatabaseManager dM = new DatabaseManager();
+		
+		//add the term
+		try {
+			dM.addTerm(term,1);
+			fail("Add duplicate term failed: "+term+" the term is already in, should not be able to be added again");
+		} catch (DatabaseAddTermException e) {
+			// TODO Auto-generated catch block
+		}
+		
+	}
+	
+	private void testAddAndCheckMultipleTerms() {
+		HashMap<String,Integer> terms = new HashMap<String,Integer>();
+		terms.put("one",1);
+		terms.put("two",1);
+		terms.put("three",1);
+		
+		
+		DatabaseManager dM = new DatabaseManager();
+		
+		//add terms
+		try {
+			dM.addTerm(terms);
+		} catch (DatabaseAddTermException e) {
+			fail("Add and get multiple term test failed: none of those terms are in database, no error should have been thrown");
+		}
+		
+		//check for the terms
+		assertTrue("Add multiple and check failed: test denied that term was in database.",dM.hasTerm("one"));
+		assertTrue("Add multiple and check failed: test denied that term was in database.",dM.hasTerm("two"));
+		assertTrue("Add multiple and check failed: test denied that term was in database.",dM.hasTerm("three"));
+		
+	}
+	
+	private void testDuplicateTermsAdd() {
+		HashMap<String,Integer> terms = new HashMap<String,Integer>();
+		terms.put("one",1);
+		terms.put("two",1);
+		terms.put("three",1);
+		
+		
+		DatabaseManager dM = new DatabaseManager();
+		//add terms
+		try {
+			dM.addTerm(terms);
+			fail("Add multiple duplicate terms failed, terms already added, should not have been able to be added again.");
+		} catch (DatabaseAddTermException e) {
+			//
+		}
+	}
+	
+	private void testRemoveSingleTerm() {
+		int term = DBHash.hashCode("pizza");
+		DatabaseManager dM = new DatabaseManager();
+		
+		try {
+			dM.removeTerm(term);
+		} catch (DatabaseRemoveTermException e) {
+			fail("Remove single term test failed: exception thrown");
+		}
+		
+		try {
+			dM.removeTerm(term);
+			fail("Remove single term test failed: term has already been deleted, should not be able to be deleted for a second time.");
+		} catch (DatabaseRemoveTermException e) {
+			//
+		}
+	}
+	
+	private void testRemoveMultipleTerms() {
+		ArrayList<Integer> terms = new ArrayList<Integer>();
+		terms.add(DBHash.hashCode("one"));
+		terms.add(DBHash.hashCode("two"));
+		terms.add(DBHash.hashCode("three"));
+		
+		DatabaseManager dM = new DatabaseManager();
+		
+		try {
+			dM.removeTerm(terms);
+		} catch (DatabaseRemoveTermException e) {
+			fail("Remove multiple term test failed: exception thrown");
+		}
+		
+		try {
+			dM.removeTerm(terms);
+			fail("Remove multiple term test failed: terms already removed, should not be able to be removed again");
+		} catch (DatabaseRemoveTermException e) {
+			//
+		}
 		
 	}
 	
 	private void testRemoveAllTerms() {
-		DatabaseManager db = new DatabaseManager();
-		db.removeAllTerms();
-	}
-
-	private void testAddTermStringInt() {
-		DatabaseManager db = new DatabaseManager();
-		db.removeAllTerms();
+		HashMap<String,Integer> terms = new HashMap<String,Integer>();
+		terms.put("one",1);
+		terms.put("two",1);
+		terms.put("three",1);
 		
-		//test adding a term that does not exist
+		
+		DatabaseManager dM = new DatabaseManager();
+		//add terms
 		try {
-			db.addTerm("hello",1);
+			dM.addTerm(terms);
 		} catch (DatabaseAddTermException e) {
-			fail("The add term test failed: "+e);
+			//
 		}
 		
-		//test a term that should exist
-		try {
-			db.addTerm("hello",1);
-			fail("The add term test failed: 'hello' has already been added and should not be able to be added again");
-		} catch (DatabaseAddTermException e) {
-			//nothing, test succeeded here
-		}
+		dM.removeAllTerms();
 		
-		//now test to see if the program stores it locally
-		assertTrue("The term 'hello' should exist in the database.",db.hasTerm("hello"));
-	}
-
-	private void testHasTermFile() {
-		DatabaseManager db = new DatabaseManager();
-
-		//test a term we do have
-		assertTrue("The term 'hello' should exist in the database and file.",db.hasTerm("hello"));
+		assertTrue("removeAll test failed.",dM.hasTerm("one")==false);
 		
-		//test a term we do not have
-		assertTrue("The term 'goodbye' should not exist in the database.",db.hasTerm("goodbye")==false);
-	}
-	
-	private void testRemoveTermString() {
-		DatabaseManager db = new DatabaseManager();
-		
-		//remove a term we do have
-		try {
-			db.removeTerm("hello");
-		} catch (DatabaseRemoveTermException e) {
-			fail("The remove term test has failed: "+e);
-		}
-		
-		//remove test, we no longer have this term
-		try {
-			db.removeTerm("hello");
-			fail("The remove term test has failed: 'hello' has already been removed");
-		} catch (DatabaseRemoveTermException e) {
-			//the test has succeeded
-		}
-	}
-	
-	private void testAddTermHashMapOfStringInteger() {
-		DatabaseManager db = new DatabaseManager();
-		
-		HashMap<String,Integer> test = new HashMap<String,Integer>();
-		test.put("banana",1);
-		test.put("apple",1);
-		test.put("carrot",2);
-		
-		//this should work 
-		try {
-			db.addTerm(test);
-		} catch (DatabaseAddTermException e) {
-			fail("Adding multiple terms test has failed: "+e);
-		}
-		
-		//this should work 
-		try {
-			db.addTerm(test);
-			fail("Adding multiple terms test has failed: terms already added");
-		} catch (DatabaseAddTermException e) {
-			//worked
-		}
 		
 		
 	}
-
-	private void testRemoveTermArrayListOfString() {
-		DatabaseManager db = new DatabaseManager();
-		
-		ArrayList<String> termsToRemove = new ArrayList<String>();
-		termsToRemove.add("banana");
-		termsToRemove.add("apple");
-		
-		//this should work
-		try {
-			db.removeTerm(termsToRemove);
-		} catch (DatabaseRemoveTermException e) {
-			fail("Removing multiple terms test has failed: "+e);
-		}
-		
-		//should not work below, terms already removed
-		try {
-			db.removeTerm(termsToRemove);
-			fail("Removing multiple terms test has failed: terms alredy removed");
-		} catch (DatabaseRemoveTermException e) {
-			//test worked
-		}
-	}
-
 }

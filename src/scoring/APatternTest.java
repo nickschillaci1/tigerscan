@@ -4,140 +4,86 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import db.DBHash;
+
 public class APatternTest {
 
 	@Test
 	public void test() {
-		System.out.println("This will test different cases.  It will give information about the email before and after it is scanned.  Cases are independent of eachother.\n");
-		
-		//the following tests deal with what happens when a single word is found
-			//test what happens when the first email ever is scanned and a word is found
-			testVeryFirstEmailWithWordFound();
-			
-			//test second email
-			testSecondEmailWordFound();
-			
-			//test third email
-			testThirdEmailWordFound();
-	}
 
-	private void testVeryFirstEmailWithWordFound() {
-		//test what happens when the first email ever is scanned
-		System.out.println("Test case: first email ever, word found");
-		String cWord = "yellow";
-		double pConfidentialWord = 50;
-		double averageConfidentialityWord = 0;
-		int wordInEmail = 0;
-		int wordNotInEmail = 0;
-		double cValue = 1;
-		
-		System.out.println("\tOne word found");
-		System.out.println("\tP any Email: "+pConfidentialWord);
-		System.out.println("\tFound in "+wordInEmail+" emails prior");
-		System.out.println("\tNot found in "+wordNotInEmail+" email prior");
-		System.out.println("\tWord weight: "+cValue);
-		System.out.println("\n\tAfter scanning:");
-		
-		APattern p = new APattern();
-		APatternReport r = null;
-		
-		try {
-			p.addWord(cWord,cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
-			r = p.calculateProbability();
-		} catch (APatternException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//look at the results
-		double rPConfidential = r.getProbabilityConfidentialPerWord(0);
-		double rCEmail = r.getConfidentialityScoreOfThisEmail();
-		double aPWord = r.getAverageProbabilityConfidential(0);
-		
-		System.out.println("\tP of this Email: "+rCEmail);
-		System.out.println("\tP any email: "+rPConfidential);
-		System.out.println("\tAverage P Confidential for word: "+aPWord);
-		System.out.println();
+		testFirstEmail();
+		testSecondEmail();
+		testThirdEmailTwoWords();
 	}
 	
-	private void testSecondEmailWordFound() {
-		System.out.println("Test case: second email, word found");
-		String cWord = "yellow";
-		double pConfidentialWord = 75;
-		double averageConfidentialityWord = 0;
-		int wordInEmail = 0;
-		int wordNotInEmail = 1;
-		double cValue = 1;
+	private void testFirstEmail() {
+		//first email
+		APattern aP = new APattern();
+		int word = DBHash.hashCode("banana");
+		double weight = 1;
+		double aC = 50;
+		int numberOfEmailsWordIsIn = 0;
+		int numberOfEmailsWordIsNotIn = 0;
+		double pConf = 50;
 		
-		System.out.println("\tOne word found");
-		System.out.println("\tP any Email: "+pConfidentialWord);
-		System.out.println("\tFound in "+wordInEmail+" emails prior");
-		System.out.println("\tNot found in "+wordNotInEmail+" email prior");
-		System.out.println("\tWord weight: "+cValue);
-		System.out.println("\n\tAfter scanning:");
+		//test script to add a word
+		//public void addWord(int word, double weight, double aC, int numberOfEmailsWordIsIn, int numberOfEmailsWordIsNotIn, double pConf) throws APatternException {
+		aP.addWord(word,weight,aC,numberOfEmailsWordIsIn,numberOfEmailsWordIsNotIn,pConf);
 		
+		//check this email
+		APatternReport aR = aP.calculateProbability();
 		
-		APattern p = new APattern();
-		APatternReport r = null;
+		assertEquals(57.1428,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
+		assertEquals(57.1428,aR.getAverageProbabilityConfidential(0),0.0001);
+	}
+	
+	private void testSecondEmail() {
+		//information is taken from the results above
+		APattern aP = new APattern();
+		int word = DBHash.hashCode("banana");
+		double weight = 1;
+		double aC = 57.1428;
+		int numberOfEmailsWordIsIn = 1;
+		int numberOfEmailsWordIsNotIn = 0;
+		double pConf = 57.1428;
 		
-		try {
-			p.addWord(cWord,cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
-			r = p.calculateProbability();
-		} catch (APatternException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//test script to add a word
+		//public void addWord(int word, double weight, double aC, int numberOfEmailsWordIsIn, int numberOfEmailsWordIsNotIn, double pConf) throws APatternException {
+		aP.addWord(word,weight,aC,numberOfEmailsWordIsIn,numberOfEmailsWordIsNotIn,pConf);
 		
-		//look at the results
-		double rPConfidential = r.getProbabilityConfidentialPerWord(0);
-		double rCEmail = r.getConfidentialityScoreOfThisEmail();
-		double aPWord = r.getAverageProbabilityConfidential(0);
+		//check this email
+		APatternReport aR = aP.calculateProbability();
 		
-		System.out.println("\tP of this Email: "+rCEmail);
-		System.out.println("\tP any email: "+rPConfidential);
-		System.out.println("\tAverage P Confidential for word: "+aPWord);
-		System.out.println();
+		assertEquals(70.3296,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
+		assertEquals(63.7362,aR.getAverageProbabilityConfidential(0),0.0001);
 		
 	}
 	
-	private void testThirdEmailWordFound() {
-		System.out.println("Test case: third email, word found");
-		String cWord = "yellow";
-		double pConfidentialWord = 75;
-		double averageConfidentialityWord = 87;
-		int wordInEmail = 1;
-		int wordNotInEmail = 1;
-		double cValue = 1;
+	private void testThirdEmailTwoWords() {
+		//information for word one is taken from results above
+		APattern aP = new APattern();
+		int word1 = DBHash.hashCode("banana");
+		double weight1 = 1;
+		double aC1 = 63.7362;
+		int numberOfEmailsWordIsIn1 = 2;
+		int numberOfEmailsWordIsNotIn1 = 0;
+		double pConf1 = 63.7362;
 		
-		System.out.println("\tOne word found");
-		System.out.println("\tP any Email: "+pConfidentialWord);
-		System.out.println("\tFound in "+wordInEmail+" emails prior");
-		System.out.println("\tNot found in "+wordNotInEmail+" email prior");
-		System.out.println("\tAverage score of emails word found in: "+averageConfidentialityWord);
-		System.out.println("\tWord weight: "+cValue);
-		System.out.println("\n\tAfter scanning:");
+		aP.addWord(word1,weight1,aC1,numberOfEmailsWordIsIn1,numberOfEmailsWordIsNotIn1,pConf1);
 		
+		int word2 = DBHash.hashCode("orange");
+		double weight2 = 2;
+		double aC2 = 50;
+		int numberOfEmailsWordIsIn2 = 0;
+		int numberOfEmailsWordIsNotIn2 = 2;
+		double pConf2 = 50;
+
+		aP.addWord(word2,weight2,aC2,numberOfEmailsWordIsIn2,numberOfEmailsWordIsNotIn2,pConf2);
 		
-		APattern p = new APattern();
-		APatternReport r = null;
+		//check this email
+		APatternReport aR = aP.calculateProbability();
 		
-		try {
-			p.addWord(cWord,cValue,averageConfidentialityWord,wordInEmail,wordNotInEmail,pConfidentialWord);
-			r = p.calculateProbability();
-		} catch (APatternException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//look at the results
-		double rPConfidential = r.getProbabilityConfidentialPerWord(0);
-		double rCEmail = r.getConfidentialityScoreOfThisEmail();
-		double aPWord = r.getAverageProbabilityConfidential(0);
-		
-		System.out.println("\tP of this Email: "+rCEmail);
-		System.out.println("\tP any email: "+rPConfidential);
-		System.out.println("\tAverage P Confidential for word: "+aPWord);
-		System.out.println();
+		assertEquals(80.46388,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
 	}
 
 }

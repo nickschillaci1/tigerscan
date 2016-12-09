@@ -84,6 +84,7 @@ public class ContentScanner {
 			APatternReport r = emailAP.get(fName).calculateProbability();
 			
 			emailValues.put(fName,r.getConfidentialityScoreOfThisEmail());
+			EventLog.writeScannedScore(fName,r.getConfidentialityScoreOfThisEmail());
 			
 			//save the necessary values
 			int sizeWords = r.getNumbWords();
@@ -108,7 +109,7 @@ public class ContentScanner {
 			}
 		}
 		
-		EventLog.writeScanned(importedFileNames);
+		//EventLog.writeScanned(importedFileNames);
 		//return emailAPR;
 		return emailValues;
 		//stop email and alert user is confidentiality score is above threshold
@@ -121,15 +122,17 @@ public class ContentScanner {
 		TopDocs hits = searcher.search(searchQuery);
 		long endTime = System.currentTimeMillis();
 
-		System.out.println(hits.totalHits +
-				" documents found. Time :" + (endTime - startTime) +" ms");
+		
+		//EventLog.writeDocHits(searchQuery, hits);
+	//	System.out.println(hits.totalHits +
+	///			" documents found. Time :" + (endTime - startTime) +" ms");
 		ScoreDoc[] scoreDoc = hits.scoreDocs;
 
 		for(int i = 0; i < scoreDoc.length; i++){
 			int docId = scoreDoc[i].doc;
 			Document doc = searcher.getDocument(docId);
 			String fileName = doc.get(LuceneConstants.FILE_PATH);
-			System.out.println("File: "+ fileName);
+		//	System.out.println("File: "+ fileName);
 			
 			//add the term
 			try {
@@ -139,7 +142,7 @@ public class ContentScanner {
 				e.printStackTrace();
 			}
 			
-			System.out.println(fileName);
+			//System.out.println(fileName);
 			//System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//Bugged, should be spitting out filepath
 		}
 	}
@@ -151,7 +154,6 @@ public class ContentScanner {
 		indexer.createIndex(filenames, new TextFileFilter());
 		long endTime = System.currentTimeMillis();
 		indexer.closeIndex();
-		System.out.println(numIndexed+" file(s) indexed, time taken: "
-				+(endTime-startTime)+" ms");		
+		EventLog.writeFileIndexed(numIndexed, startTime, endTime);	
 	}
 }

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.lucene.search.TopDocs;
+
 /**
  * This class is meant to write information to a log file for runtime documentation
  * @author Nick Schillaci
@@ -53,6 +55,14 @@ public class EventLog {
 		String[] text = lines.toArray(new String[0]);
 		write(text);
 	}
+	
+	public static void writeScannedScore(String filepath, double score) {
+		String[] text = {
+				new Date().toString() + " -- File scanned -- " + filepath + " -- Score: " + score
+		};
+		write(text);
+	}
+	
 	
 	/**
 	 * Write to the log file to reflect that a term has been added to the database
@@ -140,6 +150,20 @@ public class EventLog {
 	public static void writeDatabaseChanged(String dbFilenameOld, String dbFilenameNew) {
 		String[] text = {
 				new Date().toString() + " -- A new database has been selected -- " + dbFilenameOld + " >> " + dbFilenameNew
+		};
+		write(text);
+	}
+	
+	public static void writeFileIndexed(int numIndexed, long startTime, long endTime) {
+		String[] text = {
+				new Date().toString() + " -- Files indexed -- " + numIndexed + " file(s), time taken: " + (endTime - startTime)+" ms"
+		};
+		write(text);
+	}
+	
+	public static void writeDocHits(String searchQuery, TopDocs hits) {
+		String[] text = {
+				new Date().toString() + " -- Total document hits for the term: " + searchQuery + " -- " + hits.totalHits + " document(s)"
 		};
 		write(text);
 	}

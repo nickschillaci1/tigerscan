@@ -17,6 +17,8 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+import main.EventLog;
+
 /**
  * This class takes text files and creates indexes from them that can be searched
  * @author Ryan Hudson
@@ -91,14 +93,12 @@ public class FileIndexer {
 	 */
 	public int createIndex(ArrayList<String> fileNames, FileFilter filter) 
 			throws IOException{
-		//get all files in the data directory
-		//File[] files = new File(dataDirPath).listFiles();
 		File file;
 		//a bunch of checks to see if the file can be used for indexing
 		for (String fileName : fileNames) {
 			file = new File(fileName);
 			if(!file.isDirectory() && !file.isHidden() && file.exists() && file.canRead() && filter.accept(file)) {
-				System.out.println("Scanning file: " + fileName);
+				//EventLog.writeFileIndexed(fileName);
 				indexFile(file);
 			}
 		}

@@ -83,7 +83,7 @@ public class APatternTest {
 		//check this email
 		APatternReport aR = aP.calculateProbability();
 		
-		assertEquals(80.46388,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
+		assertEquals(91.655059,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
 	}
 
 }

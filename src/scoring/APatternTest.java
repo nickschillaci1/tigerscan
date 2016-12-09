@@ -76,14 +76,22 @@ public class APatternTest {
 		double aC2 = 50;
 		int numberOfEmailsWordIsIn2 = 0;
 		int numberOfEmailsWordIsNotIn2 = 2;
-		double pConf2 = 50;
+		double pConf2 = 63.7362;
 
 		aP.addWord(word2,weight2,aC2,numberOfEmailsWordIsIn2,numberOfEmailsWordIsNotIn2,pConf2);
 		
 		//check this email
 		APatternReport aR = aP.calculateProbability();
 		
-		assertEquals(91.655059,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
+		assertEquals(98.7597,aR.getConfidentialityScoreOfThisEmail(),0.0001); 
+		
+		//first word
+		assertEquals(75.4107,aR.getAverageProbabilityConfidential(0),0.0001);
+		assertEquals(75.4107,aR.getProbabilityConfidentialPerWord(0),0.0001);
+		
+		//second word
+		assertEquals(98.7597,aR.getAverageProbabilityConfidential(1),0.0001);
+		assertEquals(75.4107,aR.getProbabilityConfidentialPerWord(1),0.0001);
 	}
 
 }

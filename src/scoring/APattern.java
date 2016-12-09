@@ -106,17 +106,21 @@ public class APattern {
 			if (isHighestProb) {
 				pThisIsConfidential = 100;
 			} else {
-				double rTemp;
-				double rOne = 1;
-				double rTwo = 1;
-				for (int i=0; i<size; i++) {
-					rTemp=pConfidentialWithWord.get(i);
-					rOne*=rTemp;
-					//rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
-					rTwo*=(100-rTemp)*TOTAL_MULTIPLIER;
+				if (size>0) {
+					double rTemp;
+					double rOne = 1;
+					double rTwo = 1;
+					for (int i=0; i<size; i++) {
+						rTemp=pConfidentialWithWord.get(i);
+						rOne*=rTemp;
+						//rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
+						rTwo*=(100-rTemp)*TOTAL_MULTIPLIER;
+					}
+					
+					pThisIsConfidential = rOne/(rOne+rTwo)*100;
+				} else {
+					pThisIsConfidential = 0;
 				}
-				
-				pThisIsConfidential = rOne/(rOne+rTwo)*100;
 			}
 
 			r = new APatternReport(pThisIsConfidential);

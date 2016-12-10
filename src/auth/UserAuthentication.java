@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import main.CryptoUtility;
+
 /**
  * This class will handle User authentication to differentiate users from administrators and apply necessary local security restrictions
  * @author Nick Schillaci
@@ -28,7 +30,7 @@ public class UserAuthentication {
 			String line = null;
 			br = new BufferedReader(new FileReader(usersFilename));
 			while((line = br.readLine()) != null) {
-				//TODO encrypt/decrypt contents of users file. I plan to test further before implementing this
+				line = CryptoUtility.decryptString(line);
 				String entry[] = line.split(","); //entry[0] is user name, entry[1] is secure password, entry[2] is administrator status
 				boolean admin;
 				if(username.equals(entry[0])) {

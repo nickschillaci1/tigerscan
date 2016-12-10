@@ -18,12 +18,16 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 
 import java.awt.Font;
+import java.awt.GridLayout;
+
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -34,7 +38,14 @@ import java.awt.Dimension;
 
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+
+import auth.InvalidCredentialsException;
+import auth.User;
+import auth.UserAuthentication;
+
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
 import db.DatabaseManager;
 import main.Config;
 import main.ContentScanner;
@@ -144,7 +155,7 @@ public class ScannerGUI extends JFrame{
 		
 		JPanel fileActionPanel = new JPanel();
 		cPanel.add(fileActionPanel, BorderLayout.SOUTH);
-		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
 	
 		JButton fileAddButton = new JButton("Add File");
 		fileAddButton.setPreferredSize(new Dimension(125, 30));
@@ -225,17 +236,68 @@ public class ScannerGUI extends JFrame{
 			}
 		});
 		
+		
 		JButton settingsButton = new JButton();
 		URL url = Main.class.getResource("/settings.png");
 		ImageIcon icon = new ImageIcon(url);
 		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				createAdminDialog(db);		
+				JDialog authDialog = new JDialog((JDialog) null, "Login", true);
+				authDialog.setLayout(new GridLayout(2,1));
+				
+				JPanel authPanel = new JPanel();
+				GridLayout authLayout = new GridLayout(4,1);
+				authLayout.setVgap(2);
+				authPanel.setLayout(authLayout);
+				
+				JLabel userLabel = new JLabel("Username");
+				JTextField userText = new JTextField();
+				JLabel passLabel = new JLabel("Password");
+				JPasswordField passField = new JPasswordField();
+				
+				JButton loginButton = new JButton("Log In");
+	
+				authPanel.add(userLabel);
+				authPanel.add(userText);
+				authPanel.add(passLabel);
+				authPanel.add(passField);
+				
+				JPanel buttonPanel = new JPanel();
+				buttonPanel.add(loginButton);
+				buttonPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+				
+				authDialog.add(authPanel);
+				authDialog.add(buttonPanel);
+				authDialog.setSize(400, 200);
+				authDialog.setLocationRelativeTo(sPanel);
+				authDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+				authDialog.setVisible(true);
+				
+				loginButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent ev){
+						User user = null;
+						try{
+							user = UserAuthentication.login(userText.getText(), passField.getPassword().toString());
+						}
+						catch(InvalidCredentialsException e)
+						{
+							JOptionPane.showMessageDialog(authDialog, "Invalid credentials", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
+						}
+						if(user != null)
+						{
+							createAdminDialog(db);	
+						}
+					}
+				});
 			}
 		});
+		settingsButton.setPreferredSize(new Dimension(125, 30));
 		fileScanPanel.add(settingsButton);
 		
+		JButton logButton = new JButton("Show Log");
+		logButton.setPreferredSize(new Dimension(125, 30));
+		fileScanPanel.add(logButton);
 		
 		JLabel labelVersion = new JLabel("Version " + version);
 		labelVersion.setForeground(Color.GRAY);

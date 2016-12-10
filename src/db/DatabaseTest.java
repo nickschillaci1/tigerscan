@@ -29,6 +29,7 @@ public class DatabaseTest {
 		testDuplicateTermsAdd();
 		testRemoveSingleTerm();
 		testRemoveMultipleTerms();
+		testDatabaseEncryption();
 		
 	}
 	
@@ -164,7 +165,20 @@ public class DatabaseTest {
 		
 		assertTrue("removeAll test failed.",dM.hasTerm("one")==false);
 		
-		
-		
+	}
+	
+	private void testDatabaseEncryption() {
+		String word = "apple";
+		DatabaseManager dM = new DatabaseManager();
+		try {
+			dM.addTerm(word, 1);
+		} catch (DatabaseAddTermException e) {
+			//
+		}
+		for(Integer encryptedWord : dM.getTerms().keySet()) {
+			if(word.equals(encryptedWord.toString())) {
+				fail("Database encryption test failed. The term was not properly encrypted and still matches its original form");
+			}
+		}
 	}
 }

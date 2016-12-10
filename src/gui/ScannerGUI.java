@@ -67,6 +67,8 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
+	static final URL ICON_URL = Main.class.getResource("/icon.png");
+	static final URL SETTINGS_URL = Main.class.getResource("/settings.png");
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -92,8 +94,7 @@ public class ScannerGUI extends JFrame{
 				db.closeSQLConnection();
 			}
 		});
-		URL url = Main.class.getResource("/icon.png");
-		ImageIcon icon = new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(ICON_URL);
 		this.setIconImage(icon.getImage());
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		screenWidth = tk.getScreenSize().width;
@@ -238,13 +239,14 @@ public class ScannerGUI extends JFrame{
 		
 		
 		JButton settingsButton = new JButton();
-		URL url = Main.class.getResource("/settings.png");
-		ImageIcon icon = new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(SETTINGS_URL);
 		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				JDialog authDialog = new JDialog((JDialog) null, "Login", true);
 				authDialog.setLayout(new GridLayout(2,1));
+				ImageIcon icon = new ImageIcon(ICON_URL);
+				authDialog.setIconImage(icon.getImage());
 				
 				JPanel authPanel = new JPanel();
 				GridLayout authLayout = new GridLayout(4,1);
@@ -298,6 +300,13 @@ public class ScannerGUI extends JFrame{
 		JButton logButton = new JButton("Show Log");
 		logButton.setPreferredSize(new Dimension(125, 30));
 		fileScanPanel.add(logButton);
+		
+		logButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO add window to display log. afterwards, we will encrypt the log when writing and decrypt it here
+				
+			}
+		});
 		
 		JLabel labelVersion = new JLabel("Version " + version);
 		labelVersion.setForeground(Color.GRAY);

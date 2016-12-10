@@ -3,14 +3,18 @@ package auth;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * This class will handle User authentication to differentiate users from administrators and apply necessary local security restrictions
  * @author Nick Schillaci
  */
 public class UserAuthentication {
-	private static String usersFilename = "data/users.cfg";
+	private static final String usersFilename = "data/users.cfg";
 	private static BufferedReader br;
+	private static final String PASSREQ_REGEX = "^[a-zA-Z0-9]";
+	private static final int PASSREQ_MIN_SIZE = 8;
+	private static final int SALT_LENGTH = 5;
 	
 	/**
 	 * Attempt to log in with supplied credentials and return matching User object.
@@ -54,7 +58,7 @@ public class UserAuthentication {
 	 * @throws InvalidCredentialsException if pass1 and pass2 do not match (password confirmation)
 	 */
 	public static User newUserLogin(String username, String pass1, String pass2, boolean admin) throws InvalidCredentialsException {
-		if(pass1.equals(pass2)) {
+		if(pass1.equals(pass2) && validPassword(pass1)) {
 			//TODO manipulate password to record secure password instead of direct
 			return new User(username, admin); //return object that represents newly created, logged-in user
 		}
@@ -69,10 +73,32 @@ public class UserAuthentication {
 	 * @return
 	 */
 	private static boolean passwordMatch(String passwordAttempt, String password) {
-		//TODO manipulate passwordAttempt to check against secure password
-		return false;
+		//TODO manipulate passwordAttempt to check against secure password (encryption)
+		return saltedString(passwordAttempt).equals(password); //temporary
 	}
 	
+	/**
+	 * Check the String the user tries to use to create a new password to ensure it matches security requirements
+	 * @param password
+	 * @return
+	 */
+	private static boolean validPassword(String password) {
+		return password.length() >= PASSREQ_MIN_SIZE && Pattern.matches(PASSREQ_REGEX, password);
+	}
+	
+	/**
+	 * Return a string that has been salted to enhance security of authentication
+	 * Takes the last $SALT_LENGTH$ digits of a password, reverses them, and appends them to the original to create a new password
+	 * @param original
+	 * @return
+	 */
+	private static String saltedString(String original) {
+		StringBuilder salt = new StringBuilder();
+		for(int i = 0; i < SALT_LENGTH; i++) {
+			salt.append(original.charAt(original.length() - i - 1));
+		}
+		return original + salt.toString();
+	}
 	
 	
 }

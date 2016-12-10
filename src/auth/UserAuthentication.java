@@ -39,6 +39,7 @@ public class UserAuthentication {
 							admin = true;
 						else
 							admin = false;
+						//System.out.println(CryptoUtility.encryptString(entry[0] + "," + CryptoUtility.encryptString("passworddrows") + "," + entry[2]));
 						return new User(entry[0], admin); //return object that represents logged-in user
 					}
 				}
@@ -75,8 +76,9 @@ public class UserAuthentication {
 	 * @return
 	 */
 	private static boolean passwordMatch(String passwordAttempt, String password) {
+		String temp = CryptoUtility.encryptString(saltedString(passwordAttempt));
 		//TODO manipulate passwordAttempt to check against secure password (encryption)
-		return saltedString(passwordAttempt).equals(password); //temporary
+		return temp.equals(password); //temporary
 	}
 	
 	/**

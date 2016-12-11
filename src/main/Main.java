@@ -5,7 +5,7 @@ import gui.ScannerGUI;
 
 public class Main {
 
-	private static final String VERSION = "0.4";
+	private static final String VERSION = "0.4.4";
 	
 	public static void main(String[] args) {
 		Config.initConfig();

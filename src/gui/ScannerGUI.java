@@ -18,12 +18,16 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 
 import java.awt.Font;
+import java.awt.GridLayout;
+
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -34,7 +38,14 @@ import java.awt.Dimension;
 
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+
+import auth.InvalidCredentialsException;
+import auth.User;
+import auth.UserAuthentication;
+
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
 import db.DatabaseManager;
 import main.Config;
 import main.ContentScanner;
@@ -43,9 +54,6 @@ import main.Main;
 /**
  * Graphic interface to operate the security scanner
  * 
- * TODO -- JList<String> and DefaultListModel<String> instead of
- * 		JList and DefaultListModel. breaks window builder (do before release)
- * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
  * @author Zackary Flake
  * @author Brandon Dixon
@@ -56,6 +64,8 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
+	static final URL ICON_URL = Main.class.getResource("/icon.png");
+	static final URL SETTINGS_URL = Main.class.getResource("/settings.png");
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -81,8 +91,7 @@ public class ScannerGUI extends JFrame{
 				db.closeSQLConnection();
 			}
 		});
-		URL url = Main.class.getResource("/icon.png");
-		ImageIcon icon = new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(ICON_URL);
 		this.setIconImage(icon.getImage());
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		screenWidth = tk.getScreenSize().width;
@@ -144,7 +153,7 @@ public class ScannerGUI extends JFrame{
 		
 		JPanel fileActionPanel = new JPanel();
 		cPanel.add(fileActionPanel, BorderLayout.SOUTH);
-		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
 	
 		JButton fileAddButton = new JButton("Add File");
 		fileAddButton.setPreferredSize(new Dimension(125, 30));
@@ -225,17 +234,92 @@ public class ScannerGUI extends JFrame{
 			}
 		});
 		
+		
 		JButton settingsButton = new JButton();
-		URL url = Main.class.getResource("/settings.png");
-		ImageIcon icon = new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(SETTINGS_URL);
 		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				createAdminDialog(db);		
+				JDialog authDialog = new JDialog((JDialog) null, "Login", true);
+				authDialog.setLayout(new GridLayout(2,1));
+				ImageIcon icon = new ImageIcon(ICON_URL);
+				authDialog.setIconImage(icon.getImage());
+				
+				JPanel authPanel = new JPanel();
+				GridLayout authLayout = new GridLayout(4,1);
+				authLayout.setVgap(2);
+				authPanel.setLayout(authLayout);
+				
+				JLabel userLabel = new JLabel("Username");
+				JTextField userText = new JTextField();
+				JLabel passLabel = new JLabel("Password");
+				JPasswordField passField = new JPasswordField();
+				
+				JButton loginButton = new JButton("Log In");
+				loginButton.setMnemonic(KeyEvent.VK_L);
+				loginButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent ev){
+						User user = null;
+						String usernameString = userText.getText();
+						try{
+							user = UserAuthentication.login(usernameString, passField.getPassword());
+						}
+						catch(InvalidCredentialsException e1) //invalid username/password
+						{
+							JOptionPane.showMessageDialog(authDialog, "Invalid credentials", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
+						}
+						catch(IOException e2) //users file not found
+						{
+							if (UserAuthentication.verifyDefaultAdmin(usernameString, passField.getPassword())) {
+								JOptionPane.showMessageDialog(authDialog, "The default administrator information must be changed.\n"
+										+ "Please enter new log-in credentials.", "Administrator", JOptionPane.WARNING_MESSAGE);
+								
+								user = new NewUserDialog(sPanel, ICON_URL).getUser();
+							}
+							else
+								JOptionPane.showMessageDialog(authDialog, "Log-in information not found.\n"
+										+ "Please contact your system administrator.", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
+						}
+						if(user != null && user.isAdmin())
+						{
+							authDialog.dispose();
+							createAdminDialog(db);
+						}
+					}
+				});
+				
+				authPanel.add(userLabel);
+				authPanel.add(userText);
+				authPanel.add(passLabel);
+				authPanel.add(passField);
+				
+				JPanel buttonPanel = new JPanel();
+				buttonPanel.add(loginButton);
+				buttonPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+				
+				authDialog.add(authPanel);
+				authDialog.add(buttonPanel);
+				authDialog.setSize(400, 200);
+				authDialog.setLocationRelativeTo(sPanel);
+				authDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+				authDialog.setVisible(true);
+				
+				
 			}
 		});
+		settingsButton.setPreferredSize(new Dimension(125, 30));
 		fileScanPanel.add(settingsButton);
 		
+		JButton logButton = new JButton("Show Log");
+		logButton.setPreferredSize(new Dimension(125, 30));
+		fileScanPanel.add(logButton);
+		
+		logButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO add window to display log. afterwards, we will encrypt the log when writing and decrypt it here
+				
+			}
+		});
 		
 		JLabel labelVersion = new JLabel("Version " + version);
 		labelVersion.setForeground(Color.GRAY);

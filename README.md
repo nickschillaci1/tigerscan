@@ -1,6 +1,19 @@
 # TigerScan - Email Security Scanner
 *Software Engineering Project - Rowan University*
 
+## Instructions
+### Users
+coming soon..
+
+### Administrators
+Managers of the TigerScan system may display the recorded activity log and access the database settings window. Upon first launching the program, a default administrator is provided, but a new one will need to be specified and created by a manager. The default administrator credentials are as follows:
+```
+Usermame: admin
+Password: tiger2admin1676
+```
+Once the new administrator is created and saved to the system, the default administrator credentials are no longer valid and the new administrator is required to access management features.
+
+
 ## Requirements
 ### Maven
 TigerScan can be fully built outside of an IDE by utilizing [Maven](http://maven.apache.org/) for project build management. With Maven installed, navigate to the project's root directory and run the following command:

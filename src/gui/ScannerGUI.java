@@ -54,9 +54,6 @@ import main.Main;
 /**
  * Graphic interface to operate the security scanner
  * 
- * TODO -- JList<String> and DefaultListModel<String> instead of
- * 		JList and DefaultListModel. breaks window builder (do before release)
- * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
  * @author Zackary Flake
  * @author Brandon Dixon
@@ -259,19 +256,34 @@ public class ScannerGUI extends JFrame{
 				JPasswordField passField = new JPasswordField();
 				
 				JButton loginButton = new JButton("Log In");
+				loginButton.setMnemonic(KeyEvent.VK_L);
 				loginButton.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent ev){
 						User user = null;
+						String usernameString = userText.getText();
 						try{
-							user = UserAuthentication.login(userText.getText(), passField.getPassword().toString());
+							user = UserAuthentication.login(usernameString, passField.getPassword());
 						}
-						catch(InvalidCredentialsException e)
+						catch(InvalidCredentialsException e1) //invalid username/password
 						{
 							JOptionPane.showMessageDialog(authDialog, "Invalid credentials", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
 						}
-						if(user != null)
+						catch(IOException e2) //users file not found
 						{
-							createAdminDialog(db);	
+							if (UserAuthentication.verifyDefaultAdmin(usernameString, passField.getPassword())) {
+								JOptionPane.showMessageDialog(authDialog, "The default administrator information must be changed.\n"
+										+ "Please enter new log-in credentials.", "Administrator", JOptionPane.WARNING_MESSAGE);
+								
+								user = new NewUserDialog(sPanel, ICON_URL).getUser();
+							}
+							else
+								JOptionPane.showMessageDialog(authDialog, "Log-in information not found.\n"
+										+ "Please contact your system administrator.", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
+						}
+						if(user != null && user.isAdmin())
+						{
+							authDialog.dispose();
+							createAdminDialog(db);
 						}
 					}
 				});

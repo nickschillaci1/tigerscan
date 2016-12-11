@@ -259,23 +259,6 @@ public class ScannerGUI extends JFrame{
 				JPasswordField passField = new JPasswordField();
 				
 				JButton loginButton = new JButton("Log In");
-	
-				authPanel.add(userLabel);
-				authPanel.add(userText);
-				authPanel.add(passLabel);
-				authPanel.add(passField);
-				
-				JPanel buttonPanel = new JPanel();
-				buttonPanel.add(loginButton);
-				buttonPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
-				
-				authDialog.add(authPanel);
-				authDialog.add(buttonPanel);
-				authDialog.setSize(400, 200);
-				authDialog.setLocationRelativeTo(sPanel);
-				authDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-				authDialog.setVisible(true);
-				
 				loginButton.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent ev){
 						User user = null;
@@ -292,6 +275,24 @@ public class ScannerGUI extends JFrame{
 						}
 					}
 				});
+				
+				authPanel.add(userLabel);
+				authPanel.add(userText);
+				authPanel.add(passLabel);
+				authPanel.add(passField);
+				
+				JPanel buttonPanel = new JPanel();
+				buttonPanel.add(loginButton);
+				buttonPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+				
+				authDialog.add(authPanel);
+				authDialog.add(buttonPanel);
+				authDialog.setSize(400, 200);
+				authDialog.setLocationRelativeTo(sPanel);
+				authDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+				authDialog.setVisible(true);
+				
+				
 			}
 		});
 		settingsButton.setPreferredSize(new Dimension(125, 30));

@@ -222,13 +222,19 @@ public class ScannerGUI extends JFrame{
 					String[] fileNames = r.keySet().toArray(new String[0]);
 					
 					for (int i=0; i<size; i++) {
-						sReport+=fileNames[i]+": "+r.get(fileNames[i])+"\n";
+						double score = r.get(fileNames[i]);
+						if(score > 50.0)
+						sReport+=fileNames[i]+"\n - Email is confidential" +"\n";
+						else
+						sReport+=fileNames[i]+"\n - Email is not confidential" +"\n";
 					}
 					try {
 						Config.emailScanned();
 					} catch (IOException e) {
 						System.err.println("Error accessing config file.");
 					}
+
+					
 					JOptionPane.showMessageDialog(null,"Scanning complete:\n"+sReport);
 				}
 			}

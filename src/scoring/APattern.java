@@ -18,7 +18,7 @@ public class APattern {
 	private final double TOTAL_MULTIPLIER = 0.75;
 	
 	private ArrayList<Double> pConfidentialWithWord;
-	private ArrayList<String> pWords;
+	private ArrayList<Integer> pWords;
 	//private ArrayList<Double> pWordInConfidential;
 	private ArrayList<Integer> pNumberOfEmailsWordIsIn;
 	private ArrayList<Double> pAveragePerWord;
@@ -35,7 +35,7 @@ public class APattern {
 	 */
 	public APattern() {
 		pConfidentialWithWord = new ArrayList<Double>();
-		pWords = new ArrayList<String>();
+		pWords = new ArrayList<Integer>();
 		pConfidentialWithWord = new ArrayList<Double>();
 		pNumberOfEmailsWordIsIn = new ArrayList<Integer>();
 		//pWordInConfidential = new ArrayList<Double>();
@@ -56,7 +56,7 @@ public class APattern {
 	 * @param emailsBeforeWord - the number of emails scanned before the word was added to the database
 	 * @throws APatternException
 	 */
-	public void addWord(String word, double weight, double aC, int numberOfEmailsWordIsIn, int numberOfEmailsWordIsNotIn, double pConf) throws APatternException {
+	public void addWord(int word, double weight, double aC, int numberOfEmailsWordIsIn, int numberOfEmailsWordIsNotIn, double pConf) throws APatternException {
 		if (!hasAlreadyScanned) {
 			//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
 			numberOfEmailsWordIsIn++;
@@ -66,7 +66,6 @@ public class APattern {
 				double pWC;
 				if (numberOfEmailsWordIsIn>1) {
 					pWC = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*(aC/100);
-					System.out.println("Word n: "+(numberOfEmailsWordIsIn-1)*(aC/100));
 				} else if (numberOfEmailsWordIsNotIn>0) {
 					pWC = probabilityWordInEmail;
 				} else {
@@ -79,6 +78,7 @@ public class APattern {
 				pConfidentialWithWord.add((double) 100);
 				isHighestProb = true;
 			}
+			
 			
 			pAveragePerWord.add(aC);
 			pWords.add(word);
@@ -106,18 +106,21 @@ public class APattern {
 			if (isHighestProb) {
 				pThisIsConfidential = 100;
 			} else {
-				double rTemp;
-				double rOne = 1;
-				double rTwo = 1;
-				for (int i=0; i<size; i++) {
-					rTemp=pConfidentialWithWord.get(i);
-					System.out.println("Word "+i+": "+rTemp);
-					rOne*=rTemp;
-					rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
-					System.out.println("rOne: "+rOne+"\nrTwo: "+rTwo);
+				if (size>0) {
+					double rTemp;
+					double rOne = 1;
+					double rTwo = 1;
+					for (int i=0; i<size; i++) {
+						rTemp=pConfidentialWithWord.get(i);
+						rOne*=rTemp;
+						//rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
+						rTwo*=(100-rTemp)*TOTAL_MULTIPLIER;
+					}
+					
+					pThisIsConfidential = rOne/(rOne+rTwo)*100;
+				} else {
+					pThisIsConfidential = 0;
 				}
-				
-				pThisIsConfidential = rOne/(rOne+rTwo)*100;
 			}
 
 			r = new APatternReport(pThisIsConfidential);

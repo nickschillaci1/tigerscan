@@ -56,7 +56,7 @@ public class ContentScanner {
 		emailValues = new HashMap<String,Double>();
 		
 		//create queryWords
-		HashMap<String,Integer> queryWords = new HashMap<String,Integer>();
+		HashMap<Integer,Integer> queryWords = new HashMap<Integer,Integer>();
 		try {
 			this.createIndex(importedFileNames);
 		} catch (IOException e) {
@@ -65,7 +65,7 @@ public class ContentScanner {
 		}
 		queryWords = db.getTerms();
 
-		for(String term : queryWords.keySet()){
+		for(int term : queryWords.keySet()){
 			try {
 				search(term);
 			} catch (IOException e) {
@@ -78,7 +78,7 @@ public class ContentScanner {
 		}
 		
 		//get the APatternReports and save proper word values
-		ArrayList<String> wordsFound = new ArrayList<String>();
+		ArrayList<Integer> wordsFound = new ArrayList<Integer>();
 		for (int i=0; i<size; i++) {
 			String fName = importedFileNames.get(i);
 			APatternReport r = emailAP.get(fName).calculateProbability();
@@ -89,7 +89,7 @@ public class ContentScanner {
 			//save the necessary values
 			int sizeWords = r.getNumbWords();
 			for (int j=0; j<sizeWords; j++) {
-				String rWord = r.getWord(j);
+				int rWord = r.getWord(j);
 				db.setAverageProbability(rWord,r.getAverageProbabilityConfidential(j));
 				db.setProbabilityAny(rWord,r.getProbabilityConfidentialPerWord(j));
 				db.incrementNumbEmailsIn(rWord);
@@ -100,10 +100,10 @@ public class ContentScanner {
 		}
 		
 		//increment number of emails word not in for all values
-		String[] allTerms = queryWords.keySet().toArray(new String[queryWords.size()]);
+		Integer[] allTerms = queryWords.keySet().toArray(new Integer[0]);
 		int numbTerms = allTerms.length;
 		for (int i=0; i<numbTerms; i++) {
-			String currentTerm = allTerms[i];
+			int currentTerm = allTerms[i];
 			if (!wordsFound.contains(currentTerm)) {
 				db.incrementNumbEmailsNotIn(currentTerm);
 			}
@@ -115,11 +115,11 @@ public class ContentScanner {
 		//stop email and alert user is confidentiality score is above threshold
 	}
 
-	private void search(String searchQuery) throws IOException, ParseException {
+	private void search(int searchQuery) throws IOException, ParseException {
 		searcher = new FileSearcher(indexDir);
 		long startTime = System.currentTimeMillis();
 
-		TopDocs hits = searcher.search(searchQuery);
+		TopDocs hits = searcher.search(""+searchQuery);
 		long endTime = System.currentTimeMillis();
 
 		

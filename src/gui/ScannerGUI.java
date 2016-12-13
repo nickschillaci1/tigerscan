@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,11 +48,13 @@ import auth.User;
 import auth.UserAuthentication;
 
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import db.DatabaseManager;
 import main.Config;
 import main.ContentScanner;
+import main.EventLog;
 import main.Main;
 
 /**
@@ -322,8 +328,47 @@ public class ScannerGUI extends JFrame{
 		
 		logButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO add window to display log. afterwards, we will encrypt the log when writing and decrypt it here
 				
+				//TODO add window to display log. afterwards, we will encrypt the log when writing and decrypt it here
+				JDialog logDialog = new JDialog((JDialog) null, "Log", true);
+				logDialog.setSize(500, 500);
+				try{
+				File logFile = new File(EventLog.getLogFilename());
+				FileReader fr = new FileReader(logFile);
+				BufferedReader br = new BufferedReader(fr);
+				
+				String line = br.readLine();
+				String log = "";
+				while(line != null){
+					log += "" + line + "\n";
+					line = br.readLine();
+				}
+				br.close();
+
+				JTextArea logArea = new JTextArea(25,40);
+				logArea.setText(log);
+				logArea.setEditable(false);
+				
+				JPanel logPanel = new JPanel();
+				JScrollPane logPane = new JScrollPane(logArea);
+				logPanel.add(logPane);
+				
+				JButton closeButton = new JButton("Close");
+				closeButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent event){
+						logDialog.dispose();
+					}
+				});
+				logPanel.add(closeButton);
+				logDialog.add(logPanel);
+				
+				logDialog.setLocationRelativeTo(sPanel);
+				logDialog.setVisible(true);	
+				}
+				catch(Exception excep)
+				{
+					JOptionPane.showMessageDialog(logDialog, "Event Log Not Found", "Unable to Show Log", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		

@@ -168,4 +168,7 @@ public class EventLog {
 		write(text);
 	}
 	
+	public static String getLogFilename(){
+		return logFilename;
+	}
 }

@@ -117,10 +117,10 @@ public class ContentScanner {
 
 	private void search(int searchQuery) throws IOException, ParseException {
 		searcher = new FileSearcher(indexDir);
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 
 		TopDocs hits = searcher.search(""+searchQuery);
-		long endTime = System.currentTimeMillis();
+		//long endTime = System.currentTimeMillis();
 
 		
 		//EventLog.writeDocHits(searchQuery, hits);

@@ -223,7 +223,7 @@ public class ScannerGUI extends JFrame{
 					
 					for (int i=0; i<size; i++) {
 						double score = r.get(fileNames[i]);
-						if(score > 50.0)
+						if(score > 50.0 || score == 50.0)
 						sReport+=fileNames[i]+"\n - Email is confidential" +"\n";
 						else
 						sReport+=fileNames[i]+"\n - Email is not confidential" +"\n";

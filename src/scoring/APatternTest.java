@@ -19,7 +19,7 @@ public class APatternTest {
 	private void testFirstEmail() {
 		//first email
 		APattern aP = new APattern();
-		int word = DBHash.hashCode("banana");
+		String word = "banana";
 		double weight = 1;
 		double aC = 50;
 		int numberOfEmailsWordIsIn = 0;
@@ -40,7 +40,7 @@ public class APatternTest {
 	private void testSecondEmail() {
 		//information is taken from the results above
 		APattern aP = new APattern();
-		int word = DBHash.hashCode("banana");
+		String word = "banana";
 		double weight = 1;
 		double aC = 57.1428;
 		int numberOfEmailsWordIsIn = 1;
@@ -62,7 +62,7 @@ public class APatternTest {
 	private void testThirdEmailTwoWords() {
 		//information for word one is taken from results above
 		APattern aP = new APattern();
-		int word1 = DBHash.hashCode("banana");
+		String word1 = "banana";
 		double weight1 = 1;
 		double aC1 = 63.7362;
 		int numberOfEmailsWordIsIn1 = 2;
@@ -71,7 +71,7 @@ public class APatternTest {
 		
 		aP.addWord(word1,weight1,aC1,numberOfEmailsWordIsIn1,numberOfEmailsWordIsNotIn1,pConf1);
 		
-		int word2 = DBHash.hashCode("orange");
+		String word2 = "orange";
 		double weight2 = 2;
 		double aC2 = 50;
 		int numberOfEmailsWordIsIn2 = 0;

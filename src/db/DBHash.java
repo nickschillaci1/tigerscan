@@ -20,26 +20,6 @@ public class DBHash {
 		}
 		return (term+reverse).hashCode();
 	}
-	
-	/**
-	 * This will hash all words in a file and return the index of the new file
-	 * @param fileName
-	 * @return String new Filename
-	 * @throws IOException 
-	 */
-	public static String hashFile(String fileName) throws IOException {
-		InputStream in = new FileInputStream(fileName);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		
-		String line = br.readLine();
-		StringBuilder sb = new StringBuilder();
-		
-		while (line != null) {
-			sb.append(line).append("\n");
-			line = br.readLine();
-		}
-		
-		
-	}
+
 
 }

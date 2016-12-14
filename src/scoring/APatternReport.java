@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class APatternReport {
 
 	private double pConfidentialScoreOfThisEmail;
-	private ArrayList<Integer> words;
+	private ArrayList<String> words;
 	private ArrayList<Double> aPConfidential;
 	private ArrayList<Double> aPAnyC;
 	boolean isLocked;
@@ -24,7 +24,7 @@ public class APatternReport {
 	 */
 	public APatternReport(double pConfidentialOfThisEmail) {
 		pConfidentialScoreOfThisEmail = pConfidentialOfThisEmail;
-		words = new ArrayList<Integer>();
+		words = new ArrayList<String>();
 		aPConfidential = new ArrayList<Double>();
 		aPAnyC = new ArrayList<Double>();
 		isLocked = false;
@@ -37,7 +37,7 @@ public class APatternReport {
 	 * @param averagePConfidential new value
 	 * @throws APatternException 
 	 */
-	public void addWordAndSetValues(int word, double averagePConfidential, double pC) throws APatternException {
+	public void addWordAndSetValues(String word, double averagePConfidential, double pC) throws APatternException {
 		if (isLocked) {
 			throw new APatternException();
 		}
@@ -63,7 +63,7 @@ public class APatternReport {
 	 * @param i index
 	 * @return String word
 	 */
-	public int getWord(int i) {
+	public String getWord(int i) {
 		return words.get(i);
 	}
 	

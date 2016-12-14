@@ -106,7 +106,7 @@ public class DatabaseTest {
 	}
 	
 	private void testRemoveSingleTerm() {
-		int term = DBHash.hashCode("pizza");
+		String term = "pizza";
 		DatabaseManager dM = new DatabaseManager();
 		
 		try {
@@ -124,10 +124,10 @@ public class DatabaseTest {
 	}
 	
 	private void testRemoveMultipleTerms() {
-		ArrayList<Integer> terms = new ArrayList<Integer>();
-		terms.add(DBHash.hashCode("one"));
-		terms.add(DBHash.hashCode("two"));
-		terms.add(DBHash.hashCode("three"));
+		ArrayList<String> terms = new ArrayList<String>();
+		terms.add("one");
+		terms.add("two");
+		terms.add("three");
 		
 		DatabaseManager dM = new DatabaseManager();
 		
@@ -175,9 +175,9 @@ public class DatabaseTest {
 		} catch (DatabaseAddTermException e) {
 			//
 		}
-		for(Integer encryptedWord : dM.getTerms().keySet()) {
+		for(String encryptedWord : dM.getTerms().keySet()) {
 			if(word.equals(encryptedWord.toString())) {
-				fail("Database encryption test failed. The term was not properly encrypted and still matches its original form");
+				fail("Database encryption test failed. The term was not properly encrypted and still matches its original form: "+word+": "+encryptedWord);
 			}
 		}
 	}

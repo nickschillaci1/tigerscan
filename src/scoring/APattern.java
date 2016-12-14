@@ -18,7 +18,7 @@ public class APattern {
 	private final double TOTAL_MULTIPLIER = 0.75;
 	
 	private ArrayList<Double> pConfidentialWithWord;
-	private ArrayList<Integer> pWords;
+	private ArrayList<String> pWords;
 	//private ArrayList<Double> pWordInConfidential;
 	private ArrayList<Integer> pNumberOfEmailsWordIsIn;
 	private ArrayList<Double> pAveragePerWord;
@@ -35,7 +35,7 @@ public class APattern {
 	 */
 	public APattern() {
 		pConfidentialWithWord = new ArrayList<Double>();
-		pWords = new ArrayList<Integer>();
+		pWords = new ArrayList<String>();
 		pConfidentialWithWord = new ArrayList<Double>();
 		pNumberOfEmailsWordIsIn = new ArrayList<Integer>();
 		//pWordInConfidential = new ArrayList<Double>();
@@ -56,7 +56,7 @@ public class APattern {
 	 * @param emailsBeforeWord - the number of emails scanned before the word was added to the database
 	 * @throws APatternException
 	 */
-	public void addWord(int word, double weight, double aC, int numberOfEmailsWordIsIn, int numberOfEmailsWordIsNotIn, double pConf) throws APatternException {
+	public void addWord(String word, double weight, double aC, int numberOfEmailsWordIsIn, int numberOfEmailsWordIsNotIn, double pConf) throws APatternException {
 		if (!hasAlreadyScanned) {
 			//this will be the probability that a message is confidential given the word is in it, multiplied by the probability that any given message is confidential
 			numberOfEmailsWordIsIn++;
@@ -145,5 +145,11 @@ public class APattern {
 		//return the value from this analysis
 		
 		return r;
+	}
+
+	public void addWord(String term, int score, double averageProbability, int numbEmailsIn, int numbEmailsNotIn,
+			double probabilityAny) {
+		// TODO Auto-generated method stub
+		
 	}
 }

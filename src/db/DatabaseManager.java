@@ -224,7 +224,7 @@ public class DatabaseManager {
 	public HashMap<String,Integer> getTerms() {
 		HashMap<String,Integer> decryptedTerms = new HashMap<String,Integer>();
 		for (String term : terms.keySet()) {
-			decryptedTerms.put(CryptoUtility.decryptString(term), terms.get(term));
+			decryptedTerms.put(term, terms.get(term));
 		}
 		return decryptedTerms;
 	}

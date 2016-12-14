@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import main.CryptoUtility;
+import main.EventLog;
 
 /**
  * This class will handle User authentication to differentiate users from administrators and apply necessary local security restrictions
@@ -51,6 +52,7 @@ public class UserAuthentication {
 					else
 						admin = false;
 					br.close();
+					EventLog.writeUserLoggedIn(username);
 					return new User(entry[0], admin); //return object that represents logged-in user
 				}
 			}
@@ -78,6 +80,7 @@ public class UserAuthentication {
 				bw.write(CryptoUtility.encryptString(username + "," + CryptoUtility.encryptString(saltedString(pass1String)) + "," + "admin"));
 				bw.newLine();
 				bw.close();
+				EventLog.writeAdminCredentialsChanged(username);
 			return new User(username, true); //return object that represents newly created, logged-in administrator
 		}
 		else

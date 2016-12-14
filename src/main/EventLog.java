@@ -26,7 +26,7 @@ public class EventLog {
 		try {
 			bw = new BufferedWriter(new FileWriter(logFilename, true)); //true to append
 			for(int i=0; i<lines.length; i++) {
-				bw.write(lines[i]);
+				bw.write(CryptoUtility.encryptString(lines[i]));
 				bw.newLine();
 			}
 			bw.close();
@@ -164,6 +164,20 @@ public class EventLog {
 	public static void writeDocHits(String searchQuery, TopDocs hits) {
 		String[] text = {
 				new Date().toString() + " -- Total document hits for the term: " + searchQuery + " -- " + hits.totalHits + " document(s)"
+		};
+		write(text);
+	}
+	
+	public static void writeAdminCredentialsChanged(String username) {
+		String[] text = {
+				new Date().toString() + " -- Administrator credentials changed -- " + username
+		};
+		write(text);
+	}
+	
+	public static void writeUserLoggedIn(String username) {
+		String[] text = {
+				new Date().toString() + " -- Successful account log-in -- " + username
 		};
 		write(text);
 	}

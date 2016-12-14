@@ -54,6 +54,7 @@ import javax.swing.JTextField;
 import db.DatabaseManager;
 import main.Config;
 import main.ContentScanner;
+import main.CryptoUtility;
 import main.EventLog;
 import main.Main;
 
@@ -329,7 +330,6 @@ public class ScannerGUI extends JFrame{
 		logButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//TODO add window to display log. afterwards, we will encrypt the log when writing and decrypt it here
 				JDialog logDialog = new JDialog((JDialog) null, "Log", true);
 				logDialog.setSize(500, 500);
 				try{
@@ -340,7 +340,7 @@ public class ScannerGUI extends JFrame{
 				String line = br.readLine();
 				String log = "";
 				while(line != null){
-					log += "" + line + "\n";
+					log += "" + CryptoUtility.decryptString(line) + "\n";
 					line = br.readLine();
 				}
 				br.close();

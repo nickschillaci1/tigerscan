@@ -73,7 +73,7 @@ public class AdminSettings{
 					public void actionPerformed(ActionEvent event)
 					{
 						if (termsTable.getSelectedRow() != -1) {
-							int term = (int) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+							String term = (String)termsTable.getValueAt(termsTable.getSelectedRow(), 0);
 							int newScore = Integer.parseInt((JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE)));
 							//if (newScore != term && newScore != null) {
 							if (newScore != 0) {
@@ -104,7 +104,7 @@ public class AdminSettings{
 							if (!newName.equals("")) {
 								try {
 									db.addTerm(newName, db.getTerms().get(term));
-									db.removeTerm(DBHash.hashCode(newName));
+									db.removeTerm(newName);
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
@@ -211,7 +211,7 @@ public class AdminSettings{
 					public void actionPerformed(ActionEvent event)
 					{
 						if (termsTable.getSelectedRow() != -1) {
-							int term = (int)termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+							String term = (String)termsTable.getValueAt(termsTable.getSelectedRow(), 0);
 							int response = JOptionPane.showConfirmDialog(dbSettings, "Are you sure you want to remove the term \"" + term + "\"?", "Remove Term", JOptionPane.YES_NO_OPTION);
 							if (response == JOptionPane.YES_OPTION) {
 								try{

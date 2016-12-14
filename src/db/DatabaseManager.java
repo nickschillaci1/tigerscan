@@ -48,7 +48,7 @@ public class DatabaseManager {
      */
     public boolean hasTerm(String term) {
 		//root word manipulation will happen here - for now, use single line
-    	String encryptedTerm = CryptoUtility.encryptString(""+DBHash.hashCode(term));
+    	String encryptedTerm = CryptoUtility.encryptString(term);
     	return terms.containsKey(encryptedTerm);
     }
 
@@ -61,7 +61,7 @@ public class DatabaseManager {
     public void addTerm(String term, int value) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
     	
-    	String encryptedTerm = CryptoUtility.encryptString(""+DBHash.hashCode(term));
+    	String encryptedTerm = CryptoUtility.encryptString(term);
 		//throw an exception if the term is there already
 		if (terms.containsKey(encryptedTerm)) {
 		    throw new DatabaseAddTermException(term);
@@ -93,7 +93,7 @@ public class DatabaseManager {
 		
 		for (int i=0; i<length; i++) {
 		    String temp = keys[i];
-		    String encryptedTerm = CryptoUtility.encryptString(""+DBHash.hashCode(temp));
+		    String encryptedTerm = CryptoUtility.encryptString(temp);
 		    if (terms.containsKey(encryptedTerm)) {
 		    	conflicts.add(temp);
 		    } else {
@@ -123,7 +123,7 @@ public class DatabaseManager {
      * @return int score
      * @throws DatabaseNoSuchTermException if that term is not in the Database
      */
-    public int getScore(int term) throws DatabaseNoSuchTermException {
+    public int getScore(String term) throws DatabaseNoSuchTermException {
     	String encryptedTerm = CryptoUtility.encryptString(""+term);
     	if (!terms.containsKey(encryptedTerm)) {
     		throw new DatabaseNoSuchTermException(""+term);
@@ -138,7 +138,7 @@ public class DatabaseManager {
      * @exception DatabaseRemoveTermException if the word is not present in the database
      *
      */
-    public void removeTerm(int term) throws DatabaseRemoveTermException {
+    public void removeTerm(String term) throws DatabaseRemoveTermException {
 		//manipulate the root word if necessary
     	String encryptedTerm = CryptoUtility.encryptString(""+term);
 		//throws an exception if the term does not exist
@@ -160,7 +160,7 @@ public class DatabaseManager {
      * @param ArrayList<String> terms to be removed
 	 * @exception DatabaseRemoveTermException if one or more words is not present in the database
 	 */
-    public void removeTerm(ArrayList<Integer> termArray) throws DatabaseRemoveTermException {
+    public void removeTerm(ArrayList<String> termArray) throws DatabaseRemoveTermException {
 		//manipulate the root word if necessary
 	
 		ArrayList<String> error = new ArrayList<String>();
@@ -168,8 +168,8 @@ public class DatabaseManager {
 		//remove all of the terms
 		int length = termArray.size();
 		for (int i=0; i<length; i++) {
-		    int temp = termArray.get(i);
-		    encryptedTerm = CryptoUtility.encryptString(""+temp);
+		    String temp = termArray.get(i);
+		    encryptedTerm = CryptoUtility.encryptString(temp);
 		    if (!terms.containsKey(encryptedTerm)) {
 		    	error.add(""+temp);
 		    } else {
@@ -202,12 +202,12 @@ public class DatabaseManager {
 	
 	/**
 	 * Change/update the score of a term in the database
-	 * @param int term is a hashed term to change the classification score of
+	 * @param String term is a hashed term to change the classification score of
 	 * @param int score is the new score of the term
 	 * @throws SQLException
 	 * @throws DatabaseAddTermException 
 	 */
-	public void changeScore(int term, int score) throws SQLException, DatabaseAddTermException {
+	public void changeScore(String term, int score) throws SQLException, DatabaseAddTermException {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		if (terms.containsKey(""+term)) {
 		    throw new DatabaseAddTermException(""+term);
@@ -221,10 +221,10 @@ public class DatabaseManager {
 	 * Gets a HashMap<String, Integer> of terms in the database
 	 * @return HashMap<term, score>
 	 */
-	public HashMap<Integer,Integer> getTerms() {
-		HashMap<Integer,Integer> decryptedTerms = new HashMap<Integer,Integer>();
+	public HashMap<String,Integer> getTerms() {
+		HashMap<String,Integer> decryptedTerms = new HashMap<String,Integer>();
 		for (String term : terms.keySet()) {
-			decryptedTerms.put(Integer.parseInt(CryptoUtility.decryptString(term)), terms.get(term));
+			decryptedTerms.put(term, terms.get(term));
 		}
 		return decryptedTerms;
 	}
@@ -234,7 +234,7 @@ public class DatabaseManager {
 	 * @param term
 	 * @return
 	 */
-	public int getNumbEmailsIn(int term) {
+	public int getNumbEmailsIn(String term) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		int freq = 0;
 		try {
@@ -249,7 +249,7 @@ public class DatabaseManager {
 	 * Increment the frequency of a term in the database
 	 * @param term
 	 */
-	public void incrementNumbEmailsIn(int term) {
+	public void incrementNumbEmailsIn(String term) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		try {
 			sqld.incrementNumbEmailsIn(encryptedTerm);
@@ -263,7 +263,7 @@ public class DatabaseManager {
 	 * @param term
 	 * @return
 	 */
-	public int getNumbEmailsNotIn(int term) {
+	public int getNumbEmailsNotIn(String term) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		int freq = 0;
 		try {
@@ -278,7 +278,7 @@ public class DatabaseManager {
 	 * Increment the frequency of a term in the database
 	 * @param term
 	 */
-	public void incrementNumbEmailsNotIn(int term) {
+	public void incrementNumbEmailsNotIn(String term) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		try {
 			sqld.incrementNumbEmailsNotIn(encryptedTerm);
@@ -292,7 +292,7 @@ public class DatabaseManager {
 	 * @param term
 	 * @return
 	 */
-	public double getAverageProbability(int term) {
+	public double getAverageProbability(String term) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		double prob = 0;
 		try {
@@ -308,7 +308,7 @@ public class DatabaseManager {
 	 * @param term
 	 * @param prob
 	 */
-	public void setAverageProbability(int term, double prob) {
+	public void setAverageProbability(String term, double prob) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		try {
 			sqld.setAverageProbability(encryptedTerm, prob);
@@ -322,7 +322,7 @@ public class DatabaseManager {
 	 * @param term
 	 * @return
 	 */
-	public double getProbabilityAny(int term) {
+	public double getProbabilityAny(String term) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		double prob = 0;
 		try {
@@ -338,7 +338,7 @@ public class DatabaseManager {
 	 * @param term
 	 * @param prob
 	 */
-	public void setProbabilityAny(int term, double prob) {
+	public void setProbabilityAny(String term, double prob) {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		try {
 			sqld.setProbabilityAny(encryptedTerm, prob);

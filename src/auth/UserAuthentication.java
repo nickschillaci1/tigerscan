@@ -52,7 +52,6 @@ public class UserAuthentication {
 					else
 						admin = false;
 					br.close();
-					EventLog.writeUserLoggedIn(username);
 					return new User(entry[0], admin); //return object that represents logged-in user
 				}
 			}

@@ -175,13 +175,6 @@ public class EventLog {
 		write(text);
 	}
 	
-	public static void writeUserLoggedIn(String username) {
-		String[] text = {
-				new Date().toString() + " -- Successful account log-in -- " + username
-		};
-		write(text);
-	}
-	
 	public static String getLogFilename(){
 		return logFilename;
 	}

@@ -253,71 +253,7 @@ public class ScannerGUI extends JFrame{
 		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				JDialog authDialog = new JDialog((JDialog) null, "Login", true);
-				authDialog.setLayout(new GridLayout(2,1));
-				ImageIcon icon = new ImageIcon(ICON_URL);
-				authDialog.setIconImage(icon.getImage());
-				
-				JPanel authPanel = new JPanel();
-				GridLayout authLayout = new GridLayout(4,1);
-				authLayout.setVgap(2);
-				authPanel.setLayout(authLayout);
-				
-				JLabel userLabel = new JLabel("Username");
-				JTextField userText = new JTextField();
-				JLabel passLabel = new JLabel("Password");
-				JPasswordField passField = new JPasswordField();
-				
-				JButton loginButton = new JButton("Log In");
-				loginButton.setMnemonic(KeyEvent.VK_L);
-				loginButton.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent ev){
-						User user = null;
-						String usernameString = userText.getText();
-						try{
-							user = UserAuthentication.login(usernameString, passField.getPassword());
-						}
-						catch(InvalidCredentialsException e1) //invalid username/password
-						{
-							JOptionPane.showMessageDialog(authDialog, "Invalid credentials", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
-						}
-						catch(IOException e2) //users file not found
-						{
-							if (UserAuthentication.verifyDefaultAdmin(usernameString, passField.getPassword())) {
-								JOptionPane.showMessageDialog(authDialog, "The default administrator information must be changed.\n"
-										+ "Please enter new log-in credentials.", "Administrator", JOptionPane.WARNING_MESSAGE);
-								
-								user = new NewUserDialog(sPanel, ICON_URL).getUser();
-							}
-							else
-								JOptionPane.showMessageDialog(authDialog, "Log-in information not found.\n"
-										+ "Please contact your system administrator.", "Log-In Failed", JOptionPane.ERROR_MESSAGE);
-						}
-						if(user != null && user.isAdmin())
-						{
-							authDialog.dispose();
-							createAdminDialog(db);
-						}
-					}
-				});
-				
-				authPanel.add(userLabel);
-				authPanel.add(userText);
-				authPanel.add(passLabel);
-				authPanel.add(passField);
-				
-				JPanel buttonPanel = new JPanel();
-				buttonPanel.add(loginButton);
-				buttonPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
-				
-				authDialog.add(authPanel);
-				authDialog.add(buttonPanel);
-				authDialog.setSize(400, 200);
-				authDialog.setLocationRelativeTo(sPanel);
-				authDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-				authDialog.setVisible(true);
-				
-				
+				new LoginDialog(sPanel, ICON_URL, ()-> createAdminDialog(db)); //create login dialog and pass success action via lambda expression
 			}
 		});
 		settingsButton.setPreferredSize(new Dimension(125, 30));
@@ -329,46 +265,7 @@ public class ScannerGUI extends JFrame{
 		
 		logButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				JDialog logDialog = new JDialog((JDialog) null, "Log", true);
-				logDialog.setSize(500, 500);
-				try{
-				File logFile = new File(EventLog.getLogFilename());
-				FileReader fr = new FileReader(logFile);
-				BufferedReader br = new BufferedReader(fr);
-				
-				String line = br.readLine();
-				String log = "";
-				while(line != null){
-					log += "" + CryptoUtility.decryptString(line) + "\n";
-					line = br.readLine();
-				}
-				br.close();
-
-				JTextArea logArea = new JTextArea(25,40);
-				logArea.setText(log);
-				logArea.setEditable(false);
-				
-				JPanel logPanel = new JPanel();
-				JScrollPane logPane = new JScrollPane(logArea);
-				logPanel.add(logPane);
-				
-				JButton closeButton = new JButton("Close");
-				closeButton.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent event){
-						logDialog.dispose();
-					}
-				});
-				logPanel.add(closeButton);
-				logDialog.add(logPanel);
-				
-				logDialog.setLocationRelativeTo(sPanel);
-				logDialog.setVisible(true);	
-				}
-				catch(Exception excep)
-				{
-					JOptionPane.showMessageDialog(logDialog, "Event Log Not Found", "Unable to Show Log", JOptionPane.ERROR_MESSAGE);
-				}
+				new LoginDialog(sPanel, ICON_URL, ()-> new ShowLogDialog(sPanel, ICON_URL)); //create login dialog and pass success action via lambda expression
 			}
 		});
 		

@@ -7,6 +7,7 @@ import main.Config;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,6 +31,7 @@ public class DatabaseTest {
 		testRemoveSingleTerm();
 		testRemoveMultipleTerms();
 		testDatabaseEncryption();
+		testUpdateTerm();
 		
 	}
 	
@@ -180,5 +182,44 @@ public class DatabaseTest {
 				fail("Database encryption test failed. The term was not properly encrypted and still matches its original form: "+word+": "+encryptedWord);
 			}
 		}
+	}
+	
+	private void testUpdateTerm() {
+		DatabaseManager dM = new DatabaseManager();
+		dM.removeAllTerms();
+		String word = "bad";
+		
+		try {
+			dM.addTerm(word,1);
+		} catch (DatabaseAddTermException e) {
+			//nothing
+		}
+		
+		try {
+			dM.changeScore(word,2);
+		} catch (SQLException | DatabaseAddTermException e) {
+			fail("Update term test failed: failed to update classification score.");
+		}
+		
+		try {
+			assertEquals("Score classification did not update properly.",dM.getScore(word),2);
+		} catch (DatabaseNoSuchTermException e) {
+			fail("Update term test failed: failed to get classification score.");
+		}
+		
+		dM.incrementNumbEmailsIn(word);
+		dM.incrementNumbEmailsNotIn(word);
+		
+		assertEquals("IncrementNumbEmailsIn did not work.",dM.getNumbEmailsIn(word),1);
+		assertEquals("IncrementNumbEmailsNotIn did not work.",dM.getNumbEmailsNotIn(word),1);
+		
+		dM.setAverageProbability(word,57);
+		
+		assertEquals("Set average probability did not work.",dM.getAverageProbability(word),57,.0001);
+		
+		dM.setProbabilityAny(word,76);
+		
+		assertEquals("Set probability any did not work.",dM.getProbabilityAny(word),76,.0001);
+		
 	}
 }

@@ -69,9 +69,9 @@ public class DatabaseTest {
 	
 	private void testAddAndCheckMultipleTerms() {
 		HashMap<String,Double> terms = new HashMap<String,Double>();
-		terms.put("one",1);
-		terms.put("two",1);
-		terms.put("three",1);
+		terms.put("one",1.0);
+		terms.put("two",1.0);
+		terms.put("three",1.0);
 		
 		
 		DatabaseManager dM = new DatabaseManager();
@@ -91,10 +91,10 @@ public class DatabaseTest {
 	}
 	
 	private void testDuplicateTermsAdd() {
-		HashMap<String,Integer> terms = new HashMap<String,Integer>();
-		terms.put("one",1);
-		terms.put("two",1);
-		terms.put("three",1);
+		HashMap<String,Double> terms = new HashMap<String,Double>();
+		terms.put("one",1.0);
+		terms.put("two",1.0);
+		terms.put("three",1.0);
 		
 		
 		DatabaseManager dM = new DatabaseManager();
@@ -149,10 +149,10 @@ public class DatabaseTest {
 	}
 	
 	private void testRemoveAllTerms() {
-		HashMap<String,Integer> terms = new HashMap<String,Integer>();
-		terms.put("one",1);
-		terms.put("two",1);
-		terms.put("three",1);
+		HashMap<String,Double> terms = new HashMap<String,Double>();
+		terms.put("one",1.0);
+		terms.put("two",1.0);
+		terms.put("three",1.0);
 		
 		
 		DatabaseManager dM = new DatabaseManager();

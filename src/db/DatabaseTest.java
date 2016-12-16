@@ -68,7 +68,7 @@ public class DatabaseTest {
 	}
 	
 	private void testAddAndCheckMultipleTerms() {
-		HashMap<String,Integer> terms = new HashMap<String,Integer>();
+		HashMap<String,Double> terms = new HashMap<String,Double>();
 		terms.put("one",1);
 		terms.put("two",1);
 		terms.put("three",1);

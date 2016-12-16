@@ -73,7 +73,7 @@ public class SQLDatabase {
 				stmt = c.createStatement();
 		    	String sql = "CREATE TABLE TERMS " +
 		    				 "(TERM TEXT, " +
-		    				 "SCORE INTEGER NOT NULL," +
+		    				 "SCORE REAL NOT NULL," +
 		    				 "EMAILSIN INTEGER NOT NULL," +
 		    				 "EMAILSNOTIN INTEGER NOT NULL," +
 		    				 "AVGPROB REAL NOT NULL," +
@@ -94,7 +94,7 @@ public class SQLDatabase {
 	 * @param int score to assign to the term
 	 * @throws SQLException
 	 */
-	public void addTerm(String term, int score) throws SQLException {
+	public void addTerm(String term, double score) throws SQLException {
     	stmt = c.createStatement();
     	String sql = "INSERT INTO TERMS (TERM,SCORE,EMAILSIN,EMAILSNOTIN,AVGPROB,PROBCONF) " +
     				 "VALUES (\'" 
@@ -141,7 +141,7 @@ public class SQLDatabase {
 	 * @param int score to change previous score to
 	 * @throws SQLException
 	 */
-	public void changeScore(String term, int score) throws SQLException {
+	public void changeScore(String term, double score) throws SQLException {
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET SCORE = " + score + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);
@@ -154,12 +154,12 @@ public class SQLDatabase {
 	 * @return HashMap<%TERM%,%SCORE%> of all terms in the database
 	 * @throws SQLException 
 	 */
-	public HashMap<String,Integer> getTerms() throws SQLException {
-		HashMap<String,Integer> terms = new HashMap<String,Integer>();
+	public HashMap<String,Double> getTerms() throws SQLException {
+		HashMap<String,Double> terms = new HashMap<String,Double>();
 		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM TERMS;");
 		while(rs.next()) { //loop through entries in the database
-			terms.put(rs.getString("TERM"), rs.getInt("SCORE"));
+			terms.put(rs.getString("TERM"), rs.getDouble("SCORE"));
 		}
 		rs.close();
 		stmt.close();

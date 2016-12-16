@@ -18,14 +18,14 @@ import main.CryptoUtility;
 public class DatabaseManager {
 
     
-    private HashMap<String,Integer> terms;
+    private HashMap<String,Double> terms;
     private SQLDatabase sqld;
 
     /**
      * This will initialize the database and load in terms if there are any to load
      */
     public DatabaseManager() {  //HASHINTOVALUE - the O, not zero, is the separator
-    	terms = new HashMap<String,Integer>();
+    	terms = new HashMap<String,Double>();
     	this.updateLocalTerms();
     }
 
@@ -58,7 +58,7 @@ public class DatabaseManager {
      * @param int of the confidentiality value of the term
      * @exception DatabaseAddTermException if the word is already present in the database, or if the confidentiality value: v<0 || v>100
      */
-    public void addTerm(String term, int value) throws DatabaseAddTermException {
+    public void addTerm(String term, double value) throws DatabaseAddTermException {
 		//manipulate to root word if necessary
     	
     	String encryptedTerm = CryptoUtility.encryptString(term);
@@ -82,7 +82,7 @@ public class DatabaseManager {
      * @param ArrayList<Integer> of the values for each String
      * @exception DabaseAddTermException if one or more words is already present in the database, or if the confidentiality value: v<0 || v>100
      */
-    public void addTerm(HashMap<String,Integer> values) throws DatabaseAddTermException {
+    public void addTerm(HashMap<String,Double> values) throws DatabaseAddTermException {
 		//manipulate root words as necessary
 		ArrayList<String> conflicts = new ArrayList<String>();
 	
@@ -97,7 +97,7 @@ public class DatabaseManager {
 		    if (terms.containsKey(encryptedTerm)) {
 		    	conflicts.add(temp);
 		    } else {
-		    	int tValue = values.get(keys[i]);
+		    	double tValue = values.get(keys[i]);
 		    	//if the value is not between 0 and 100
 		    	/*if (tValue<0 && tValue>100) {
 		    		throw new DatabaseAddTermException("");
@@ -123,10 +123,10 @@ public class DatabaseManager {
      * @return int score
      * @throws DatabaseNoSuchTermException if that term is not in the Database
      */
-    public int getScore(String term) throws DatabaseNoSuchTermException {
-    	String encryptedTerm = CryptoUtility.encryptString(""+term);
+    public double getScore(String term) throws DatabaseNoSuchTermException {
+    	String encryptedTerm = CryptoUtility.encryptString(term);
     	if (!terms.containsKey(encryptedTerm)) {
-    		throw new DatabaseNoSuchTermException(""+term);
+    		throw new DatabaseNoSuchTermException(term);
     	}
     	
     	return terms.get(encryptedTerm);
@@ -192,7 +192,7 @@ public class DatabaseManager {
      * This will remove all terms from the Database.  This cannot be undone.
      */
 	public void removeAllTerms() {
-		terms = new HashMap<String,Integer>();
+		terms = new HashMap<String,Double>();
 		try {
 			sqld.removeAll();
 		} catch (SQLException e) {
@@ -207,7 +207,7 @@ public class DatabaseManager {
 	 * @throws SQLException
 	 * @throws DatabaseAddTermException 
 	 */
-	public void changeScore(String term, int score) throws SQLException, DatabaseAddTermException {
+	public void changeScore(String term, double score) throws SQLException, DatabaseAddTermException {
 		String encryptedTerm = CryptoUtility.encryptString(""+term);
 		if (terms.containsKey(""+term)) {
 		    throw new DatabaseAddTermException(""+term);
@@ -221,8 +221,8 @@ public class DatabaseManager {
 	 * Gets a HashMap<String, Integer> of terms in the database
 	 * @return HashMap<term, score>
 	 */
-	public HashMap<String,Integer> getTerms() {
-		HashMap<String,Integer> decryptedTerms = new HashMap<String,Integer>();
+	public HashMap<String,Double> getTerms() {
+		HashMap<String,Double> decryptedTerms = new HashMap<String,Double>();
 		for (String term : terms.keySet()) {
 			decryptedTerms.put(CryptoUtility.decryptString(term), terms.get(term));
 		}

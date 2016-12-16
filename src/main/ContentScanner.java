@@ -56,7 +56,7 @@ public class ContentScanner {
 		emailValues = new HashMap<String,Double>();
 		
 		//create queryWords
-		HashMap<String,Integer> queryWords = new HashMap<String,Integer>();
+		HashMap<String,Double> queryWords = new HashMap<String,Double>();
 		try {
 			this.createIndex(importedFileNames);
 		} catch (IOException e) {

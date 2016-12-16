@@ -13,10 +13,10 @@ import javax.swing.table.AbstractTableModel;
 public class CustomTableModel extends AbstractTableModel {
 
 	private String[] columnNames = {"Term", "Classification" };
-	private HashMap<String,Integer> terms;
+	private HashMap<String,Double> terms;
 	private int selectedRowIndex;
 	
-	public CustomTableModel(HashMap<String, Integer> hashMap) {
+	public CustomTableModel(HashMap<String, Double> hashMap) {
 		this.terms = hashMap;
 	}
 	
@@ -53,14 +53,14 @@ public class CustomTableModel extends AbstractTableModel {
 	public void setValueAt(Object value, int row, int col) {
 		ArrayList<String> keys = new ArrayList<String>(terms.keySet());
 		String selectedKey = keys.get(row);
-		int selectedValue = terms.get(selectedKey);
+		double selectedValue = terms.get(selectedKey);
 		if (col == 0) { //if renaming a term
 			terms.remove(selectedKey);
 			terms.put((String) value, selectedValue);
 		}
 		else { //if changing a term's score
 			terms.remove(selectedKey);
-			terms.put(selectedKey, Integer.parseInt((String) value));
+			terms.put(selectedKey, Double.parseDouble((String) value));
 		}
 	}
 	

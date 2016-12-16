@@ -71,7 +71,7 @@ public class AdminSettings{
 					{
 						if (termsTable.getSelectedRow() != -1) {
 							String term = (String)termsTable.getValueAt(termsTable.getSelectedRow(), 0);
-							int newScore = Integer.parseInt((JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE)));
+							double newScore = Double.parseDouble((JOptionPane.showInputDialog(dbSettings, "Enter new classification score for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE)));
 							//if (newScore != term && newScore != null) {
 							if (newScore != 0) {
 								try {
@@ -95,7 +95,7 @@ public class AdminSettings{
 					public void actionPerformed(ActionEvent event)
 					{
 						if (termsTable.getSelectedRow() != -1) {
-							int term = (int) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
+							String term = (String) termsTable.getValueAt(termsTable.getSelectedRow(), 0);
 							String newName = (String) JOptionPane.showInputDialog(dbSettings, "Enter new name for the term \"" + term + "\"", "Remove Term", JOptionPane.PLAIN_MESSAGE, null, null, term);
 							//if (newName != term && newName != null) {
 							if (!newName.equals("")) {
@@ -164,9 +164,9 @@ public class AdminSettings{
 							public void actionPerformed(ActionEvent ev) {
 								try{
 									String term = termField.getText();
-									int classScore;
+									double classScore;
 									if(classField.isEnabled())
-										classScore = Integer.parseInt(classField.getText());
+										classScore = Double.parseDouble(classField.getText());
 									else
 										classScore = -1;
 									db.addTerm(term, classScore);

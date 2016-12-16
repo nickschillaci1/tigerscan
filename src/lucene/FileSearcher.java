@@ -69,7 +69,7 @@ public class FileSearcher {
 	 * @param term - Word that needs to be stemmed.
 	 * @return - The root word.
 	 */
-	public String stemTerm (String term) {
+	public static String stemTerm (String term) {
 		PorterStemmer stemmer = new PorterStemmer();
 		stemmer.setCurrent(term);
 		stemmer.stem();

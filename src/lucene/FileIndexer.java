@@ -84,7 +84,7 @@ public class FileIndexer {
 
 	/**
 	 * Creates the index using a file path of where the data is located and a file filter
-	 * @param dataDirPath - Directory where the text files to be indexed are located
+	 * @param filesName - List of text file names
 	 * @param filter - Filter for a specific file format
 	 * @return The number of files that were indexed.
 	 * @throws IOException

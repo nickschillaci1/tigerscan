@@ -39,10 +39,21 @@ public class ContentScanner {
 
 	String indexDir = "data/index/";
 
+	/**
+	 * Initializes the the ContentScanner given a database of confidential term	
+	 * @param db - data base of confidential terms
+	 */
 	public ContentScanner(DatabaseManager db) {
 		this.db = db;
 	}
 
+	/**
+	 * Scans an ArrayList of filenames, calling for the creation of a Lucene index based of the contents of the files.
+	 * After the index is created, it calls a search query on the index from the list of database terms, an APattern report for the
+	 * confidentiality score of the email is created based off the results of the query.
+	 * @param importedFileNames - A String ArrayList of filenames that will be indexed
+	 * @return A HashMap of the filename and the confidentiality score of the file.
+	 */
 	public HashMap<String,Double> scanFiles(ArrayList<String> importedFileNames) {
 		//confidentialityScore = 0;
 		
@@ -60,7 +71,6 @@ public class ContentScanner {
 		try {
 			this.createIndex(importedFileNames);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		queryWords = db.getTerms();
@@ -69,10 +79,8 @@ public class ContentScanner {
 			try {
 				search(term);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				System.out.println("IOException " + e);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				System.out.println("ParseException " + e);
 			}
 		}
@@ -115,38 +123,36 @@ public class ContentScanner {
 		//stop email and alert user is confidentiality score is above threshold
 	}
 
+	/**
+	 * Queries a database term to be searched by calling the FileSearcher class
+	 * @param term - A term from the database
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	private void search(String term) throws IOException, ParseException {
 		searcher = new FileSearcher(indexDir);
-		//long startTime = System.currentTimeMillis();
-
 		TopDocs hits = searcher.search(""+term);
-		//long endTime = System.currentTimeMillis();
-
-		
-		//EventLog.writeDocHits(searchQuery, hits);
-	//	System.out.println(hits.totalHits +
-	///			" documents found. Time :" + (endTime - startTime) +" ms");
 		ScoreDoc[] scoreDoc = hits.scoreDocs;
 
 		for(int i = 0; i < scoreDoc.length; i++){
 			int docId = scoreDoc[i].doc;
 			Document doc = searcher.getDocument(docId);
 			String fileName = doc.get(LuceneConstants.FILE_PATH);
-		//	System.out.println("File: "+ fileName);
 			
 			//add the term
 			try {
 				emailAP.get(fileName).addWord(term,db.getScore(term),db.getAverageProbability(term),db.getNumbEmailsIn(term),db.getNumbEmailsNotIn(term),db.getProbabilityAny(term));
 			} catch (APatternException | DatabaseNoSuchTermException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			//System.out.println(fileName);
-			//System.out.println("File: "+ doc.get(LuceneConstants.FILE_PATH));	//Bugged, should be spitting out filepath
 		}
 	}
 
+	/**
+	 * Calls the FileIndexer class to begin indexing the email
+	 * @param filenames - A String ArrayList of filenames to be indexed
+	 * @throws IOException
+	 */
 	private void createIndex(ArrayList<String> filenames) throws IOException{
 		indexer = new FileIndexer(indexDir);
 		int numIndexed = filenames.size();

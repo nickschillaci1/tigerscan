@@ -39,13 +39,13 @@ public class CustomTableModel extends AbstractTableModel {
 	}*/
 
 	public Object getValueAt(int row, int col) {
-		String value = null;
+		Object value;
 		ArrayList<String> keys = new ArrayList<String>(terms.keySet());
 		if (col == 0) { //if getting a term
 			value = keys.get(row);
 		}
 		else { //if getting a term's score
-			value = terms.get(keys.get(row)).toString();
+			value = terms.get(keys.get(row));
 		}
 		return value;
 	}

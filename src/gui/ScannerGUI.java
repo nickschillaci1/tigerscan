@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,12 +22,16 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 
 import java.awt.Font;
+import java.awt.GridLayout;
+
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -34,18 +42,25 @@ import java.awt.Dimension;
 
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+
+import auth.InvalidCredentialsException;
+import auth.User;
+import auth.UserAuthentication;
+
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import db.DatabaseManager;
 import main.Config;
 import main.ContentScanner;
+import main.CryptoUtility;
+import main.EventLog;
 import main.Main;
 
 /**
  * Graphic interface to operate the security scanner
  * 
- * TODO -- JList<String> and DefaultListModel<String> instead of
- * 		JList and DefaultListModel. breaks window builder (do before release)
- * TODO program will run without gui from command line (work with Main/Scanner)
  * @author Nick Schillaci
  * @author Zackary Flake
  * @author Brandon Dixon
@@ -56,6 +71,8 @@ public class ScannerGUI extends JFrame{
 	static final String TITLE_FULL = "TigerScan - Email Security Scanner";
 	static final int FRAME_WIDTH = 500;
 	static final int FRAME_HEIGHT = 400;
+	static final URL ICON_URL = Main.class.getResource("/icon.png");
+	static final URL SETTINGS_URL = Main.class.getResource("/settings.png");
 	
 	private ArrayList<String> filenames;
 	private ContentScanner scanner;
@@ -81,8 +98,7 @@ public class ScannerGUI extends JFrame{
 				db.closeSQLConnection();
 			}
 		});
-		URL url = Main.class.getResource("/icon.png");
-		ImageIcon icon = new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(ICON_URL);
 		this.setIconImage(icon.getImage());
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		screenWidth = tk.getScreenSize().width;
@@ -144,7 +160,7 @@ public class ScannerGUI extends JFrame{
 		
 		JPanel fileActionPanel = new JPanel();
 		cPanel.add(fileActionPanel, BorderLayout.SOUTH);
-		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		fileActionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
 	
 		JButton fileAddButton = new JButton("Add File");
 		fileAddButton.setPreferredSize(new Dimension(125, 30));
@@ -213,29 +229,45 @@ public class ScannerGUI extends JFrame{
 					String[] fileNames = r.keySet().toArray(new String[0]);
 					
 					for (int i=0; i<size; i++) {
-						sReport+=fileNames[i]+": "+r.get(fileNames[i])+"\n";
+						double score = r.get(fileNames[i]);
+						if(score > 50.0 || score == 50.0)
+						sReport+=fileNames[i]+"\n - Email is confidential" +"\n";
+						else
+						sReport+=fileNames[i]+"\n - Email is not confidential" +"\n";
 					}
 					try {
 						Config.emailScanned();
 					} catch (IOException e) {
 						System.err.println("Error accessing config file.");
 					}
+
+					
 					JOptionPane.showMessageDialog(null,"Scanning complete:\n"+sReport);
 				}
 			}
 		});
 		
+		
 		JButton settingsButton = new JButton();
-		URL url = Main.class.getResource("/settings.png");
-		ImageIcon icon = new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(SETTINGS_URL);
 		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				createAdminDialog(db);		
+				new LoginDialog(sPanel, ICON_URL, ()-> createAdminDialog(db)); //create login dialog and pass success action via lambda expression
 			}
 		});
+		settingsButton.setPreferredSize(new Dimension(125, 30));
 		fileScanPanel.add(settingsButton);
 		
+		JButton logButton = new JButton("Show Log");
+		logButton.setPreferredSize(new Dimension(125, 30));
+		fileScanPanel.add(logButton);
+		
+		logButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new LoginDialog(sPanel, ICON_URL, ()-> new ShowLogDialog(sPanel, ICON_URL)); //create login dialog and pass success action via lambda expression
+			}
+		});
 		
 		JLabel labelVersion = new JLabel("Version " + version);
 		labelVersion.setForeground(Color.GRAY);

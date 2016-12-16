@@ -66,7 +66,6 @@ public class APattern {
 				double pWC;
 				if (numberOfEmailsWordIsIn>1) {
 					pWC = ((double)numberOfEmailsWordIsIn/(numberOfEmailsWordIsIn+numberOfEmailsWordIsNotIn))*(aC/100);
-					System.out.println("Word n: "+(numberOfEmailsWordIsIn-1)*(aC/100));
 				} else if (numberOfEmailsWordIsNotIn>0) {
 					pWC = probabilityWordInEmail;
 				} else {
@@ -79,6 +78,7 @@ public class APattern {
 				pConfidentialWithWord.add((double) 100);
 				isHighestProb = true;
 			}
+			
 			
 			pAveragePerWord.add(aC);
 			pWords.add(word);
@@ -106,18 +106,21 @@ public class APattern {
 			if (isHighestProb) {
 				pThisIsConfidential = 100;
 			} else {
-				double rTemp;
-				double rOne = 1;
-				double rTwo = 1;
-				for (int i=0; i<size; i++) {
-					rTemp=pConfidentialWithWord.get(i);
-					System.out.println("Word "+i+": "+rTemp);
-					rOne*=rTemp;
-					rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
-					System.out.println("rOne: "+rOne+"\nrTwo: "+rTwo);
+				if (size>0) {
+					double rTemp;
+					double rOne = 1;
+					double rTwo = 1;
+					for (int i=0; i<size; i++) {
+						rTemp=pConfidentialWithWord.get(i);
+						rOne*=rTemp;
+						//rTwo*=Math.max((100-rTemp)*TOTAL_MULTIPLIER,1);
+						rTwo*=(100-rTemp)*TOTAL_MULTIPLIER;
+					}
+					
+					pThisIsConfidential = rOne/(rOne+rTwo)*100;
+				} else {
+					pThisIsConfidential = 0;
 				}
-				
-				pThisIsConfidential = rOne/(rOne+rTwo)*100;
 			}
 
 			r = new APatternReport(pThisIsConfidential);
@@ -142,5 +145,11 @@ public class APattern {
 		//return the value from this analysis
 		
 		return r;
+	}
+
+	public void addWord(String term, int score, double averageProbability, int numbEmailsIn, int numbEmailsNotIn,
+			double probabilityAny) {
+		// TODO Auto-generated method stub
+		
 	}
 }

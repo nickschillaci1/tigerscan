@@ -226,7 +226,7 @@ public class SQLDatabase {
 	 * @throws SQLException
 	 */
 	public void incrementNumbEmailsNotIn(String term) throws SQLException {
-		int freq = this.getNumbEmailsIn(term);
+		int freq = this.getNumbEmailsNotIn(term);
 		stmt = c.createStatement();
 		String sql = "UPDATE TERMS SET EMAILSNOTIN = " + (++freq) + " WHERE TERM='" + term + "';";
 		stmt.executeUpdate(sql);

@@ -25,7 +25,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import db.DBHash;
 import db.DatabaseAddTermException;
 import db.DatabaseManager;
 import db.DatabaseRemoveTermException;
@@ -45,8 +44,6 @@ public class AdminSettings{
 	private int screenHeight = tk.getScreenSize().height;;
 	
 	public AdminSettings(DatabaseManager db){
-		//String passwordAttempt = JOptionPane.showInputDialog(sPanel, "Administrator password required:", "Access Denied", JOptionPane.WARNING_MESSAGE);
-				//TODO working on PasswordField or another solution for isolating management from the user
 				
 			    JDialog dbSettings = new JDialog((JDialog) null, "Settings", true);
 			    

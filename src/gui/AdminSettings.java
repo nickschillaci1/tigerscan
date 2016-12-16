@@ -101,11 +101,11 @@ public class AdminSettings{
 							if (!newName.equals("")) {
 								try {
 									db.addTerm(newName, db.getTerms().get(term));
-									db.removeTerm(newName);
+									db.removeTerm(term);
 									tableModel = new CustomTableModel(db.getTerms());
 									termsTable.setModel(tableModel);
 									//tableModel.fireTableDataChanged();
-									EventLog.writeTermRemoved(new File(db.getDatabaseFilename()).getName());
+									EventLog.writeTermRenamed(new File(db.getDatabaseFilename()).getName());
 								} catch (NumberFormatException | DatabaseRemoveTermException e) {
 									JOptionPane.showMessageDialog(dbSettings, "An error occured trying to rename the term!", "Error", JOptionPane.ERROR_MESSAGE);
 								} catch (DatabaseAddTermException e) {

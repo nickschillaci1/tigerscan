@@ -96,8 +96,5 @@ public class LoginDialog extends JDialog {
 		super.setVisible(true);
 	}
 	
-	public User getUser() {
-		return user;
-	}
 	
 }

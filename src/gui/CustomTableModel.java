@@ -16,18 +16,31 @@ public class CustomTableModel extends AbstractTableModel {
 	private HashMap<String,Double> terms;
 	private int selectedRowIndex;
 	
+	/**
+	 * Constructor for the table model object, instantiates a local list of terms to display in the table
+	 * @param hashMap
+	 */
 	public CustomTableModel(HashMap<String, Double> hashMap) {
 		this.terms = hashMap;
 	}
 	
+	/**
+	 * Get the number of rows
+	 */
 	public int getRowCount() {
 		return terms.size();
 	}
 
+	/**
+	 * Get the number of columns
+	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 	
+	/**
+	 * Get the name of a column
+	 */
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
@@ -38,6 +51,9 @@ public class CustomTableModel extends AbstractTableModel {
 		return col == 1;
 	}*/
 
+	/**
+	 * Return the value at a specific location in the table
+	 */
 	public Object getValueAt(int row, int col) {
 		Object value;
 		ArrayList<String> keys = new ArrayList<String>(terms.keySet());
@@ -50,6 +66,9 @@ public class CustomTableModel extends AbstractTableModel {
 		return value;
 	}
 	
+	/**
+	 * Set the value at a specific location in the table
+	 */
 	public void setValueAt(Object value, int row, int col) {
 		ArrayList<String> keys = new ArrayList<String>(terms.keySet());
 		String selectedKey = keys.get(row);
@@ -60,18 +79,29 @@ public class CustomTableModel extends AbstractTableModel {
 		}
 		else { //if changing a term's score
 			terms.remove(selectedKey);
-			terms.put(selectedKey, Double.parseDouble((String) value));
+			terms.put(selectedKey, (Double)value);
 		}
 	}
 	
+	/**
+	 * Clear all cells in the table
+	 */
 	public void clearAllCells() {
 		terms.clear();
 	}
 	
+	/**
+	 * Return the index of the currently selected row
+	 * @return
+	 */
 	public int getSelectedRowIndex() {
 		return selectedRowIndex;
 	}
 	
+	/**
+	 * Sets the index of the selected row, thereby selecting a row
+	 * @param row
+	 */
 	public void setSelectedRowIndex(int row) {
 		selectedRowIndex = row;
 		return;

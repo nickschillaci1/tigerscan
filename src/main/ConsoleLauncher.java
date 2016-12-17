@@ -4,10 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Launcher for the console version of the program that is intended to be called from an external email provider like Outlook
+ * @author Nick Schillaci
+ */
 public class ConsoleLauncher {
 
 	private ContentScanner scanner;
 	
+	/**
+	 * Instantiate the console launcher object and organize the files to be scanned from the command-line
+	 * @param args
+	 * @param scanner
+	 * @param version
+	 */
 	public ConsoleLauncher(String[] args, ContentScanner scanner, String version) {
 		this.scanner = scanner;
 		
@@ -22,6 +32,11 @@ public class ConsoleLauncher {
 		this.scanFiles(filenames);
 	}
 	
+	/**
+	 * Scan files specified by the command-line and return if the program successfully runs
+	 * @param filenames
+	 * @return
+	 */
 	private boolean scanFiles(ArrayList<String> filenames) {
 		HashMap<String,Double> r = scanner.scanFiles(filenames);
 		String sReport = "";

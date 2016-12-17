@@ -81,6 +81,12 @@ public class ScannerGUI extends JFrame{
 	private DatabaseManager db;
 	private String version;
 	
+	/**
+	 * Instantiate the user interface object and its parameters
+	 * @param scanner
+	 * @param db
+	 * @param version
+	 */
 	public ScannerGUI(ContentScanner scanner, DatabaseManager db, String version) {
 		this.scanner = scanner;
 		this.db = db;
@@ -89,6 +95,9 @@ public class ScannerGUI extends JFrame{
 		initializeUI();
 	}
 	
+	/**
+	 * Initialize settings of the interface
+	 */
 	private void initializeUI() {
 		this.setTitle(TITLE);
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -108,7 +117,8 @@ public class ScannerGUI extends JFrame{
 	}
 	
 	/**
-	 * unused as of right now
+	 * main menu bar for navigation
+	 * [unused as of right now]
 	 */
 	private JMenuBar mainMenuBar() {
 		JMenuBar menu = new JMenuBar();
@@ -116,6 +126,10 @@ public class ScannerGUI extends JFrame{
 		return menu;
 	}
 	
+	/**
+	 * The main panel on the GUI that specifies the layout
+	 * @return
+	 */
 	private JPanel mainPanel() {	
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(northPanel(), BorderLayout.NORTH);
@@ -125,6 +139,10 @@ public class ScannerGUI extends JFrame{
 		return panel;
 	}
 	
+	/**
+	 * Panel that includes the title of the program
+	 * @return
+	 */
 	private JPanel northPanel() {
 		JPanel nPanel = new JPanel();
 		//nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.PAGE_AXIS));
@@ -135,6 +153,10 @@ public class ScannerGUI extends JFrame{
 		return nPanel;
 	}
 	
+	/**
+	 * Panel that includes the file list and option buttons
+	 * @return
+	 */
 	private JPanel centerPanel() {
 		DefaultListModel listModel = new DefaultListModel();
 		
@@ -204,6 +226,10 @@ public class ScannerGUI extends JFrame{
 		return cPanel;
 	}
 	
+	/**
+	 * Panel that includes the Scan All button, Settings button, and Show Log button
+	 * @return
+	 */
 	private JPanel southPanel() {
 		
 		JPanel sPanel = new JPanel();
@@ -253,7 +279,7 @@ public class ScannerGUI extends JFrame{
 		settingsButton.setIcon(icon);
 		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				new LoginDialog(sPanel, ICON_URL, ()-> createAdminDialog(db)); //create login dialog and pass success action via lambda expression
+				new LoginDialog(sPanel, ICON_URL, ()-> new AdminSettings(db)); //create login dialog and pass success action via lambda expression
 			}
 		});
 		settingsButton.setPreferredSize(new Dimension(125, 30));
@@ -278,13 +304,13 @@ public class ScannerGUI extends JFrame{
 		return sPanel;
 	}
 	
-	// this won't be needed when we can add the scanner to the gui
+	/**
+	 * Return names of files to be scanned
+	 * @return
+	 */
 	public ArrayList<String> getFilesToScan() {
 		return filenames;
 	}
 	
-	public void createAdminDialog(DatabaseManager db){
-		AdminSettings admin = new AdminSettings(db);
-	}	
 	
 }
